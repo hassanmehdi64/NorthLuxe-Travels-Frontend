@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import { getApiErrorMessage } from "../lib/apiError";
 
 const Login = () => {
   const { isAuthenticated, loading: authLoading, login } = useAuth();
@@ -25,7 +26,7 @@ const Login = () => {
       const to = location.state?.from?.pathname || "/admin";
       navigate(to, { replace: true });
     } catch (e) {
-      setError(e?.response?.data?.message || "Login failed");
+      setError(getApiErrorMessage(e, "Login failed"));
     } finally {
       setLoading(false);
     }
