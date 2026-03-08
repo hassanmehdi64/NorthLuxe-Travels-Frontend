@@ -1,12 +1,24 @@
 import { Link, useParams } from "react-router-dom";
 import { usePublicContentItem, usePublicTours } from "../hooks/useCms";
-import { getSeasonDetails, toDynamicSeason } from "../components/seasonal-journeys/seasonalJourneysData";
+import { toDynamicSeason } from "../components/seasonal-journeys/seasonalJourneysData";
 
 const SeasonDetails = () => {
   const { slug } = useParams();
   const { data: tours = [] } = usePublicTours();
   const { data: seasonEntry } = usePublicContentItem("season", (slug || "").toLowerCase());
-  const season = seasonEntry ? toDynamicSeason(seasonEntry, tours) : getSeasonDetails((slug || "").toLowerCase(), tours);
+  const season = seasonEntry ? toDynamicSeason(seasonEntry, tours) : null;
+
+  if (!season) {
+    return (
+      <section className="bg-theme-bg py-10 md:py-12">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14">
+          <div className="rounded-2xl border border-dashed border-theme bg-theme-surface py-16 text-center text-muted">
+            Seasonal journey not found.
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="bg-theme-bg py-10 md:py-12">

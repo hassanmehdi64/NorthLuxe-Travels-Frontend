@@ -79,7 +79,7 @@ const TourCard = ({ tour }) => {
   const savedInWishlist = wishlistVersion >= 0 && isInWishlist(tour?.id);
   const placeName = normalizePlaceName(tour?.location);
   const displayTitle = tour?.title || deriveSimpleTourName(tour);
-  const personsCount = Number(tour?.capacity || tour?.availableSeats || 0);
+  const seatLabel = seatsLeft > 0 ? `${seatsLeft} seats left` : "Sold out";
   const totalDays = Number(tour?.durationDays || 0);
   const placesCount = derivePlacesCount(tour);
   const placesLabel = placesCount > 0 ? `${placesCount} Places` : "Planned Route";
@@ -143,7 +143,7 @@ const TourCard = ({ tour }) => {
         <div className="mb-5 flex items-center justify-between gap-5 text-[11px] font-medium text-muted">
           <div className="flex items-center gap-1">
             <Users size={12} className="opacity-50" />
-            <span>{personsCount ? `${personsCount} persons` : "Custom group size"}</span>
+            <span>{seatLabel}</span>
           </div>
           <div className="flex items-center gap-1.5 text-right">
             <MapPin size={12} className="opacity-50" />

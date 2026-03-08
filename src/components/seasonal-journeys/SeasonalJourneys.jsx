@@ -5,15 +5,12 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import DestinationCard from "../featured-destinations/DestinationCard";
-import { getDynamicSeasonPackages, getSeasonPackages } from "./seasonalJourneysData";
+import { getDynamicSeasonPackages } from "./seasonalJourneysData";
 
 const SeasonalJourneys = () => {
   const { data: tours = [] } = usePublicTours();
   const { data: seasonEntries = [] } = usePublicContentList("season");
-  const seasons = useMemo(
-    () => (seasonEntries.length ? getDynamicSeasonPackages(seasonEntries, tours) : getSeasonPackages(tours)),
-    [seasonEntries, tours],
-  );
+  const seasons = useMemo(() => getDynamicSeasonPackages(seasonEntries, tours), [seasonEntries, tours]);
 
   return (
     <section className="bg-theme-bg py-12 lg:py-14 ql-scroll-reveal" data-ql-reveal>
@@ -35,44 +32,50 @@ const SeasonalJourneys = () => {
           </div>
         </div>
 
-        <div className="seasonal-journeys-swiper">
-          <Swiper
-            modules={[Autoplay]}
-            loop
-            speed={1100}
-            autoplay={{
-              delay: 2400,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true,
-            }}
-            grabCursor
-            spaceBetween={16}
-            breakpoints={{
-              0: { slidesPerView: 1.15 },
-              640: { slidesPerView: 2.1 },
-              1024: { slidesPerView: 3.1 },
-              1280: { slidesPerView: 3.2 },
-            }}
-          >
-            {seasons.map((season, index) => (
-              <SwiperSlide key={season.id} className="pb-1">
-                <div className="w-full transition-transform duration-300 hover:-translate-y-1">
-                  <DestinationCard
-                    destination={{
-                      id: season.id,
-                      title: season.title,
-                      image: season.image,
-                      description: season.subtitle,
-                      href: `/seasons/${season.slug}`,
-                    }}
-                    index={index}
-                    compact
-                  />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
-        </div>
+        {seasons.length ? (
+          <div className="seasonal-journeys-swiper">
+            <Swiper
+              modules={[Autoplay]}
+              loop={seasons.length > 3}
+              speed={1100}
+              autoplay={{
+                delay: 2400,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              grabCursor
+              spaceBetween={16}
+              breakpoints={{
+                0: { slidesPerView: 1.15 },
+                640: { slidesPerView: 2.1 },
+                1024: { slidesPerView: 3.1 },
+                1280: { slidesPerView: 3.2 },
+              }}
+            >
+              {seasons.map((season, index) => (
+                <SwiperSlide key={season.id} className="pb-1">
+                  <div className="w-full transition-transform duration-300 hover:-translate-y-1">
+                    <DestinationCard
+                      destination={{
+                        id: season.id,
+                        title: season.title,
+                        image: season.image,
+                        description: season.subtitle,
+                        href: `/seasons/${season.slug}`,
+                      }}
+                      index={index}
+                      compact
+                    />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-theme bg-theme-surface py-16 text-center text-muted">
+            Add published seasonal journeys from the admin dashboard to display them here.
+          </div>
+        )}
       </div>
     </section>
   );
