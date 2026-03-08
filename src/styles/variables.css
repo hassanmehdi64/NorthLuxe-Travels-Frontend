@@ -1,0 +1,69 @@
+:root {
+  /* =====================================================
+     CORE PALETTE (The "Source of Truth")
+     ===================================================== */
+  --c-brand:   #13DDB4;  /* Brand Green */
+  --c-brand-rgb: 19, 221, 180;
+  --c-bg:      #F7FBFA;  /* Off-white cool */
+  --c-surface: #FFFFFF;  /* Pure white */
+  --c-text:    #0F172A;  /* Slate Dark */
+  --c-muted:   #475569;  /* Darker muted for better light-mode readability */
+  --c-border:  #E6F2EE;  /* Soft Mint Border */
+  --c-hover:   #ECFDF7;  /* Soft Mint Hover */
+
+  /* =====================================================
+     DERIVED BUTTON TOKENS
+     ===================================================== */
+  /* Primary (Solid Brand) */
+  --btn-primary-bg:     var(--c-brand);
+  --btn-primary-text:   var(--c-text);
+  --btn-primary-hover:  #10C7A2;
+
+  /* Ghost (Outlined) */
+  --btn-ghost-bg:       transparent;
+  --btn-ghost-text:     var(--c-text);
+  --btn-ghost-border:   var(--c-border);
+  --btn-ghost-hover-bg: var(--c-hover);
+
+  /* =====================================================
+     OVERLAYS & GRADIENTS
+     ===================================================== */
+  --c-text-rgb: 15, 23, 42;
+  --overlay-dark:    rgba(var(--c-text-rgb), 0.45);
+  --overlay-light:   rgba(247, 251, 250, 0.55);
+  --overlay-gradient: linear-gradient(
+    110deg,
+    rgba(var(--c-text-rgb), 0.55) 0%,
+    rgba(var(--c-text-rgb), 0.35) 45%,
+    rgba(var(--c-text-rgb), 0.15) 100%
+  );
+  
+  --gradient-underline: linear-gradient(90deg, var(--c-brand), rgba(var(--c-brand-rgb), 0.55));
+
+  /* =====================================================
+     BACKWARD COMPATIBILITY & SEMANTIC ALIASES
+     ===================================================== */
+  --color-primary:    var(--c-text);
+  --color-accent:     var(--c-brand);
+  --color-bg:         var(--c-bg);
+  --color-surface:    var(--c-surface);
+  --color-icon:       var(--c-brand);
+  --color-heading:    var(--c-text);
+  --color-subheading: var(--c-muted);
+
+  --primary:          var(--c-text);
+  --secondary:        var(--c-brand);
+  --bg-main:          var(--c-bg);
+  --card:             var(--c-surface);
+
+  --text-main:        var(--c-text);
+  --text-muted:       var(--c-muted);
+  --text-on-dark:     #FFFFFF;
+
+  /* =====================================================
+     TYPOGRAPHY
+     ===================================================== */
+  --font-primary: "Manrope", sans-serif;
+  --font-heading: "Plus Jakarta Sans", sans-serif;
+  --font-urdu:    "Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", serif;
+}
