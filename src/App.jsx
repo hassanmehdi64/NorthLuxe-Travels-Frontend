@@ -43,6 +43,7 @@ import SiteSettings from "./admin/settings/SiteSettings";
 import ContentManagement from "./admin/content/ContentManagement";
 import ActivitiesManagement from "./admin/content/ActivitiesManagement";
 import ServicesManagement from "./admin/content/ServicesManagement";
+import SeasonsManagement from "./admin/content/SeasonsManagement";
 import BlogForm from "./admin/blogs/BlogForm";
 import TourManagement from "./admin/tours/TourManagement";
 import TestimonialsManagement from "./admin/testimonials/TestimonialsManagement";
@@ -121,6 +122,7 @@ const App = () => {
           <Route path="content" element={<ContentManagement />} />
           <Route path="activities" element={<ActivitiesManagement />} />
           <Route path="services" element={<ServicesManagement />} />
+          <Route path="seasons" element={<SeasonsManagement />} />
           <Route path="settings" element={<RequireRole roles={["Admin"]} fallback="/admin/content"><SiteSettings /></RequireRole>} />
           <Route path="notifications" element={<RequireRole roles={["Admin"]} fallback="/admin/content"><Notifications /></RequireRole>} />
         </Route>

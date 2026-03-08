@@ -1,14 +1,19 @@
 import { useMemo } from "react";
 import { usePublicTours } from "../../hooks/useCms";
+import { usePublicContentList } from "../../hooks/useCms";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay } from "swiper/modules";
 import "swiper/css";
 import DestinationCard from "../featured-destinations/DestinationCard";
-import { getSeasonPackages } from "./seasonalJourneysData";
+import { getDynamicSeasonPackages, getSeasonPackages } from "./seasonalJourneysData";
 
 const SeasonalJourneys = () => {
   const { data: tours = [] } = usePublicTours();
-  const seasons = useMemo(() => getSeasonPackages(tours), [tours]);
+  const { data: seasonEntries = [] } = usePublicContentList("season");
+  const seasons = useMemo(
+    () => (seasonEntries.length ? getDynamicSeasonPackages(seasonEntries, tours) : getSeasonPackages(tours)),
+    [seasonEntries, tours],
+  );
 
   return (
     <section className="bg-theme-bg py-12 lg:py-14 ql-scroll-reveal" data-ql-reveal>

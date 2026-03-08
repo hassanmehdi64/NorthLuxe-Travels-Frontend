@@ -1,11 +1,12 @@
 import { Link, useParams } from "react-router-dom";
-import { usePublicTours } from "../hooks/useCms";
-import { getSeasonDetails } from "../components/seasonal-journeys/seasonalJourneysData";
+import { usePublicContentItem, usePublicTours } from "../hooks/useCms";
+import { getSeasonDetails, toDynamicSeason } from "../components/seasonal-journeys/seasonalJourneysData";
 
 const SeasonDetails = () => {
   const { slug } = useParams();
   const { data: tours = [] } = usePublicTours();
-  const season = getSeasonDetails((slug || "").toLowerCase(), tours);
+  const { data: seasonEntry } = usePublicContentItem("season", (slug || "").toLowerCase());
+  const season = seasonEntry ? toDynamicSeason(seasonEntry, tours) : getSeasonDetails((slug || "").toLowerCase(), tours);
 
   return (
     <section className="bg-theme-bg py-10 md:py-12">

@@ -13,6 +13,7 @@ const contentTypes = [
   { value: "destination", label: "Destinations" },
   { value: "activity", label: "Activities" },
   { value: "service", label: "Services" },
+  { value: "season", label: "Seasonal Journeys" },
   { value: "career", label: "Career" },
   { value: "faq", label: "FAQs" },
   { value: "help-center", label: "Help Center" },
@@ -41,6 +42,9 @@ const initialForm = {
   deliverables: "",
   bestTime: "",
   idealFor: "",
+  weather: "",
+  destinations: "",
+  terms: "",
   status: "published",
   featured: false,
   sortOrder: 0,
@@ -106,6 +110,29 @@ const buildPayloadByType = (type, form) => {
     };
   }
 
+  if (type === "season") {
+    return {
+      ...base,
+      title: form.title,
+      highlight: form.highlight,
+      shortDescription: form.shortDescription,
+      description: form.description,
+      content: form.content,
+      image: form.image,
+      includes: parseCommaList(form.includes),
+      deliverables: parseCommaList(form.deliverables),
+      highlights: parseCommaList(form.highlights),
+      features: parseCommaList(form.features),
+      meta: {
+        bestTime: form.bestTime,
+        idealFor: form.idealFor,
+        weather: form.weather,
+        destinations: parseCommaList(form.destinations),
+        terms: parseCommaList(form.terms),
+      },
+    };
+  }
+
   if (type === "career") {
     return {
       ...base,
@@ -142,6 +169,7 @@ const typeText = {
   destination: "Destination",
   activity: "Activity",
   service: "Service",
+  season: "Season",
   career: "Career",
   faq: "FAQ",
   "help-center": "Help Center",
@@ -184,6 +212,7 @@ const ContentManagement = ({ fixedType = null }) => {
   const isDestination = activeType === "destination";
   const isActivity = activeType === "activity";
   const isService = activeType === "service";
+  const isSeason = activeType === "season";
   const isCareer = activeType === "career";
   const isFaq = activeType === "faq";
   const isStaticPolicy =
@@ -232,6 +261,9 @@ const ContentManagement = ({ fixedType = null }) => {
       deliverables: toCommaList(item.deliverables),
       bestTime: item.meta?.bestTime || "",
       idealFor: item.meta?.idealFor || "",
+      weather: item.meta?.weather || "",
+      destinations: toCommaList(item.meta?.destinations),
+      terms: toCommaList(item.meta?.terms),
     });
     setIsFormOpen(true);
   };
@@ -258,7 +290,7 @@ const ContentManagement = ({ fixedType = null }) => {
           <p className="text-sm text-slate-500 dark:text-slate-300">
             {fixedType
               ? `Add, update, and manage ${String(typeText[activeType] || "content").toLowerCase()} entries for future site updates.`
-              : "Update destinations, activities, services, careers, and support pages from one place."}
+              : "Update destinations, activities, services, seasonal journeys, careers, and support pages from one place."}
           </p>
         </div>
         <button
@@ -346,7 +378,7 @@ const ContentManagement = ({ fixedType = null }) => {
             </>
           ) : null}
 
-          {isDestination || isActivity || isService || isCareer || isStaticPolicy ? (
+          {isDestination || isActivity || isService || isSeason || isCareer || isStaticPolicy ? (
             <label className="md:col-span-2 space-y-2">
               <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Short Description</span>
               <textarea
@@ -358,7 +390,7 @@ const ContentManagement = ({ fixedType = null }) => {
             </label>
           ) : null}
 
-          {isActivity || isService ? (
+          {isActivity || isService || isSeason ? (
             <label className="md:col-span-2 space-y-2">
               <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Description</span>
               <textarea
@@ -370,7 +402,7 @@ const ContentManagement = ({ fixedType = null }) => {
             </label>
           ) : null}
 
-          {isDestination || isCareer || isStaticPolicy ? (
+          {isDestination || isSeason || isCareer || isStaticPolicy ? (
             <label className="md:col-span-2 space-y-2">
               <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Main Content</span>
               <textarea
@@ -382,7 +414,7 @@ const ContentManagement = ({ fixedType = null }) => {
             </label>
           ) : null}
 
-          {isDestination || isActivity || isService ? (
+          {isDestination || isActivity || isService || isSeason ? (
             <label className="md:col-span-2 space-y-2">
               <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Image URL</span>
               <input
@@ -412,6 +444,51 @@ const ContentManagement = ({ fixedType = null }) => {
                 onChange={(e) => setForm((p) => ({ ...p, category: e.target.value }))}
               />
             </label>
+          ) : null}
+          {isSeason ? (
+            <>
+              <label className="space-y-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Best Time</span>
+                <input
+                  className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
+                  value={form.bestTime}
+                  onChange={(e) => setForm((p) => ({ ...p, bestTime: e.target.value }))}
+                />
+              </label>
+              <label className="space-y-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Ideal For</span>
+                <input
+                  className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
+                  value={form.idealFor}
+                  onChange={(e) => setForm((p) => ({ ...p, idealFor: e.target.value }))}
+                />
+              </label>
+              <label className="md:col-span-2 space-y-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Weather Feel</span>
+                <input
+                  className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
+                  value={form.weather}
+                  onChange={(e) => setForm((p) => ({ ...p, weather: e.target.value }))}
+                />
+              </label>
+              <label className="md:col-span-2 space-y-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Top Regions (comma separated)</span>
+                <input
+                  className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
+                  value={form.destinations}
+                  onChange={(e) => setForm((p) => ({ ...p, destinations: e.target.value }))}
+                />
+              </label>
+              <label className="md:col-span-2 space-y-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Season Tags (comma separated)</span>
+                <input
+                  className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
+                  placeholder="spring, blossom, april"
+                  value={form.terms}
+                  onChange={(e) => setForm((p) => ({ ...p, terms: e.target.value }))}
+                />
+              </label>
+            </>
           ) : null}
           {isActivity ? (
             <>
@@ -492,9 +569,9 @@ const ContentManagement = ({ fixedType = null }) => {
             </>
           ) : null}
 
-          {isActivity ? (
+          {isActivity || isSeason ? (
             <label className="md:col-span-2 space-y-2">
-              <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Includes (comma separated)</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">{isSeason ? "Activities (comma separated)" : "Includes (comma separated)"}</span>
               <input
                 className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
                 value={form.includes}
@@ -503,15 +580,36 @@ const ContentManagement = ({ fixedType = null }) => {
             </label>
           ) : null}
 
-          {isService ? (
+          {isService || isSeason ? (
             <label className="md:col-span-2 space-y-2">
-              <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Deliverables (comma separated)</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">{isSeason ? "Services (comma separated)" : "Deliverables (comma separated)"}</span>
               <input
                 className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
                 value={form.deliverables}
                 onChange={(e) => setForm((p) => ({ ...p, deliverables: e.target.value }))}
               />
             </label>
+          ) : null}
+
+          {isSeason ? (
+            <>
+              <label className="md:col-span-2 space-y-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Why Go (comma separated)</span>
+                <input
+                  className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
+                  value={form.highlights}
+                  onChange={(e) => setForm((p) => ({ ...p, highlights: e.target.value }))}
+                />
+              </label>
+              <label className="md:col-span-2 space-y-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Planning Notes (comma separated)</span>
+                <input
+                  className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
+                  value={form.features}
+                  onChange={(e) => setForm((p) => ({ ...p, features: e.target.value }))}
+                />
+              </label>
+            </>
           ) : null}
 
           <label className="space-y-2">
