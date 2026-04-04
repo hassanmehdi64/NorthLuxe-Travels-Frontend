@@ -14,7 +14,6 @@ const BookingDetails = () => {
     cancelled: "bg-red-100 text-red-600",
   };
 
-  // 2. Action Handlers
   const updateStatus = (newStatus) => {
     updateBooking.mutate({ id, status: newStatus });
   };
@@ -45,7 +44,6 @@ const BookingDetails = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Customer Information */}
         <div className="space-y-3">
           <h2 className="text-lg font-semibold text-gray-700">Customer Info</h2>
           <div className="bg-gray-50 p-4 rounded-lg space-y-2">
@@ -61,7 +59,6 @@ const BookingDetails = () => {
           </div>
         </div>
 
-        {/* Tour Details */}
         <div className="space-y-3">
           <h2 className="text-lg font-semibold text-gray-700">Tour Details</h2>
           <div className="bg-gray-50 p-4 rounded-lg space-y-2">
@@ -134,7 +131,29 @@ const BookingDetails = () => {
         </div>
       </div>
 
-      {/* Action Buttons */}
+      {booking.manualPayment && (booking.manualPayment.senderName || booking.manualPayment.senderNumber || booking.manualPayment.sentAmount || booking.transactionReference) ? (
+        <div className="space-y-3">
+          <h2 className="text-lg font-semibold text-gray-700">Client Payment Details</h2>
+          <div className="bg-gray-50 p-4 rounded-lg space-y-2">
+            <p>
+              <span className="text-gray-500">Sender Name:</span> {booking.manualPayment.senderName || "-"}
+            </p>
+            <p>
+              <span className="text-gray-500">Sender Number / Account:</span> {booking.manualPayment.senderNumber || "-"}
+            </p>
+            <p>
+              <span className="text-gray-500">Amount Sent:</span> {booking.manualPayment.sentAmount ? `${booking.currency} ${booking.manualPayment.sentAmount}` : "-"}
+            </p>
+            <p>
+              <span className="text-gray-500">Payment Date:</span> {booking.manualPayment.sentAt ? new Date(booking.manualPayment.sentAt).toLocaleString() : "-"}
+            </p>
+            <p>
+              <span className="text-gray-500">Reference:</span> {booking.transactionReference || "-"}
+            </p>
+          </div>
+        </div>
+      ) : null}
+
       <div className="flex flex-wrap gap-4 pt-6 border-t">
         {booking.status === "pending" && (
           <button

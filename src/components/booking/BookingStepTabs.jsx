@@ -1,7 +1,7 @@
 const STEP_ITEMS = [
-  { id: 1, label: "Guest Details" },
-  { id: 2, label: "Dates & Stay" },
-  { id: 3, label: "Trip Options" },
+  { id: 1, label: "Guest Details", short: "Guests" },
+  { id: 2, label: "Dates & Stay", short: "Travel" },
+  { id: 3, label: "Payment", short: "Payment" },
 ];
 
 const BookingStepTabs = ({
@@ -9,9 +9,8 @@ const BookingStepTabs = ({
   isTravelerSectionValid,
   isTravelSectionValid,
   onStepChange,
-  onBlockedStep,
 }) => (
-  <div className="rounded-2xl border border-theme bg-theme-surface p-2.5 shadow-[0_10px_20px_rgba(15,23,42,0.06)]">
+  <div className="rounded-2xl border border-theme bg-theme-surface p-2 shadow-[0_8px_18px_rgba(15,23,42,0.05)]">
     <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
       {STEP_ITEMS.map((item) => {
         const canOpen =
@@ -22,16 +21,19 @@ const BookingStepTabs = ({
           <button
             key={item.id}
             type="button"
-            onClick={() => (canOpen ? onStepChange(item.id) : onBlockedStep())}
-            className={`rounded-md border px-2 py-1 text-[6px] font-semibold uppercase tracking-[0.03em] leading-none transition ${
+            disabled={!canOpen}
+            onClick={() => canOpen && onStepChange(item.id)}
+            className={`rounded-xl border px-3 py-2.5 text-left transition ${
               activeSection === item.id
-                ? "border-[var(--c-brand)]/65 bg-[var(--c-brand)]/15 text-theme shadow-[0_8px_18px_rgba(123,231,196,0.28)]"
+                ? "border-[rgba(15,23,42,0.16)] bg-white text-theme shadow-[0_8px_18px_rgba(15,23,42,0.06)]"
                 : canOpen
-                  ? "border-theme bg-theme-bg text-heading hover:border-[var(--c-brand)]/35 hover:bg-white"
-                  : "cursor-not-allowed border-theme bg-theme-bg text-muted opacity-60"
+                  ? "cursor-pointer border-theme bg-theme-bg text-heading hover:border-[rgba(15,23,42,0.16)] hover:bg-white"
+                  : "cursor-not-allowed border-[#e5eaef] bg-[#f7f8fa] text-muted opacity-70"
             }`}
           >
-            {item.id}. {item.label}
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em]">Step {item.id}</p>
+            <p className="mt-1 text-[13px] font-semibold leading-5 sm:hidden">{item.short}</p>
+            <p className="mt-1 hidden text-[13px] font-semibold leading-5 sm:block">{item.label}</p>
           </button>
         );
       })}

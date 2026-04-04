@@ -87,6 +87,7 @@ const keys = {
   contentAdmin: (type) => ["content", "admin", type],
   notifications: ["notifications"],
   dashboard: ["dashboard", "overview"],
+  paymentSession: (sessionId) => ["payments", "session", sessionId],
 };
 
 export const usePublicTours = () =>
@@ -298,9 +299,27 @@ export const usePublicBookingQuote = () =>
     mutationFn: (payload) => apiClient.post("/bookings/quote/public", payload).then(unwrap),
   });
 
+export const useCreateCheckoutSession = () =>
+  useMutation({
+    mutationFn: (payload) => apiClient.post("/payments/checkout-session", payload).then(unwrap),
+  });
+
+export const usePaymentSession = (sessionId, enabled = true) =>
+  useQuery({
+    queryKey: keys.paymentSession(sessionId || "unknown"),
+    queryFn: () => apiClient.get(`/payments/session/${sessionId}`).then(unwrap),
+    enabled: Boolean(sessionId) && enabled,
+    refetchInterval: (query) => (query.state.data?.booking?.paymentVerified ? false : 3000),
+  });
+
 export const useCreatePaymentIntent = () =>
   useMutation({
     mutationFn: (payload) => apiClient.post("/payments/intent", payload).then(unwrap),
+  });
+
+export const useCreateJazzCashSession = () =>
+  useMutation({
+    mutationFn: (payload) => apiClient.post("/payments/jazzcash/session", payload).then(unwrap),
   });
 
 export const useVerifyPaymentIntent = () =>
@@ -566,3 +585,8 @@ export const useDashboardOverview = (enabled = true) =>
     queryFn: () => apiClient.get("/dashboard/overview").then(unwrap),
     enabled,
   });
+
+
+
+
+

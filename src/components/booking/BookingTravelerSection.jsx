@@ -9,7 +9,7 @@ const BookingTravelerSection = ({
   isTravelerSectionValid,
   onNext,
 }) => (
-  <div className="rounded-2xl border border-theme bg-theme-surface p-3.5 md:p-4.5 shadow-[0_8px_16px_rgba(15,23,42,0.06)]">
+  <div className="rounded-2xl border border-theme bg-theme-surface p-3 md:p-3.5 shadow-[0_6px_14px_rgba(15,23,42,0.05)] space-y-3.5">
     <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
       <label>
         <span className="ql-label">Full Name</span>
@@ -63,6 +63,9 @@ const BookingTravelerSection = ({
           }))}
         />
       </label>
+    </div>
+
+    <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
       <label>
         <span className="ql-label">Traveler Type</span>
         <BookingDropdown
@@ -78,69 +81,63 @@ const BookingTravelerSection = ({
       </label>
 
       {form.travelerType === "local" ? (
-        <>
-          <label>
-            <span className="ql-label">Local ID Type</span>
-            <BookingDropdown
-              value={form.localIdType}
-              onChange={(nextValue) =>
-                setForm((p) => ({ ...p, localIdType: nextValue }))
-              }
-              options={[
-                { value: "cnic", label: "CNIC" },
-                { value: "passport", label: "Passport" },
-              ]}
-            />
-          </label>
-          <label>
-            <span className="ql-label">
-              {form.localIdType === "passport"
-                ? "Passport Number"
-                : "CNIC Number"}
-            </span>
-            <input
-              className="ql-input"
-              placeholder={
-                form.localIdType === "passport"
-                  ? "AA1234567"
-                  : "12345-1234567-1"
-              }
-              value={form.localIdNumber}
-              onChange={(e) =>
-                setForm((p) => ({ ...p, localIdNumber: e.target.value }))
-              }
-            />
-          </label>
-        </>
+        <label>
+          <span className="ql-label">Local ID Type</span>
+          <BookingDropdown
+            value={form.localIdType}
+            onChange={(nextValue) =>
+              setForm((p) => ({ ...p, localIdType: nextValue }))
+            }
+            options={[
+              { value: "cnic", label: "CNIC" },
+              { value: "passport", label: "Passport" },
+            ]}
+          />
+        </label>
       ) : (
-        <>
-          <label>
-            <span className="ql-label">Passport Number</span>
-            <input
-              className="ql-input"
-              placeholder="Passport Number"
-              value={form.passportNumber}
-              onChange={(e) =>
-                setForm((p) => ({ ...p, passportNumber: e.target.value }))
-              }
-            />
-          </label>
-          <label>
-            <span className="ql-label">Country</span>
-            <input
-              className="ql-input"
-              placeholder="Country of Residence"
-              value={form.country}
-              onChange={(e) =>
-                setForm((p) => ({ ...p, country: e.target.value }))
-              }
-            />
-          </label>
-        </>
+        <label>
+          <span className="ql-label">Country</span>
+          <input
+            className="ql-input"
+            placeholder="Country of Residence"
+            value={form.country}
+            onChange={(e) =>
+              setForm((p) => ({ ...p, country: e.target.value }))
+            }
+          />
+        </label>
+      )}
+
+      {form.travelerType === "local" ? (
+        <label className="md:col-span-2">
+          <span className="ql-label">
+            {form.localIdType === "passport" ? "Passport Number" : "CNIC Number"}
+          </span>
+          <input
+            className="ql-input"
+            placeholder={form.localIdType === "passport" ? "AA1234567" : "12345-1234567-1"}
+            value={form.localIdNumber}
+            onChange={(e) =>
+              setForm((p) => ({ ...p, localIdNumber: e.target.value }))
+            }
+          />
+        </label>
+      ) : (
+        <label>
+          <span className="ql-label">Passport Number</span>
+          <input
+            className="ql-input"
+            placeholder="Passport Number"
+            value={form.passportNumber}
+            onChange={(e) =>
+              setForm((p) => ({ ...p, passportNumber: e.target.value }))
+            }
+          />
+        </label>
       )}
     </div>
 
-    <div className="mt-4 flex justify-end">
+    <div className="mt-2 flex justify-end">
       <button
         type="button"
         className="ql-btn-primary w-full sm:w-auto"

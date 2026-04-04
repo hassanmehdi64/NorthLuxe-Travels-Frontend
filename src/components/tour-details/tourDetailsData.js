@@ -17,6 +17,15 @@ export const normalizePlaceName = (location = "") =>
     .replace(/\s{2,}/g, " ")
     .trim() || "Northern Pakistan";
 
+export const getTourPlaceName = (tour) => normalizePlaceName(tour?.location);
+
+export const getTourPlanCount = (tour) => Number(tour?.capacity || tour?.availableSeats || 0);
+
+export const getTourPlanLabel = (tour) => {
+  const persons = getTourPlanCount(tour);
+  return persons ? `${persons} ${persons === 1 ? "person" : "persons"} plan` : "Custom plan";
+};
+
 export const getTourMood = (tour) => {
   const searchText = [tour?.title, ...(Array.isArray(tour?.tags) ? tour.tags : [])].filter(Boolean).join(" ").toLowerCase();
   if (searchText.includes("summer")) return "Summer Tour";
@@ -122,15 +131,17 @@ export const buildPlacesCovered = (tour, itinerary) => {
   return Array.from(places).slice(0, 8);
 };
 
-export const buildPackageOverview = (tour) => {
-  const persons = Number(tour?.capacity || tour?.availableSeats || 0);
-  return [
-    { label: "Package Type", value: `${getTourMood(tour)} in ${normalizePlaceName(tour?.location)}` },
-    { label: "Ideal Group", value: persons ? `${persons} persons` : "Flexible group size" },
-    { label: "Travel Duration", value: tour?.durationLabel || `${tour?.durationDays || 0} Days` },
-    { label: "Route Style", value: "Road travel, sightseeing, and hotel stay plan" },
-  ];
+export const getTourPlacesLabel = (tour, itinerary) => {
+  const places = buildPlacesCovered(tour, itinerary || buildDisplayItinerary(tour));
+  return places.length ? `${places.length} places` : "Planned route";
 };
+
+export const buildPackageOverview = (tour) => [
+  { label: "Package Type", value: `${getTourMood(tour)} in ${normalizePlaceName(tour?.location)}` },
+  { label: "Ideal Group", value: getTourPlanLabel(tour) },
+  { label: "Travel Duration", value: tour?.durationLabel || `${tour?.durationDays || 0} Days` },
+  { label: "Route Coverage", value: getTourPlacesLabel(tour) },
+];
 
 export const buildDetailedDescription = (tour) =>
   tour.description ||

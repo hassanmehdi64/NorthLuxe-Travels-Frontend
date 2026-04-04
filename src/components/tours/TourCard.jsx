@@ -1,73 +1,14 @@
 import { Link } from "react-router-dom";
-import { Clock3, Heart, MapPin, ShoppingBag, Star, Users } from "lucide-react";
+import { Heart, MapPin, ShoppingBag, Star, Users } from "lucide-react";
 import { useState } from "react";
-import CustomTourBookingButton from "../booking/CustomTourBookingButton";
 import { useToast } from "../../context/ToastContext";
 import { addToCart, isInCart, isInWishlist, toggleWishlist } from "../../features/commerce/storage";
-
-const normalizePlaceName = (location = "") =>
-  String(location)
-    .replace(/\b(valley|lake|lakes|district|region|plateau|meadows)\b/gi, "")
-    .replace(/\s{2,}/g, " ")
-    .trim() || "Pakistan";
-
-const deriveSimpleTourName = (tour) => {
-  const searchText = [tour?.title, ...(Array.isArray(tour?.tags) ? tour.tags : [])]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
-  if (searchText.includes("summer")) return "Summer Escape";
-  if (searchText.includes("winter")) return "Winter Escape";
-  if (searchText.includes("spring")) return "Spring Retreat";
-  if (searchText.includes("autumn") || searchText.includes("fall")) return "Autumn Retreat";
-  if (searchText.includes("family")) return "Family Escape";
-  if (searchText.includes("group")) return "Group Adventure";
-  if (searchText.includes("premium") || searchText.includes("luxury")) return "Signature Escape";
-  if (searchText.includes("heritage") || searchText.includes("culture")) return "Heritage Journey";
-  if (searchText.includes("honeymoon") || searchText.includes("couple")) return "Romantic Escape";
-  if (searchText.includes("trek")) return "Trail Adventure";
-  return "Scenic Escape";
-};
-
-const derivePlacesCount = (tour) => {
-  const places = new Set();
-  const genericStops = {
-    hunza: ["Karimabad", "Baltit Fort", "Altit Village", "Attabad Lake", "Passu Cones", "Duikar"],
-    skardu: ["Shangrila", "Upper Kachura", "Shigar Fort", "Blind Lake", "Katpana Desert", "Skardu Bazaar"],
-    nagar: ["Hopar Glacier", "Rakaposhi Viewpoint", "Nagar Villages", "Karimabad"],
-    fairy: ["Raikot Bridge", "Tattu Village", "Fairy Meadows", "Beyal Camp"],
-    astore: ["Rama Meadows", "Rama Lake", "Astore Valley", "Deosai"],
-    khaplu: ["Khaplu Palace", "Chaqchan Mosque", "Old Village", "River Viewpoints"],
-    shigar: ["Shigar Fort", "Shigar Valley", "Traditional Settlements", "River Edge"],
-    deosai: ["Deosai Plains", "Sheosar Lake", "Wildlife Point", "Scenic Plateau"],
-  };
-
-  if (Array.isArray(tour?.itinerary)) {
-    tour.itinerary.forEach((item) => {
-      const parts = String(item?.description || "")
-        .split(/,| and /i)
-        .map((entry) => entry.trim())
-        .filter(Boolean);
-
-      parts.forEach((place) => places.add(place));
-    });
-  }
-
-  if (!places.size) {
-    const searchText = [tour?.location, tour?.title]
-      .filter(Boolean)
-      .join(" ")
-      .toLowerCase();
-
-    const matchedKey = Object.keys(genericStops).find((key) => searchText.includes(key));
-    if (matchedKey) {
-      genericStops[matchedKey].forEach((place) => places.add(place));
-    }
-  }
-
-  return places.size;
-};
+import {
+  buildDisplayItinerary,
+  getTourPlaceName,
+  getTourPlacesLabel,
+  getTourPlanLabel,
+} from "../tour-details/tourDetailsData";
 
 const TourCard = ({ tour }) => {
   const toast = useToast();
@@ -77,12 +18,11 @@ const TourCard = ({ tour }) => {
   const slugOrId = tour?.slug || tour?.id;
   const [wishlistVersion, setWishlistVersion] = useState(0);
   const savedInWishlist = wishlistVersion >= 0 && isInWishlist(tour?.id);
-  const placeName = normalizePlaceName(tour?.location);
-  const displayTitle = tour?.title || deriveSimpleTourName(tour);
-  const seatLabel = seatsLeft > 0 ? `${seatsLeft} seats left` : "Sold out";
+  const placeName = getTourPlaceName(tour);
+  const displayTitle = tour?.title || "Scenic Escape";
+  const seatLabel = getTourPlanLabel(tour);
   const totalDays = Number(tour?.durationDays || 0);
-  const placesCount = derivePlacesCount(tour);
-  const placesLabel = placesCount > 0 ? `${placesCount} Places` : "Planned Route";
+  const placesLabel = getTourPlacesLabel(tour, buildDisplayItinerary(tour));
 
   const handleWishlist = () => {
     const added = toggleWishlist(tour);
@@ -129,9 +69,7 @@ const TourCard = ({ tour }) => {
             {placeName}
           </span>
           <span className="opacity-20">|</span>
-          <span className="flex items-center gap-1">
-            <Clock3 size={11} /> {totalDays} Days
-          </span>
+          <span>{tour?.durationLabel || `${totalDays} Days`}</span>
           <span className="opacity-20">|</span>
           <span className="truncate">{placesLabel}</span>
         </div>
@@ -147,7 +85,7 @@ const TourCard = ({ tour }) => {
           </div>
           <div className="flex items-center gap-1.5 text-right">
             <MapPin size={12} className="opacity-50" />
-            <span>{placesCount > 0 ? `${placesCount} Places` : "Planned Route"}</span>
+            <span>{placesLabel}</span>
           </div>
           <div className="h-1 w-12 bg-theme-bg rounded-full overflow-hidden">
             <div

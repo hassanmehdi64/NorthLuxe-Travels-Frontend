@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Save, Globe, Palette, Eye, Shield, Phone } from "lucide-react";
+import { Save, Globe, Palette, Eye, Shield, CreditCard } from "lucide-react";
 import GeneralSettings from "./GeneralSettings";
 import AppearanceSettings from "./AppearanceSettings";
 import SEOSettings from "./SEOSettings";
@@ -30,7 +30,7 @@ const SiteSettings = () => {
   const tabs = [
     { id: "General", icon: <Globe size={18} />, label: "General" },
     { id: "Appearance", icon: <Palette size={18} />, label: "Branding" },
-    { id: "Pricing", icon: <Phone size={18} />, label: "Booking Pricing" },
+    { id: "Pricing", icon: <CreditCard size={18} />, label: "Payments & Pricing" },
     { id: "SEO", icon: <Eye size={18} />, label: "SEO & Social" },
     { id: "Security", icon: <Shield size={18} />, label: "Security" },
   ];
@@ -48,7 +48,7 @@ const SiteSettings = () => {
             Site Settings
           </h1>
           <p className="text-sm text-slate-500 font-medium">
-            Manage your brand identity and platform core.
+            Manage branding, booking pricing, and customer payment setup.
           </p>
         </div>
         <button

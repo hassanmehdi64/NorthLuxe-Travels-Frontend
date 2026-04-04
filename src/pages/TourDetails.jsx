@@ -25,6 +25,9 @@ import {
   buildVehicleDetails,
   fallbackFaq,
   fallbackReviews,
+  getTourPlaceName,
+  getTourPlacesLabel,
+  getTourPlanLabel,
 } from "../components/tour-details/tourDetailsData";
 
 const TourDetails = () => {
@@ -76,6 +79,9 @@ const TourDetails = () => {
   const includedServices = buildIncludedServices(tour);
   const placesCovered = buildPlacesCovered(tour, displayItinerary);
   const vehicleDetails = buildVehicleDetails(tour);
+  const placeName = getTourPlaceName(tour);
+  const placesLabel = getTourPlacesLabel(tour, displayItinerary);
+  const planLabel = getTourPlanLabel(tour);
 
   const detailedDescription = buildDetailedDescription(tour);
 
@@ -110,7 +116,9 @@ const TourDetails = () => {
         </div>
 
         <PackageDetailsSection
-          placeName={tour.location}
+          placeName={placeName}
+          placesLabel={placesLabel}
+          planLabel={planLabel}
           includedServices={includedServices}
           placesCovered={placesCovered}
           packageOverview={packageOverview}

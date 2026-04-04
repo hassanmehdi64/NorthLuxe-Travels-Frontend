@@ -26,14 +26,14 @@ export const TourBookingSidebar = ({ tour, ratingValue, reviewCount }) => (
   </aside>
 );
 
-export const PackageDetailsSection = ({ placeName, includedServices, placesCovered, packageOverview, vehicleDetails }) => (
+export const PackageDetailsSection = ({ placeName, placesLabel, planLabel, includedServices, placesCovered, packageOverview, vehicleDetails }) => (
   <section className="rounded-2xl border-[0.5px] border-[rgba(15,23,42,0.08)] bg-theme-surface p-4 md:p-5 shadow-[0_8px_24px_rgba(15,23,42,0.02)]">
     <div className="pb-3">
       <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">Package Overview</p>
       <h2 className="mt-1 text-[1.4rem] leading-none md:text-[1.8rem] font-semibold tracking-[-0.025em] text-theme">Package Details</h2>
     </div>
     <p className="mt-3 max-w-4xl text-[15px] md:text-[16px] text-muted leading-7">
-      This package is arranged as a guided multi-day route through {placeName} with structured sightseeing, hotel stays, and coordinated travel support. It is best suited for travelers who want a clear plan with practical timing and flexible comfort options.
+      This package is arranged as a guided multi-day route through {placeName} with structured sightseeing, hotel stays, and coordinated travel support. It is planned as a {planLabel.toLowerCase()} covering {placesLabel}.
     </p>
     <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
       <div className="space-y-4">

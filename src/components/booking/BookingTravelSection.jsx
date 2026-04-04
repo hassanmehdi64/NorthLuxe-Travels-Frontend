@@ -10,55 +10,53 @@ const BookingTravelSection = ({
   onBack,
   onNext,
 }) => (
-  <div className="rounded-2xl border border-theme bg-theme-surface p-3.5 md:p-4.5 shadow-[0_8px_16px_rgba(15,23,42,0.06)]">
-    <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
-      <label>
-        <span className="ql-label">Start Date</span>
-        <PrettyDateField
-          variant="standalone"
-          placeholder="Select start date"
-          when={form.travelDate}
-          setWhen={(nextValue) =>
-            setForm((p) => ({ ...p, travelDate: nextValue }))
-          }
-        />
-      </label>
-      <label>
-        <span className="ql-label">End Date</span>
-        <PrettyDateField
-          variant="standalone"
-          disabled={form.flexibleDates}
-          placeholder="Select end date"
-          when={form.endDate}
-          setWhen={(nextValue) =>
-            setForm((p) => ({ ...p, endDate: nextValue }))
-          }
-        />
-        <label className="mt-2 inline-flex items-center gap-2 text-[13px] text-textMuted">
-          <input
-            type="checkbox"
-            className="ql-check"
-            checked={form.flexibleDates}
-            onChange={(e) =>
-              setForm((p) => ({ ...p, flexibleDates: e.target.checked }))
+  <div className="rounded-2xl border border-theme bg-theme-surface p-3 md:p-3.5 shadow-[0_6px_14px_rgba(15,23,42,0.05)] space-y-3.5">
+    <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white p-3">
+      <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
+        <label>
+          <span className="ql-label">Start Date</span>
+          <PrettyDateField
+            variant="standalone"
+            placeholder="Select start date"
+            when={form.travelDate}
+            setWhen={(nextValue) =>
+              setForm((p) => ({ ...p, travelDate: nextValue }))
             }
           />
-          My dates are flexible
         </label>
-        {form.travelDate &&
-        form.endDate &&
-        form.endDate < form.travelDate ? (
-          <span className="mt-1 block text-xs text-red-500">
-            End date cannot be before travel date.
-          </span>
-        ) : null}
-      </label>
+        <label>
+          <span className="ql-label">End Date</span>
+          <PrettyDateField
+            variant="standalone"
+            disabled={form.flexibleDates}
+            placeholder="Select end date"
+            when={form.endDate}
+            setWhen={(nextValue) =>
+              setForm((p) => ({ ...p, endDate: nextValue }))
+            }
+          />
+          <label className="mt-2 inline-flex items-center gap-2 text-[13px] text-textMuted">
+            <input
+              type="checkbox"
+              className="ql-check"
+              checked={form.flexibleDates}
+              onChange={(e) =>
+                setForm((p) => ({ ...p, flexibleDates: e.target.checked }))
+              }
+            />
+            My dates are flexible
+          </label>
+          {form.travelDate && form.endDate && form.endDate < form.travelDate ? (
+            <span className="mt-1 block text-xs text-red-500">End date cannot be before travel date.</span>
+          ) : null}
+        </label>
+      </div>
+    </div>
 
-      <div className="md:col-span-2 grid gap-3 sm:grid-cols-2 lg:grid-cols-3 lg:auto-rows-fr">
-        <label className="space-y-1.5">
-          <span className="ql-label mb-0 text-[10px] normal-case tracking-[0.08em]">
-            Departure Time
-          </span>
+    <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white p-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <label className="space-y-2">
+          <span className="ql-label mb-0 text-[10px] normal-case tracking-[0.08em]">Departure Time</span>
           <BookingDropdown
             value={form.travelTime}
             placeholder="No Preference"
@@ -75,10 +73,8 @@ const BookingTravelSection = ({
           />
         </label>
 
-        <label className="space-y-1.5">
-          <span className="ql-label mb-0 text-[10px] normal-case tracking-[0.08em]">
-            Adults
-          </span>
+        <label className="space-y-2">
+          <span className="ql-label mb-0 text-[10px] normal-case tracking-[0.08em]">Adults</span>
           <input
             type="number"
             min={1}
@@ -93,10 +89,8 @@ const BookingTravelSection = ({
           />
         </label>
 
-        <label className="space-y-1.5">
-          <span className="ql-label mb-0 text-[10px] normal-case tracking-[0.08em]">
-            Child Below 3
-          </span>
+        <label className="space-y-2">
+          <span className="ql-label mb-0 text-[10px] normal-case tracking-[0.08em]">Child Below 3</span>
           <input
             type="number"
             min={0}
@@ -113,7 +107,7 @@ const BookingTravelSection = ({
       </div>
     </div>
 
-    <div className="mt-4 space-y-4">
+    <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white p-3 space-y-3.5">
       <label className="inline-flex items-center gap-2 text-sm text-textMain">
         <input
           type="checkbox"
@@ -176,7 +170,20 @@ const BookingTravelSection = ({
       </div>
     </div>
 
-    <div className="mt-4 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+    <label className="block">
+      <span className="ql-label">Special Requirements</span>
+      <textarea
+        className="ql-textarea"
+        rows={3}
+        placeholder="Dietary preferences, accessibility needs, or trip notes."
+        value={form.specialRequirements}
+        onChange={(e) =>
+          setForm((p) => ({ ...p, specialRequirements: e.target.value }))
+        }
+      />
+    </label>
+
+    <div className="mt-2 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
       <button
         type="button"
         className="ql-btn-secondary w-full sm:w-auto"
@@ -190,7 +197,7 @@ const BookingTravelSection = ({
         disabled={!isTravelSectionValid}
         onClick={onNext}
       >
-        Next: Preferences
+        Next: Payment
       </button>
     </div>
   </div>

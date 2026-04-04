@@ -44,18 +44,25 @@ const BookingDropdown = ({
     <div className="relative" ref={menuRef}>
       <button
         type="button"
-        className={`w-full rounded-2xl border px-4 py-3 text-left text-sm text-theme shadow-[0_5px_14px_rgba(123,231,196,0.18)] transition ${
+        className={`w-full rounded-xl border px-3 py-2.5 text-left text-sm text-theme transition ${
           disabled
-            ? "cursor-not-allowed border-[#d7e8e2] bg-[#f6faf8] text-muted shadow-none"
-            : "border-[#89dfc3] bg-[#f2fff9] hover:border-[#67d7b2] hover:bg-[#e8fbf3]"
+            ? "cursor-not-allowed border-[#dde3ea] bg-[#f7f8fa] text-muted"
+            : "cursor-pointer border-[rgba(15,23,42,0.1)] bg-white hover:border-[rgba(15,23,42,0.16)] hover:bg-[#fbfcfd]"
         }`}
         disabled={disabled}
         onClick={() => setOpen((prev) => !prev)}
         aria-expanded={open}
       >
-        <span className="block truncate">
-          {selectedOption?.label || placeholder}
-        </span>
+        <div className="pr-7">
+          <span className="block truncate font-semibold">
+            {selectedOption?.label || placeholder}
+          </span>
+          {selectedOption?.description ? (
+            <span className="mt-1 block text-xs leading-4 text-muted">
+              {selectedOption.description}
+            </span>
+          ) : null}
+        </div>
         <ChevronDown
           size={14}
           className={`pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted transition ${
@@ -66,11 +73,11 @@ const BookingDropdown = ({
 
       {!disabled && open ? (
         <div
-          className={`absolute z-[120] w-full overflow-hidden rounded-2xl border border-[#89dfc3] bg-white p-1.5 shadow-[0_16px_32px_rgba(15,23,42,0.16)] ${
+          className={`absolute z-[120] w-full overflow-hidden rounded-xl border border-[rgba(15,23,42,0.12)] bg-white p-1.5 shadow-[0_16px_32px_rgba(15,23,42,0.12)] ${
             openUpward ? "bottom-full mb-2" : "top-full mt-2"
           }`}
         >
-          <div className="max-h-60 overflow-auto space-y-1">
+          <div className="max-h-60 space-y-1 overflow-auto">
             {options.map((item) => {
               const isActive = item.value === value;
               return (
@@ -81,13 +88,31 @@ const BookingDropdown = ({
                     onChange(item.value);
                     setOpen(false);
                   }}
-                  className={`w-full rounded-xl px-3 py-2.5 text-left text-sm transition ${
+                  className={`w-full cursor-pointer rounded-lg px-3 py-2.5 text-left text-sm transition ${
                     isActive
-                      ? "bg-[#7BE7C4] font-semibold text-[#0F172A]"
-                      : "bg-[#f8fffc] text-theme hover:bg-[#dcf8ed]"
+                      ? "bg-[#f3f5f7] text-[#0F172A]"
+                      : "bg-white text-theme hover:bg-[#f7f8fa]"
                   }`}
                 >
-                  {item.label}
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className={`truncate ${isActive ? "font-bold" : "font-semibold"}`}>
+                        {item.label}
+                      </p>
+                      {item.description ? (
+                        <p className={`mt-1 text-xs leading-4 ${isActive ? "text-[#0F172A]/70" : "text-muted"}`}>
+                          {item.description}
+                        </p>
+                      ) : null}
+                    </div>
+                    {item.badge ? (
+                      <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${
+                        isActive ? "bg-white text-[#0F172A]" : "bg-[#f3f5f7] text-subheading"
+                      }`}>
+                        {item.badge}
+                      </span>
+                    ) : null}
+                  </div>
                 </button>
               );
             })}

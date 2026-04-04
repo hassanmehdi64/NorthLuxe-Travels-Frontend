@@ -1,160 +1,271 @@
-import { CreditCard, ShieldCheck } from "lucide-react";
-import BookingDropdown from "./BookingDropdown";
+import { Elements } from "@stripe/react-stripe-js";
+import { CreditCard } from "lucide-react";
+import BookingCardPaymentFields from "./BookingCardPaymentFields";
+import { stripePromise } from "../../lib/stripe";
+
+const SummaryCard = ({ label, value, detail }) => (
+  <div className="rounded-xl border border-[rgba(15,23,42,0.06)] bg-white/80 px-3.5 py-3">
+    <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-textMuted">
+      {label}
+    </p>
+    <p className="mt-1 text-[13px] font-semibold text-heading break-words">
+      {value}
+    </p>
+    {detail ? (
+      <p className="mt-1 text-[12px] leading-5 text-textMuted">{detail}</p>
+    ) : null}
+  </div>
+);
 
 const BookingReviewStep = ({
   quoteData,
   selectedTour,
   form,
-  setForm,
-  paymentVerified,
+  selectedPaymentMethod,
+  selectedReceivingAccount,
+  paymentMethodLabel,
+  transactionReferenceLabel,
+  isCardPayment,
   submitting,
   canConfirmBooking,
+  cardAmountLabel,
+  cardClientSecret,
+  cardIntentLoading,
+  cardIntentError,
+  confirmedCardPayment,
   onBack,
   onSubmit,
-}) => (
-  <div className="space-y-4 p-4 sm:p-5 md:p-6">
-    <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-[linear-gradient(180deg,rgba(123,231,196,0.1),rgba(255,255,255,0.96))] p-3.5 md:p-4.5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="space-y-1">
-          <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-subheading">
-            Quote Summary
-          </p>
-          <p className="text-base font-semibold text-heading">
-            Standard Route Estimate
-          </p>
-        </div>
-        <div className="rounded-xl bg-white/80 px-3 py-2 text-right shadow-[0_6px_16px_rgba(15,23,42,0.05)]">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-textMuted">
-            Total Amount
-          </p>
-          <p className="text-lg font-semibold text-heading">
-            {selectedTour?.currency || "USD"} {quoteData?.totalAmount}
-          </p>
-        </div>
-      </div>
+  onCardPaymentConfirmed,
+  onSubmitPaidBooking,
+}) => {
+  const isManualPayment = selectedPaymentMethod?.mode === "manual";
+  const isArrivalPayment = selectedPaymentMethod?.mode === "arrival";
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          { label: "Duration", value: `${quoteData?.days ?? 0} day(s)` },
-          { label: "Travelers", value: `${quoteData?.guests ?? 0}` },
-          {
-            label: "Advance Due",
-            value: `${selectedTour?.currency || "USD"} ${quoteData?.advanceAmount ?? 0}`,
-          },
-          {
-            label: "Remaining",
-            value: `${selectedTour?.currency || "USD"} ${quoteData?.remainingAmount ?? 0}`,
-          },
-        ].map((item) => (
-          <div
-            key={item.label}
-            className="rounded-xl border border-[rgba(15,23,42,0.06)] bg-white/80 px-3.5 py-3"
-          >
-            <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-textMuted">
-              {item.label}
+  const paymentPlanLabel = !form.paymentMethod || form.paymentMethod === "pay_on_arrival"
+    ? "On Arrival"
+    : form.paymentPlan === "full"
+      ? "Full Payment"
+      : "10% Advance";
+
+  const verificationSummary = isCardPayment
+    ? "Card charge must complete before the booking is finalized."
+    : isManualPayment
+      ? "Your sender details and transfer reference will be reviewed against the linked receiving account."
+      : "No online payment proof is needed before booking submission.";
+
+  return (
+    <div className="space-y-4 p-4 sm:p-5 md:p-6">
+      <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-[linear-gradient(180deg,rgba(123,231,196,0.1),rgba(255,255,255,0.96))] p-3.5 md:p-4.5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="space-y-1">
+            <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-subheading">
+              Quote Summary
             </p>
-            <p className="mt-1 text-[13px] font-semibold text-heading">
-              {item.value}
+            <p className="text-base font-semibold text-heading">
+              Standard Route Estimate
             </p>
           </div>
-        ))}
-      </div>
-    </div>
+          <div className="rounded-xl bg-white/80 px-3 py-2 text-right shadow-[0_6px_16px_rgba(15,23,42,0.05)]">
+            <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-textMuted">
+              Total Amount
+            </p>
+            <p className="text-lg font-semibold text-heading">
+              {selectedTour?.currency || "USD"} {quoteData?.totalAmount}
+            </p>
+          </div>
+        </div>
 
-    <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
-      <label>
-        <span className="ql-label">Payment Method</span>
-        <BookingDropdown
-          value={form.paymentMethod}
-          onChange={(nextValue) =>
-            setForm((p) => ({ ...p, paymentMethod: nextValue }))
-          }
-          options={[
-            { value: "visa_card", label: "Visa / Card" },
-            { value: "easypaisa", label: "EasyPaisa" },
-            { value: "jazzcash", label: "JazzCash" },
-            { value: "pay_on_arrival", label: "Pay on Arrival" },
-          ]}
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { label: "Duration", value: `${quoteData?.days ?? 0} day(s)` },
+            { label: "Travelers", value: `${quoteData?.guests ?? 0}` },
+            {
+              label: "Advance Due",
+              value: `${selectedTour?.currency || "USD"} ${quoteData?.advanceAmount ?? 0}`,
+            },
+            {
+              label: "Remaining",
+              value: `${selectedTour?.currency || "USD"} ${quoteData?.remainingAmount ?? 0}`,
+            },
+            {
+              label: "Payment Method",
+              value: paymentMethodLabel,
+            },
+            {
+              label: "Payment Plan",
+              value: paymentPlanLabel,
+            },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className="rounded-xl border border-[rgba(15,23,42,0.06)] bg-white/80 px-3.5 py-3"
+            >
+              <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-textMuted">
+                {item.label}
+              </p>
+              <p className="mt-1 text-[13px] font-semibold text-heading">
+                {item.value}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid gap-3 lg:grid-cols-3">
+        <SummaryCard
+          label="Selected Method"
+          value={selectedPaymentMethod?.label || paymentMethodLabel}
+          detail={selectedPaymentMethod?.instructions || "The booking will use the payment setup shown below."}
         />
-      </label>
-      <label>
-        <span className="ql-label">Payment Plan</span>
-        <BookingDropdown
-          value={form.paymentPlan}
-          disabled={form.paymentMethod === "pay_on_arrival"}
-          onChange={(nextValue) =>
-            setForm((p) => ({ ...p, paymentPlan: nextValue }))
-          }
-          options={[
-            { value: "advance_10", label: "10% Advance" },
-            { value: "full", label: "Full Payment" },
-          ]}
+        <SummaryCard
+          label="Verification"
+          value={isCardPayment ? "Instant card verification" : isManualPayment ? "Manual transfer review" : "Arrival payment"}
+          detail={verificationSummary}
         />
-      </label>
-    </div>
-
-    {form.paymentMethod === "visa_card" ? (
-      <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-[rgba(123,231,196,0.05)] p-3.5">
-        <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-subheading">
-          Card Payment
-        </p>
-        <p className="mt-2 text-[13px] leading-5 text-textMuted">
-          Submit your booking first. Our team will share the secure card
-          payment link and payment instructions with you after reviewing your
-          request.
-        </p>
-      </div>
-    ) : null}
-
-    {form.paymentMethod !== "visa_card" ? (
-      <label>
-        <span className="ql-label">Transaction Reference (manual methods)</span>
-        <input
-          className="ql-input"
-          value={form.transactionReference}
-          onChange={(e) =>
-            setForm((p) => ({
-              ...p,
-              transactionReference: e.target.value,
-            }))
+        <SummaryCard
+          label="Receiving Details"
+          value={isManualPayment ? (selectedReceivingAccount ? "Configured" : "Missing") : "Not required"}
+          detail={
+            isManualPayment
+              ? selectedReceivingAccount
+                ? `${selectedReceivingAccount.bankName || selectedReceivingAccount.label}${selectedReceivingAccount.accountNumber ? `, ${selectedReceivingAccount.accountNumber}` : ""}`
+                : "This payment method still needs an active linked receiving account in admin settings."
+              : isCardPayment
+                ? "Secure debit card fields are shown below."
+                : "No transfer details are needed for pay on arrival."
           }
         />
-      </label>
-    ) : null}
-
-    {paymentVerified ? (
-      <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-[rgba(123,231,196,0.06)] p-3.5 text-[13px]">
-        <p className="flex items-center gap-2 font-semibold text-heading">
-          <ShieldCheck size={16} className="ql-icon" />
-          Payment Status
-        </p>
-        <p className="mt-1.5 leading-5 text-textMuted">
-          Payment verified. You can confirm booking.
-        </p>
       </div>
-    ) : null}
 
-    <div className="flex flex-col gap-3 border-t border-[rgba(15,23,42,0.06)] pt-3 sm:flex-row sm:items-center sm:justify-between">
-      <button
-        type="button"
-        className="ql-btn-secondary w-full sm:w-auto"
-        onClick={onBack}
-      >
-        Back
-      </button>
-      <div className="flex w-full flex-col justify-end gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
-        <button
-          type="button"
-          className="ql-btn-primary w-full sm:w-auto"
-          disabled={submitting || !canConfirmBooking}
-          onClick={onSubmit}
-        >
-          <CreditCard size={16} />
-          {submitting ? "Submitting..." : "Submit Booking"}
-        </button>
-      </div>
+      {isManualPayment && selectedReceivingAccount ? (
+        <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white p-3.5 md:p-4 space-y-4">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-subheading">
+                Manual Payment Details
+              </p>
+              <p className="mt-2 text-[13px] leading-5 text-textMuted">
+                Double-check the receiving account and the client payment details before submitting the booking.
+              </p>
+            </div>
+            <div className="rounded-xl bg-[rgba(19,221,180,0.08)] px-3 py-2 text-right">
+              <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-textMuted">
+                Account Number
+              </p>
+              <p className="mt-1 text-[15px] font-black tracking-tight text-heading">
+                {selectedReceivingAccount.accountNumber || "Add in admin"}
+              </p>
+            </div>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <SummaryCard label="Method" value={selectedPaymentMethod?.label || "Manual payment"} />
+            <SummaryCard label="Account Holder" value={selectedReceivingAccount.accountTitle || "Not added yet"} />
+            <SummaryCard label="Bank / Wallet" value={selectedReceivingAccount.bankName || selectedReceivingAccount.label || "Not added yet"} />
+            <SummaryCard label="Contact Number" value={selectedReceivingAccount.contactNumber || "Not added yet"} />
+            <SummaryCard label="Branch / Wallet ID" value={selectedReceivingAccount.branchCode || "Not added yet"} />
+            <SummaryCard label="IBAN / SWIFT" value={[selectedReceivingAccount.iban, selectedReceivingAccount.swiftCode].filter(Boolean).join(" / ") || "Not added yet"} />
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <SummaryCard label="Sender Name" value={form.manualSenderName || "Not added yet"} />
+            <SummaryCard label="Sender Number / Account" value={form.manualSenderNumber || "Not added yet"} />
+            <SummaryCard label="Amount Sent" value={form.manualSentAmount ? `${selectedTour?.currency || "USD"} ${form.manualSentAmount}` : "Not added yet"} />
+            <SummaryCard label="Payment Date" value={form.manualSentAt ? new Date(form.manualSentAt).toLocaleString() : "Not added yet"} />
+          </div>
+
+          {selectedReceivingAccount.instructions ? (
+            <div className="rounded-xl border border-[rgba(15,23,42,0.06)] bg-slate-50 px-4 py-3 text-[13px] leading-5 text-heading">
+              {selectedReceivingAccount.instructions}
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+
+      {isArrivalPayment ? (
+        <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white p-3.5 text-[13px] leading-5 text-textMuted">
+          Pay on arrival is selected. Your booking can be submitted without entering transfer details or card information.
+        </div>
+      ) : null}
+
+      {!isCardPayment && form.transactionReference ? (
+        <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white p-3.5">
+          <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-textMuted">
+            {transactionReferenceLabel}
+          </p>
+          <p className="mt-2 text-[13px] leading-5 text-heading">{form.transactionReference}</p>
+        </div>
+      ) : null}
+
+      {form.customRequirements ? (
+        <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white p-3.5">
+          <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-textMuted">
+            Custom Requirements
+          </p>
+          <p className="mt-2 text-[13px] leading-5 text-heading">{form.customRequirements}</p>
+        </div>
+      ) : null}
+
+      {isCardPayment ? (
+        stripePromise ? (
+          <Elements stripe={stripePromise}>
+            <BookingCardPaymentFields
+              customerName={form.customerName}
+              email={form.email}
+              phone={form.phone}
+              amountLabel={cardAmountLabel}
+              clientSecret={cardClientSecret}
+              intentLoading={cardIntentLoading}
+              intentError={cardIntentError}
+              confirmedPayment={confirmedCardPayment}
+              submitting={submitting}
+              canConfirmBooking={canConfirmBooking}
+              onBack={onBack}
+              onPaymentConfirmed={onCardPaymentConfirmed}
+              onSubmitPaidBooking={onSubmitPaidBooking}
+            />
+          </Elements>
+        ) : (
+          <div className="space-y-4 rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white p-4">
+            <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-[13px] text-amber-800">
+              {cardIntentError || "Card payments are not available until a Stripe publishable key and payment session are ready."}
+            </div>
+            <div className="flex justify-start">
+              <button
+                type="button"
+                className="ql-btn-secondary w-full sm:w-auto"
+                onClick={onBack}
+              >
+                Back
+              </button>
+            </div>
+          </div>
+        )
+      ) : (
+        <div className="flex flex-col gap-3 border-t border-[rgba(15,23,42,0.06)] pt-3 sm:flex-row sm:items-center sm:justify-between">
+          <button
+            type="button"
+            className="ql-btn-secondary w-full sm:w-auto"
+            onClick={onBack}
+          >
+            Back
+          </button>
+          <div className="flex w-full flex-col justify-end gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
+            <button
+              type="button"
+              className="ql-btn-primary w-full sm:w-auto"
+              disabled={submitting || !canConfirmBooking}
+              onClick={onSubmit}
+            >
+              <CreditCard size={16} />
+              {submitting ? "Submitting..." : "Submit Booking"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 export default BookingReviewStep;
+

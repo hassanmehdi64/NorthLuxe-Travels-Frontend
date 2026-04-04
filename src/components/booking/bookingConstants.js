@@ -17,6 +17,10 @@ export const DEFAULT_FORM = {
   paymentMethod: "visa_card",
   paymentPlan: "advance_10",
   transactionReference: "",
+  manualSenderName: "",
+  manualSenderNumber: "",
+  manualSentAmount: "",
+  manualSentAt: "",
   facilities: {
     hotelEnabled: false,
     hotelType: "no_hotel",
