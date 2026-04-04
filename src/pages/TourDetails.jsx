@@ -1,5 +1,9 @@
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
 import { usePublicTour, usePublicTours } from "../hooks/useCms";
 import {
   TourDescriptionAccordion,
@@ -25,6 +29,7 @@ import {
   buildVehicleDetails,
   fallbackFaq,
   fallbackReviews,
+  getTourHeroImages,
   getTourPlaceName,
   getTourPlacesLabel,
   getTourPlanLabel,
@@ -51,6 +56,11 @@ const TourDetails = () => {
       .slice(0, 4);
   }, [tours, tour]);
 
+  const heroImages = useMemo(() => {
+    if (!tour) return [];
+    return getTourHeroImages(tour);
+  }, [tour]);
+
   if (!tour) {
     return (
       <section className="py-12 lg:py-14 bg-theme-bg">
@@ -69,11 +79,6 @@ const TourDetails = () => {
     : ["Scenic routes", "Comfort stays", "Local support", "Flexible pacing"];
   const ratingValue = Number(tour.rating || 4.8);
   const reviewCount = Number(tour.reviews || 24);
-  const reviewStats = [5, 4, 3, 2, 1].map((star) => {
-    const count = fallbackReviews.filter((item) => Number(item.rating) === star).length;
-    const percent = fallbackReviews.length ? (count / fallbackReviews.length) * 100 : 0;
-    return { star, count, percent };
-  });
 
   const packageOverview = buildPackageOverview(tour);
   const includedServices = buildIncludedServices(tour);
@@ -90,12 +95,41 @@ const TourDetails = () => {
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 space-y-6">
         <TourDetailsHeader tour={tour} />
 
-        <div className="rounded-2xl border border-theme bg-theme-surface overflow-hidden">
-          <img
-            src={tour.image}
-            alt={tour.title}
-            className="w-full h-[220px] sm:h-[300px] lg:h-[360px] object-cover"
-          />
+        <div className="mx-auto max-w-[1240px] overflow-hidden rounded-[1.45rem] border border-[rgba(15,23,42,0.08)] bg-theme-surface shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
+          <Swiper
+            modules={[Autoplay, Pagination]}
+            loop={heroImages.length > 1}
+            speed={800}
+            spaceBetween={12}
+            autoplay={
+              heroImages.length > 1
+                ? {
+                    delay: 3200,
+                    disableOnInteraction: false,
+                    pauseOnMouseEnter: true,
+                  }
+                : false
+            }
+            pagination={{ clickable: true }}
+            breakpoints={{
+              0: { slidesPerView: 1 },
+              768: { slidesPerView: Math.min(2, heroImages.length || 1) },
+            }}
+            className="tour-hero-swiper"
+          >
+            {heroImages.map((image, index) => (
+              <SwiperSlide key={`${image}-${index}`}>
+                <div className="relative">
+                  <img
+                    src={image}
+                    alt={`${tour.title} ${index + 1}`}
+                    className="w-full h-[180px] sm:h-[235px] lg:h-[285px] object-cover object-center"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[rgba(8,15,30,0.18)] via-transparent to-transparent" />
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
         </div>
 
         <div className="grid lg:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
@@ -136,7 +170,6 @@ const TourDetails = () => {
         <ReviewsSection
           ratingValue={ratingValue}
           reviewCount={reviewCount}
-          reviewStats={reviewStats}
           reviews={fallbackReviews}
         />
 

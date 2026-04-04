@@ -136,6 +136,50 @@ export const getTourPlacesLabel = (tour, itinerary) => {
   return places.length ? `${places.length} places` : "Planned route";
 };
 
+
+const heroGalleryFallbacks = {
+  fairy: [
+    "https://images.squarespace-cdn.com/content/v1/5a815ad2e45a7c1f4ef40fb8/1533222115427-RM0925EGPCZMCCN8T01S/fairy-meadows-1920.jpg",
+    "https://cdn.tripspoint.com/uploads/photos/8183/10-days-fairy-meadows-hunza-valley-pakistan_uJZ6j.jpeg",
+    "https://tripako.com/wp-content/uploads/2020/12/Fairy-1-1-scaled.jpg",
+  ],
+  hunza: [
+    "https://luxushunza.com/wp-content/uploads/Gojal_Restaurant-1.webp",
+    "https://realpakistan.com.pk/wp-content/uploads/2025/06/hunza-sarena.jpg",
+    "https://luxushunza.com/wp-content/uploads/slider/cache/da7922896e4ca1abc15bafab13c8151f/DSC_9668-HDR-1-scaled.jpg",
+  ],
+  skardu: [
+    "https://visitgilgitbaltistan.gov.pk/storage/images/egawjw4TjQ4b8yD9iUHzkLxFwwxyce-metaQ2h1bmRhLXZhbGxleS0xMDI0eDY4My5qcGc%3D-.jpg",
+    "https://visitgilgitbaltistan.gov.pk/storage/images/gTH9WHnKkooBD4lDCkJglPVSGG59Qm-metaQmFzaG8gVmFsbGV5IDIuSlBH-.jpg",
+    "https://visitgilgitbaltistan.gov.pk/storage/images/EgzRNEiwXoQdYYriBJZ4pfaOqAZtEE-metaU2hhbmdyaWxhLF9Mb3dlcl9LYWNodXJhX0xha2UuanBn-.jpg",
+    "https://visitgilgitbaltistan.gov.pk/storage/images/VYOw4S1I2iCdU3YoaagAMTAAGsKj97-metaU0FEUEFSQSBsYWtlIFNrYXJkdSwgUGFraXN0YW4gLSBDb3B5LmpwZw%3D%3D-.jpg",
+  ],
+  nagar: [
+    "https://visitgilgitbaltistan.gov.pk/storage/images/amF3lOQaNWavgTlumgn9lgeW8FdoL1-metacmFrYXBvc2hpX3ZpZXdfcG9pbnRfcGFraXN0YW4uanBn-.jpg",
+    "https://visitgilgitbaltistan.gov.pk/storage/images/UrfxjQ5cNIyBVoWo1q1WwTkegmiM8T-metaSGlzcGFyIEdsY2FjaWVyLkpQRw%3D%3D-.jpg",
+    "https://visitgilgitbaltistan.gov.pk/storage/images/iAl0RLMGh7yzaKXYZLglObq4QzY09V-metaUnVzaCBMYWtlIDMuanBn-.jpg",
+    "https://visitgilgitbaltistan.gov.pk/storage/images/XZna35rr13FxPXMijjw4yzlY09Nitq-metaa2FjaGVsaSBsYWtlLmpwZw%3D%3D-.jpg",
+  ],
+  deosai: [
+    "https://clickpakistan.org/wp-content/uploads/2023/11/Best-Things-to-do-in-Skardu.jpg",
+    "https://realpakistan.com.pk/wp-content/uploads/2025/04/shangrila-resort.jpg",
+    "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Shangrila_resort_skardu.jpg/1024px-Shangrila_resort_skardu.jpg",
+  ],
+};
+
+export const getTourHeroImages = (tour) => {
+  const configured = [tour?.image, ...(Array.isArray(tour?.gallery) ? tour.gallery : [])].filter(Boolean);
+  if (configured.length > 1) return [...new Set(configured)];
+
+  const searchKey = [tour?.location, tour?.title, ...(Array.isArray(tour?.tags) ? tour.tags : [])]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+  const matchedKey = Object.keys(heroGalleryFallbacks).find((key) => searchKey.includes(key));
+  const fallback = matchedKey ? heroGalleryFallbacks[matchedKey] : [];
+  return [...new Set([...configured, ...fallback])];
+};
 export const buildPackageOverview = (tour) => [
   { label: "Package Type", value: `${getTourMood(tour)} in ${normalizePlaceName(tour?.location)}` },
   { label: "Ideal Group", value: getTourPlanLabel(tour) },

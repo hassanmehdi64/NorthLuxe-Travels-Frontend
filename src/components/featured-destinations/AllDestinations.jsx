@@ -1,67 +1,43 @@
 import { useMemo } from "react";
 import DestinationCard from "./DestinationCard";
 import { usePublicContentList, usePublicTours } from "../../hooks/useCms";
+import FeaturePageHeader from "../features/FeaturePageHeader";
+import { buildTourDestinationFallback, mapContentDestination } from "../../utils/destinations";
 
 const AllDestinations = () => {
   const { data: tours = [] } = usePublicTours();
   const { data: backendDestinations = [] } = usePublicContentList("destination");
 
-  const tourDestinations = useMemo(() => {
-    const map = new Map();
-    tours.forEach((tour) => {
-      const key = (tour.location || "").trim();
-      if (!key) return;
-      if (!map.has(key)) {
-        const slug = key.toLowerCase().replace(/\s+/g, "-");
-        map.set(key, {
-          id: slug,
-          title: key,
-          image: tour.image,
-          description: tour.shortDescription || tour.title,
-          href: `/destinations/${slug}`,
-        });
-      }
-    });
-    return Array.from(map.values());
-  }, [tours]);
-
   const destinations = useMemo(() => {
     if (backendDestinations.length) {
-      return backendDestinations.map((item) => ({
-        id: item.id || item.slug,
-        title: item.title,
-        image: item.image || item.coverImage,
-        description: item.shortDescription || item.description,
-        href: `/destinations/${item.slug}`,
-      }));
+      return backendDestinations.map(mapContentDestination);
     }
-    return tourDestinations;
-  }, [backendDestinations, tourDestinations]);
+
+    return buildTourDestinationFallback(tours);
+  }, [backendDestinations, tours]);
 
   return (
-    <section className="py-20 bg-theme-bg ql-scroll-reveal" data-ql-reveal>
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-14">
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold ql-section-heading mb-5">
-            All Destinations
-          </h1>
-          <div className="ql-heading-underline mx-auto mb-5" />
-          <p className="ql-section-subheading max-w-2xl mx-auto">
-            Browse every available destination from our published tours.
-          </p>
-        </div>
+    <section className="bg-theme-bg py-12 lg:py-14">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14">
+        <FeaturePageHeader
+          eyebrow="Explore"
+          title="All"
+          highlight="Destinations"
+          description="Browse every available destination from published content with direct access to dynamic destination details and related tours."
+        />
 
         {destinations.length ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {destinations.map((destination) => (
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:gap-5">
+            {destinations.map((destination, index) => (
               <DestinationCard
-                key={destination.id}
+                key={destination.id || destination.slug || `${destination.title}-${index}`}
                 destination={destination}
+                index={index}
               />
             ))}
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-light bg-theme-surface py-16 text-center ql-section-subheading">
+          <div className="rounded-2xl border border-dashed border-light bg-theme-surface py-16 text-center text-muted">
             No destinations available yet.
           </div>
         )}

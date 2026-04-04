@@ -1,29 +1,38 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search as SearchIcon } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import TourCard from "../../components/tours/TourCard";
 import FeaturePageHeader from "../../components/features/FeaturePageHeader";
-import { usePublicTours } from "../../hooks/useCms";
+import PlaceSearchInput from "../../components/search/PlaceSearchInput";
+import { usePublicContentList, usePublicTours } from "../../hooks/useCms";
+import { buildPlaceSuggestions, getTourSearchScore } from "../../utils/tourSearch";
 
 const SearchPage = () => {
   const { data: tours = [] } = usePublicTours();
-  const [query, setQuery] = useState("");
+  const { data: destinationItems = [] } = usePublicContentList("destination");
+  const [searchParams] = useSearchParams();
+  const urlQuery = searchParams.get("q") || "";
+  const [query, setQuery] = useState(urlQuery);
+
+  useEffect(() => {
+    setQuery(urlQuery);
+  }, [urlQuery]);
+
+  const placeSuggestions = useMemo(
+    () =>
+      buildPlaceSuggestions({ tours, destinationItems }),
+    [tours, destinationItems],
+  );
 
   const results = useMemo(() => {
-    const term = query.trim().toLowerCase();
-    if (!term) return tours.slice(0, 12);
+    if (!query.trim()) return tours.slice(0, 12);
+
     return tours
-      .filter((tour) => {
-        const values = [
-          tour?.title,
-          tour?.location,
-          tour?.shortDescription,
-          tour?.durationDays ? `${tour.durationDays}` : "",
-        ]
-          .join(" ")
-          .toLowerCase();
-        return values.includes(term);
-      })
-      .slice(0, 24);
+      .map((tour) => ({ tour, meta: getTourSearchScore(tour, query) }))
+      .filter((item) => item.meta.matchesQuery)
+      .sort((a, b) => (b.meta.score || 0) - (a.meta.score || 0))
+      .slice(0, 24)
+      .map((item) => item.tour);
   }, [tours, query]);
 
   return (
@@ -37,21 +46,22 @@ const SearchPage = () => {
         />
 
         <div className="rounded-2xl border border-theme bg-theme-surface p-4 mb-8">
-          <div className="relative">
-            <SearchIcon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted" />
-            <input
+          <div className="relative flex items-center gap-3 rounded-xl border border-theme bg-white px-4 py-3">
+            <SearchIcon size={18} className="shrink-0 text-muted" />
+            <PlaceSearchInput
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search tours by destination, title, duration..."
-              className="w-full rounded-xl border border-theme bg-white pl-11 pr-4 py-3 text-sm text-theme placeholder:text-muted/70 focus:outline-none focus:ring-2 focus:ring-[var(--c-brand)]/35"
+              onChange={setQuery}
+              suggestions={placeSuggestions}
+              placeholder="Search tours by place, title, duration..."
+              inputClassName="w-full bg-transparent text-sm text-theme placeholder:text-muted/70 focus:outline-none"
             />
           </div>
         </div>
 
         {results.length ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-            {results.map((tour) => (
-              <TourCard key={tour.id} tour={tour} />
+            {results.map((tour, index) => (
+              <TourCard key={tour.id} tour={tour} index={index} />
             ))}
           </div>
         ) : (
@@ -65,3 +75,9 @@ const SearchPage = () => {
 };
 
 export default SearchPage;
+
+
+
+
+
+

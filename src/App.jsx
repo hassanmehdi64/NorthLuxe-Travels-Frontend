@@ -42,6 +42,7 @@ import UserManagement from "./admin/users/UserList";
 import ContactManagement from "./admin/contact/ContactMessages";
 import SiteSettings from "./admin/settings/SiteSettings";
 import ContentManagement from "./admin/content/ContentManagement";
+import DestinationsManagement from "./admin/content/DestinationsManagement";
 import ActivitiesManagement from "./admin/content/ActivitiesManagement";
 import ServicesManagement from "./admin/content/ServicesManagement";
 import SeasonsManagement from "./admin/content/SeasonsManagement";
@@ -133,6 +134,7 @@ const App = () => {
           <Route path="users" element={<RequireRole roles={["Admin"]} fallback="/admin/content"><UserManagement /></RequireRole>} />
           <Route path="contacts" element={<RequireRole roles={["Admin"]} fallback="/admin/content"><ContactManagement /></RequireRole>} />
           <Route path="content" element={<ContentManagement />} />
+          <Route path="destinations" element={<DestinationsManagement />} />
           <Route path="activities" element={<ActivitiesManagement />} />
           <Route path="services" element={<ServicesManagement />} />
           <Route path="seasons" element={<SeasonsManagement />} />
@@ -180,3 +182,6 @@ const App = () => {
 };
 
 export default App;
+
+
+

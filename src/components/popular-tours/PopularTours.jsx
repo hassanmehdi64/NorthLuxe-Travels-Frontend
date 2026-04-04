@@ -146,9 +146,9 @@ const PopularTours = () => {
 
         {list.length ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
-            {list.map((tour) => (
+            {list.map((tour, index) => (
               <div key={tour.id} className="h-full">
-                <TourCard tour={tour} />
+                <TourCard tour={tour} index={index} />
               </div>
             ))}
           </div>
@@ -165,3 +165,5 @@ const PopularTours = () => {
 };
 
 export default PopularTours;
+
+

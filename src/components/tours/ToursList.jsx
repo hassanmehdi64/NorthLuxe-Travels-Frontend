@@ -1,25 +1,49 @@
 import TourCard from "./TourCard";
 import { SearchX } from "lucide-react";
 
-const ToursList = ({ tours = [] }) => {
+const ToursList = ({ tours = [], searchSummary = {} }) => {
+  const hasSearchSummary = Boolean(searchSummary?.query || searchSummary?.dateLabel);
+
   return (
     <section className="pb-14 lg:pb-16 pt-8 lg:pt-10 bg-theme-bg">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14">
-        <div className="mb-6 lg:mb-8 rounded-xl border border-theme bg-theme-surface px-4 py-3 sm:px-5 sm:py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-black uppercase tracking-[0.22em] text-muted">Results</span>
-            <span className="h-1 w-1 rounded-full bg-[var(--c-brand)]" />
-            <span className="text-sm font-semibold text-theme">{tours.length} tours found</span>
+        <div className="mb-6 lg:mb-8 rounded-xl border border-theme bg-theme-surface px-4 py-3 sm:px-5 sm:py-4 flex flex-col gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-[10px] font-black uppercase tracking-[0.22em] text-muted">Results</span>
+              <span className="h-1 w-1 rounded-full bg-[var(--c-brand)]" />
+              <span className="text-sm font-semibold text-theme">{tours.length} tours found</span>
+            </div>
+            <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--c-brand)]">
+              Verified listings
+            </span>
           </div>
-          <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--c-brand)]">
-            Verified listings
-          </span>
+
+          {hasSearchSummary ? (
+            <div className="flex flex-wrap gap-2">
+              {searchSummary?.query ? (
+                <span className="rounded-full border border-theme bg-theme-bg px-3 py-1 text-[11px] font-semibold text-theme">
+                  Place: {searchSummary.query}
+                </span>
+              ) : null}
+              {searchSummary?.dateLabel ? (
+                <span className="rounded-full border border-theme bg-theme-bg px-3 py-1 text-[11px] font-semibold text-theme">
+                  Date: {searchSummary.dateLabel}
+                </span>
+              ) : null}
+              {searchSummary?.seasonLabel ? (
+                <span className="rounded-full border border-theme bg-theme-bg px-3 py-1 text-[11px] font-semibold text-theme">
+                  Season match: {searchSummary.seasonLabel}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
         {tours.length ? (
           <div className="grid gap-4 sm:gap-4.5 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {tours.map((tour) => (
-              <TourCard key={tour.id} tour={tour} />
+            {tours.map((tour, index) => (
+              <TourCard key={tour.id} tour={tour} index={index} />
             ))}
           </div>
         ) : (
@@ -31,7 +55,7 @@ const ToursList = ({ tours = [] }) => {
               No matching tours found
             </h3>
             <p className="text-sm text-muted leading-relaxed max-w-md">
-              Try changing filters like destination, duration, or sort priority to view more options.
+              Try changing your place, date, or filter options to view more matching tours.
             </p>
           </div>
         )}
@@ -41,3 +65,4 @@ const ToursList = ({ tours = [] }) => {
 };
 
 export default ToursList;
+

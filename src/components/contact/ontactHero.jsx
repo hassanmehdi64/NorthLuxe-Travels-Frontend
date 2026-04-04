@@ -15,7 +15,7 @@ const ContactHero = () => {
         className="absolute inset-0 bg-gradient-to-r from-[#071326]/90 via-[#071326]/60 to-[#071326]/20"
       />
 
-      <div className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 py-16 sm:py-20 lg:py-24 text-white">
+      <div className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 py-12 sm:py-14 lg:py-16 text-white">
         <div className="max-w-3xl space-y-4">
           <div className="inline-flex items-center gap-3">
             <span className="h-px w-8 bg-[var(--c-brand)]" />
@@ -24,11 +24,11 @@ const ContactHero = () => {
             </span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight leading-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-tight">
             Plan Your Trip With Confidence
           </h1>
 
-          <p className="text-sm sm:text-base lg:text-lg text-white/85 max-w-2xl leading-relaxed">
+          <p className="text-sm sm:text-base text-white/85 max-w-2xl leading-relaxed">
             Send your travel requirements and our team will respond with clear guidance, itinerary options, and practical support.
           </p>
         </div>

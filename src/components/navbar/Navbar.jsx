@@ -88,17 +88,19 @@ const Navbar = () => {
     >
       <div className="w-full px-4 sm:px-6 lg:px-10">
         <div className="h-16 flex items-center justify-between gap-2 sm:gap-4">
-          <Link to="/" className="shrink min-w-0 whitespace-nowrap text-base sm:text-lg lg:text-xl font-black tracking-tight text-white">
-            North Luxe <span className="text-[var(--c-brand)]">Travels</span>
-          </Link>
+          <div className="flex min-w-0 flex-1 items-center">
+            <Link to="/" className="shrink min-w-0 whitespace-nowrap text-base sm:text-lg lg:text-xl font-black tracking-tight text-white">
+              North Luxe <span className="text-[var(--c-brand)]">Travels</span>
+            </Link>
+          </div>
 
-          <div className="hidden xl:flex items-center gap-1">
+          <div className="hidden xl:flex flex-1 items-center justify-center gap-0.5">
             {menuItems.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.href}
                 className={({ isActive }) =>
-                  `group relative px-3 py-2 text-sm font-semibold transition-colors duration-300 ${
+                  `group relative inline-flex h-10 items-center justify-center px-3.5 text-sm font-semibold leading-none transition-colors duration-300 ${
                     isActive ? "text-[var(--c-brand)]" : "text-white/90 hover:text-white"
                   }`
                 }
@@ -109,7 +111,7 @@ const Navbar = () => {
             ))}
           </div>
 
-          <div className="hidden xl:flex items-center gap-2">
+          <div className="hidden xl:flex flex-1 items-center justify-end gap-2">
             <ActionLink to="/search" icon={Search} label="Search Tours" />
             <ActionLink to="/wishlist" icon={Heart} label="Wishlist" count={wishlistCount} />
             <ActionLink to="/cart" icon={ShoppingBag} label="Cart" count={cartCount} />

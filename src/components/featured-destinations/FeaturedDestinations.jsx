@@ -1,44 +1,23 @@
 import { Link } from "react-router-dom";
 import { useMemo } from "react";
 import { MoveUpRight } from "lucide-react";
-import { usePublicTours } from "../../hooks/useCms";
+import { usePublicContentList, usePublicTours } from "../../hooks/useCms";
 import DestinationCard from "./DestinationCard";
-import destinationsData from "./destinationsData";
-
-const toSlug = (value = "") =>
-  String(value)
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-");
+import { buildTourDestinationFallback, mapContentDestination } from "../../utils/destinations";
 
 const FeaturedDestinations = () => {
   const { data: tours = [] } = usePublicTours();
+  const { data: backendDestinations = [] } = usePublicContentList("destination");
 
   const destinations = useMemo(() => {
-    const byLocation = new Map();
+    if (backendDestinations.length) {
+      return backendDestinations.slice(0, 4).map(mapContentDestination);
+    }
 
-    tours.forEach((tour) => {
-      const location = tour?.location?.trim();
-      if (!location || byLocation.has(location)) return;
-
-      byLocation.set(location, {
-        id: tour?.id || location,
-        title: location,
-        image: tour?.image,
-        description: tour?.shortDescription || tour?.title,
-        href: `/destinations/${toSlug(location)}`,
-      });
-    });
-
-    const dynamic = Array.from(byLocation.values()).filter((item) => item.image).slice(0, 4);
-    if (dynamic.length) return dynamic;
-
-    return destinationsData.slice(0, 4).map((item) => ({
-      ...item,
-      href: `/destinations/${toSlug(item.title)}`,
-    }));
-  }, [tours]);
+    return buildTourDestinationFallback(tours)
+      .filter((item) => item.image)
+      .slice(0, 4);
+  }, [backendDestinations, tours]);
 
   return (
     <section className="py-12 lg:py-14 bg-theme-bg overflow-hidden">
@@ -88,7 +67,7 @@ const FeaturedDestinations = () => {
 
         {!destinations.length && (
           <div className="mt-6 rounded-2xl border border-dashed border-light bg-theme-surface py-14 text-center text-muted">
-            Destinations will appear here after publishing tours.
+            Destinations will appear here after publishing destination content.
           </div>
         )}
       </div>

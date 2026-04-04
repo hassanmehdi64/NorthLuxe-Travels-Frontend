@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Heart, MapPin, ShoppingBag, Star, Users } from "lucide-react";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { useToast } from "../../context/ToastContext";
 import { addToCart, isInCart, isInWishlist, toggleWishlist } from "../../features/commerce/storage";
 import {
@@ -10,7 +11,9 @@ import {
   getTourPlanLabel,
 } from "../tour-details/tourDetailsData";
 
-const TourCard = ({ tour }) => {
+const MotionArticle = motion.article;
+
+const TourCard = ({ tour, index = 0 }) => {
   const toast = useToast();
   const seatsLeft = Number(tour?.availableSeats || 0);
   const isAvailable = seatsLeft > 0;
@@ -23,6 +26,7 @@ const TourCard = ({ tour }) => {
   const seatLabel = getTourPlanLabel(tour);
   const totalDays = Number(tour?.durationDays || 0);
   const placesLabel = getTourPlacesLabel(tour, buildDisplayItinerary(tour));
+  const cardDelay = Math.min(index * 0.08, 0.36);
 
   const handleWishlist = () => {
     const added = toggleWishlist(tour);
@@ -41,12 +45,21 @@ const TourCard = ({ tour }) => {
   };
 
   return (
-    <article className="group h-full flex flex-col rounded-2xl bg-theme-surface border border-theme shadow-[0_10px_20px_rgba(15,23,42,0.08)] hover:border-[var(--c-brand)] transition-all duration-500 hover:shadow-[0_18px_34px_rgba(15,23,42,0.14)] overflow-hidden">
+    <MotionArticle
+      initial={{ opacity: 0, y: 28, scale: 0.98 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
+      whileHover={{ y: -8 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.55, delay: cardDelay, ease: [0.22, 1, 0.36, 1] }}
+      className="group h-full flex flex-col rounded-2xl bg-theme-surface border border-theme shadow-[0_10px_20px_rgba(15,23,42,0.08)] hover:border-[var(--c-brand)] transition-all duration-500 hover:shadow-[0_18px_34px_rgba(15,23,42,0.14)] overflow-hidden"
+    >
       <div className="relative h-44 sm:h-48 overflow-hidden">
-        <img
+        <motion.img
           src={tour?.image}
           alt={tour?.title || "Tour image"}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          className="w-full h-full object-cover"
+          whileHover={{ scale: 1.08 }}
+          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
         />
 
         <div className="absolute bottom-3 left-3 flex gap-1.5">
@@ -128,7 +141,7 @@ const TourCard = ({ tour }) => {
           </Link>
         </div>
       </div>
-    </article>
+    </MotionArticle>
   );
 };
 
