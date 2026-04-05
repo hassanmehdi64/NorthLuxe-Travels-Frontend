@@ -117,6 +117,8 @@ const BookingPreferencesSection = ({
                 manualSenderNumber: nextValue === p.paymentMethod ? p.manualSenderNumber : "",
                 manualSentAmount: nextValue === p.paymentMethod ? p.manualSentAmount : "",
                 manualSentAt: nextValue === p.paymentMethod ? p.manualSentAt : "",
+                manualPaymentSlip: nextValue === p.paymentMethod ? p.manualPaymentSlip : "",
+                manualPaymentSlipName: nextValue === p.paymentMethod ? p.manualPaymentSlipName : "",
               }))
             }
             options={paymentMethodOptions}
@@ -281,6 +283,47 @@ const BookingPreferencesSection = ({
               Add the same receipt ID, transfer ID, or bank reference shown after payment.
             </p>
           </label>
+
+          <label>
+            <span className="ql-label">Reference Slip</span>
+            <input
+              type="file"
+              accept="image/*,.pdf"
+              className="ql-input cursor-pointer file:mr-3 file:rounded-xl file:border-0 file:bg-[rgba(19,221,180,0.12)] file:px-3 file:py-2 file:text-[12px] file:font-semibold file:text-heading"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (!file) {
+                  setForm((p) => ({ ...p, manualPaymentSlip: "", manualPaymentSlipName: "" }));
+                  return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = () => {
+                  setForm((p) => ({
+                    ...p,
+                    manualPaymentSlip: typeof reader.result === "string" ? reader.result : "",
+                    manualPaymentSlipName: file.name,
+                  }));
+                };
+                reader.readAsDataURL(file);
+              }}
+            />
+            <p className="mt-1.5 px-1 text-[12px] leading-5 text-textMuted">
+              Upload the payment screenshot, bank slip, or receipt after sending the amount.
+            </p>
+            {form.manualPaymentSlipName ? (
+              <div className="mt-2 flex items-center justify-between gap-3 rounded-xl border border-[rgba(15,23,42,0.06)] bg-slate-50 px-3.5 py-2.5 text-[12px] text-heading">
+                <span className="truncate font-medium">{form.manualPaymentSlipName}</span>
+                <button
+                  type="button"
+                  className="cursor-pointer text-rose-600 transition hover:text-rose-700"
+                  onClick={() => setForm((p) => ({ ...p, manualPaymentSlip: "", manualPaymentSlipName: "" }))}
+                >
+                  Remove
+                </button>
+              </div>
+            ) : null}
+          </label>
         </div>
       ) : null}
 
@@ -345,3 +388,5 @@ const BookingPreferencesSection = ({
 };
 
 export default BookingPreferencesSection;
+
+

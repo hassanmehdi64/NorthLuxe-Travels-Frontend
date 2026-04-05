@@ -174,6 +174,22 @@ const BookingReviewStep = ({
             <SummaryCard label="Payment Date" value={form.manualSentAt ? new Date(form.manualSentAt).toLocaleString() : "Not added yet"} />
           </div>
 
+          {form.manualPaymentSlip ? (
+            <div className="rounded-xl border border-[rgba(15,23,42,0.06)] bg-slate-50 px-4 py-3">
+              <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-textMuted">
+                Reference Slip
+              </p>
+              <a
+                href={form.manualPaymentSlip}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 inline-flex text-[13px] font-medium text-emerald-700 underline"
+              >
+                {form.manualPaymentSlipName || "View uploaded slip"}
+              </a>
+            </div>
+          ) : null}
+
           {selectedReceivingAccount.instructions ? (
             <div className="rounded-xl border border-[rgba(15,23,42,0.06)] bg-slate-50 px-4 py-3 text-[13px] leading-5 text-heading">
               {selectedReceivingAccount.instructions}
@@ -268,4 +284,5 @@ const BookingReviewStep = ({
 };
 
 export default BookingReviewStep;
+
 

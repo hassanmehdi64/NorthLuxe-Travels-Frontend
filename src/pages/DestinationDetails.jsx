@@ -136,8 +136,8 @@ const DestinationDetails = () => {
             grabCursor
             centeredSlides={canAutoSlideHero}
             loop={canAutoSlideHero}
-            loopAdditionalSlides={heroRenderSlides.length}
-            loopedSlides={heroRenderSlides.length}
+            loopAdditionalSlides={heroGallery.length}
+            loopedSlides={heroGallery.length}
             loopPreventsSliding={false}
             speed={1050}
             autoplay={
@@ -185,7 +185,7 @@ const DestinationDetails = () => {
                   <img
                     src={img}
                     alt={`${destinationName} ${idx + 1}`}
-                    className="h-[180px] w-full object-cover object-center sm:h-[235px] lg:h-[285px]"
+                    className="h-[175px] w-full object-cover object-center sm:h-[210px] lg:h-[235px]"
                   />
                 </div>
               </SwiperSlide>
@@ -290,3 +290,5 @@ const DestinationDetails = () => {
 };
 
 export default DestinationDetails;
+
+

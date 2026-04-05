@@ -197,12 +197,42 @@ const Booking = () => {
     if (!hasLockedTour || !selectedTour?.availableOptions?.vehicleTypes?.length) {
       return vehicleOptions;
     }
-    const allowed = new Set(selectedTour.availableOptions.vehicleTypes);
-    return vehicleOptions.filter((option) => allowed.has(option.key));
+
+    const normalizeKey = (value) =>
+      String(value || "")
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, "_");
+
+    const toLabel = (value) =>
+      String(value || "")
+        .replace(/[_-]+/g, " ")
+        .replace(/\w/g, (char) => char.toUpperCase());
+
+    const matchedOptions = selectedTour.availableOptions.vehicleTypes
+      .map((allowedKey) => {
+        const normalizedAllowedKey = normalizeKey(allowedKey);
+        const matched = vehicleOptions.find(
+          (option) =>
+            normalizeKey(option.key) === normalizedAllowedKey ||
+            normalizeKey(option.label) === normalizedAllowedKey,
+        );
+
+        return matched || {
+          key: normalizedAllowedKey,
+          label: toLabel(allowedKey),
+        };
+      })
+      .filter((item, index, arr) => arr.findIndex((option) => option.key === item.key) === index);
+
+    return matchedOptions;
   }, [hasLockedTour, selectedTour, vehicleOptions]);
 
   useEffect(() => {
-    if (!form.facilities.vehicleType && visibleVehicleOptions.length) {
+    if (!visibleVehicleOptions.length) return;
+
+    const isCurrentVehicleVisible = visibleVehicleOptions.some((option) => option.key === form.facilities.vehicleType);
+    if (!form.facilities.vehicleType || !isCurrentVehicleVisible) {
       setForm((prev) => ({
         ...prev,
         facilities: { ...prev.facilities, vehicleType: visibleVehicleOptions[0].key },
@@ -344,6 +374,8 @@ const Booking = () => {
           senderNumber: form.manualSenderNumber.trim(),
           sentAmount: Number(form.manualSentAmount || 0),
           sentAt: form.manualSentAt || "",
+          slip: form.manualPaymentSlip || "",
+          slipName: form.manualPaymentSlipName || "",
         }
       : {
           senderName: "",
@@ -705,6 +737,7 @@ const Booking = () => {
 };
 
 export default Booking;
+
 
 
 

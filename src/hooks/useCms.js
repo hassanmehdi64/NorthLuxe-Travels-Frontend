@@ -272,6 +272,8 @@ export const useBookings = (enabled = true) =>
     queryKey: keys.bookings,
     queryFn: () => apiClient.get("/bookings").then(unwrap).then((d) => d.items),
     enabled,
+    refetchInterval: enabled ? 15000 : false,
+    refetchOnWindowFocus: true,
   });
 
 export const useBooking = (id) =>
@@ -346,8 +348,30 @@ export const useUpdateBooking = () => {
     mutationFn: ({ id, ...payload }) =>
       apiClient.patch(`/bookings/${id}`, payload).then(unwrap).then((d) => d.item),
     onSuccess: (item) => {
+      qc.setQueryData(keys.booking(item.id), item);
+      qc.setQueryData(keys.bookings, (current) =>
+        Array.isArray(current)
+          ? current.map((entry) => (entry.id === item.id ? item : entry))
+          : current,
+      );
       qc.invalidateQueries({ queryKey: keys.bookings });
       qc.invalidateQueries({ queryKey: keys.booking(item.id) });
+      qc.invalidateQueries({ queryKey: keys.dashboard });
+      qc.invalidateQueries({ queryKey: keys.notifications });
+    },
+  });
+};
+
+export const useDeleteBooking = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id) => apiClient.delete(`/bookings/${id}`),
+    onSuccess: (_result, id) => {
+      qc.setQueryData(keys.bookings, (current) =>
+        Array.isArray(current) ? current.filter((entry) => entry.id !== id) : current,
+      );
+      qc.invalidateQueries({ queryKey: keys.bookings });
+      qc.invalidateQueries({ queryKey: keys.booking(id) });
       qc.invalidateQueries({ queryKey: keys.dashboard });
       qc.invalidateQueries({ queryKey: keys.notifications });
     },
@@ -552,6 +576,8 @@ export const useNotifications = (enabled = true) =>
     queryKey: keys.notifications,
     queryFn: () => apiClient.get("/notifications").then(unwrap).then((d) => d.items),
     enabled,
+    refetchInterval: enabled ? 10000 : false,
+    refetchOnWindowFocus: true,
   });
 
 export const useUpdateNotification = () => {

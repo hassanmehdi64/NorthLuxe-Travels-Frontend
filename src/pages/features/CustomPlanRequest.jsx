@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import FeaturePageHeader from "../../components/features/FeaturePageHeader";
-import { useCreateContact } from "../../hooks/useCms";
+import { useCreatePublicBooking } from "../../hooks/useCms";
 import { useToast } from "../../context/ToastContext";
 
 const DESTINATION_OPTIONS = [
@@ -328,7 +328,7 @@ const createInitialForm = (sourceTour = null) => ({
 const CustomPlanRequest = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const createContact = useCreateContact();
+  const createBooking = useCreatePublicBooking();
   const toast = useToast();
   const sourceTour = location.state?.sourceTour || null;
   const [form, setForm] = useState(() => ({
@@ -364,7 +364,7 @@ const CustomPlanRequest = () => {
         ].filter(Boolean)
       : form.destinations;
 
-    const message = [
+    const customSummary = [
       `Source Tour: ${sourceTour?.title || "N/A"}`,
       `Preferred Destinations: ${selectedDestinations.length ? selectedDestinations.join(", ") : "Flexible"}`,
       `Start Date: ${form.startDate || "Flexible"}`,
@@ -380,17 +380,49 @@ const CustomPlanRequest = () => {
 
     setSubmitting(true);
     try {
-      await createContact.mutateAsync({
-        sender: form.name,
+      await createBooking.mutateAsync({
+        customerName: form.name,
         email: form.email,
-        subject,
-        message,
+        phone: form.phone,
+        ...(sourceTour?.id ? { tourId: sourceTour.id } : {}),
+        bookingType: "custom",
+        isCustomTour: true,
+        source: "website",
+        travelDate: form.startDate || "",
+        endDate: form.endDate || "",
+        flexibleDates: !form.startDate,
+        adults: Number(form.persons || 1),
+        children: Number(form.childrenBelowThree || 0),
+        groupSize: Number(form.persons || 1) + Number(form.childrenBelowThree || 0),
+        paymentMethod: "pay_on_arrival",
+        facilities: {
+          hotelType: form.hotelPreference,
+          vehicleType: form.vehiclePreference === "other" ? form.customVehicle || "other" : form.vehiclePreference,
+          meals: "",
+          addOns: [],
+        },
+        customRequest: {
+          preferredDestinations: selectedDestinations,
+          sourceTourTitle: sourceTour?.title || "",
+          startDate: form.startDate || "",
+          endDate: form.endDate || "",
+          persons: Number(form.persons || 1),
+          childrenBelowThree: Number(form.childrenBelowThree || 0),
+          budget: form.budget || "",
+          budgetMode: form.budgetMode || "",
+          hotelPreference: form.hotelPreference || "",
+          vehiclePreference: form.vehiclePreference === "other" ? form.customVehicle || "other" : form.vehiclePreference,
+          requirements: form.requirements || "",
+        },
+        customRequirements: customSummary,
+        specialRequirements: form.requirements || "",
+        notes: subject,
       });
-      toast.success("Request submitted", "Our travel specialist will contact you soon.");
+      toast.success("Request submitted", "Your custom booking request is now saved in bookings.");
       setSubmissionNotice({
         title: "Request Submitted Successfully",
         message:
-          "Your custom tour plan request has been received. Our team will review your details and get back to you shortly with the next steps.",
+          "Your custom tour plan request has been received. Your request has been added to booking management. Our team will review it and contact you shortly with the next steps.",
       });
       setForm({
         ...createInitialForm(sourceTour),
@@ -696,3 +728,5 @@ const CustomPlanRequest = () => {
 };
 
 export default CustomPlanRequest;
+
+

@@ -8,7 +8,6 @@ import {
   Star,
   Users,
   MessageSquare,
-  Bell,
   FilePenLine,
   Settings,
 } from "lucide-react";
@@ -36,13 +35,6 @@ export const adminNavItems = [
     label: "Inquiries",
     path: "/admin/contacts",
     icon: MessageSquare,
-    roles: ["Admin"],
-  },
-  {
-    id: "notifications",
-    label: "Notifications",
-    path: "/admin/notifications",
-    icon: Bell,
     roles: ["Admin"],
   },
   {

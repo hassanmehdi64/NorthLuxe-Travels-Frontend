@@ -108,7 +108,7 @@ const Topbar = ({ onMenuClick, theme, setTheme }) => {
           >
             <Bell
               size={22}
-              className="group-hover:rotate-[15deg] transition-transform duration-300"
+              className={`group-hover:rotate-[15deg] transition-transform duration-300 ${unreadCount > 0 ? "animate-pulse" : ""}`}
             />
             {/* Unread Count Badge */}
             {unreadCount > 0 && (

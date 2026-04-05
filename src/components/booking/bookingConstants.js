@@ -17,6 +17,8 @@ export const DEFAULT_FORM = {
   paymentMethod: "visa_card",
   paymentPlan: "advance_10",
   transactionReference: "",
+  manualPaymentSlip: "",
+  manualPaymentSlipName: "",
   manualSenderName: "",
   manualSenderNumber: "",
   manualSentAmount: "",
@@ -44,3 +46,4 @@ export const FALLBACK_VEHICLES = [
   { key: "standard_suv", label: "Standard SUV" },
   { key: "premium_suv", label: "Premium SUV" },
 ];
+

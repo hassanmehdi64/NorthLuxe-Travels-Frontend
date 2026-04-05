@@ -12,6 +12,19 @@ import {
 } from "../tour-details/tourDetailsData";
 
 const MotionArticle = motion.article;
+const cardReveal = {
+  hidden: { opacity: 0, y: 26, scale: 0.985 },
+  visible: (delay) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.72,
+      delay,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  }),
+};
 
 const TourCard = ({ tour, index = 0 }) => {
   const toast = useToast();
@@ -46,20 +59,21 @@ const TourCard = ({ tour, index = 0 }) => {
 
   return (
     <MotionArticle
-      initial={{ opacity: 0, y: 28, scale: 0.98 }}
-      whileInView={{ opacity: 1, y: 0, scale: 1 }}
-      whileHover={{ y: -8 }}
+      variants={cardReveal}
+      custom={cardDelay}
+      initial="hidden"
+      whileInView="visible"
+      whileHover={{ y: -5, transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] } }}
       viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.55, delay: cardDelay, ease: [0.22, 1, 0.36, 1] }}
-      className="group h-full flex flex-col rounded-2xl bg-theme-surface border border-theme shadow-[0_10px_20px_rgba(15,23,42,0.08)] hover:border-[var(--c-brand)] transition-all duration-500 hover:shadow-[0_18px_34px_rgba(15,23,42,0.14)] overflow-hidden"
+      className="group h-full flex flex-col rounded-2xl bg-theme-surface border border-theme shadow-[0_10px_20px_rgba(15,23,42,0.08)] hover:border-[var(--c-brand)] transition-[border-color,box-shadow] duration-500 hover:shadow-[0_18px_34px_rgba(15,23,42,0.14)] overflow-hidden will-change-transform"
     >
       <div className="relative h-44 sm:h-48 overflow-hidden">
         <motion.img
           src={tour?.image}
           alt={tour?.title || "Tour image"}
           className="w-full h-full object-cover"
-          whileHover={{ scale: 1.08 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          whileHover={{ scale: 1.045 }}
+          transition={{ duration: 1.15, ease: [0.16, 1, 0.3, 1] }}
         />
 
         <div className="absolute bottom-3 left-3 flex gap-1.5">
@@ -87,7 +101,7 @@ const TourCard = ({ tour, index = 0 }) => {
           <span className="truncate">{placesLabel}</span>
         </div>
 
-        <h3 className="text-sm sm:text-base font-bold text-theme leading-tight mb-4 line-clamp-2 min-h-[42px] group-hover:text-[var(--c-brand)] transition-colors">
+        <h3 className="text-sm sm:text-base font-bold text-theme leading-tight mb-4 line-clamp-2 min-h-[42px] group-hover:text-[var(--c-brand)] transition-colors duration-300">
           {displayTitle}
         </h3>
 
@@ -146,3 +160,4 @@ const TourCard = ({ tour, index = 0 }) => {
 };
 
 export default TourCard;
+

@@ -56,11 +56,14 @@ const ContactMessages = () => {
   };
 
   const filteredMessages = messages
-    .filter(
-      (m) =>
-        m.sender.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        m.subject.toLowerCase().includes(searchTerm.toLowerCase()),
-    )
+    .filter((m) => {
+      const subject = String(m.subject || "").toLowerCase();
+      const isCustomPlan = subject.includes("custom tour plan request") || subject.includes("custom plan");
+      if (isCustomPlan) return false;
+
+      const query = searchTerm.toLowerCase();
+      return m.sender.toLowerCase().includes(query) || m.subject.toLowerCase().includes(query);
+    })
     .sort((a, b) => {
       const aTime = new Date(a?.date || a?.createdAt || 0).getTime();
       const bTime = new Date(b?.date || b?.createdAt || 0).getTime();
@@ -198,3 +201,4 @@ const ContactMessages = () => {
 };
 
 export default ContactMessages;
+

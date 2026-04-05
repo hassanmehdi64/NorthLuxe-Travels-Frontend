@@ -1,7 +1,8 @@
-﻿import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   ArrowRight,
   Bell,
+  Volume2,
   BookOpen,
   Briefcase,
   CreditCard,
@@ -13,7 +14,6 @@ import {
 } from "lucide-react";
 import {
   useBookings,
-  useContacts,
   useAdminContentList,
   useDashboardOverview,
   useGallery,
@@ -41,11 +41,50 @@ const formatCurrency = (value) => {
     maximumFractionDigits: 0,
   }).format(num);
 };
+const isRecentlyReceived = (value) => {
+  if (!value) return false;
+  const at = new Date(value).getTime();
+  if (Number.isNaN(at)) return false;
+  return Date.now() - at <= 2 * 24 * 60 * 60 * 1000;
+};
+
+
+const playTestNotificationSound = async () => {
+  if (typeof window === "undefined") return;
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return;
+
+  const context = new AudioContextClass();
+  try {
+    if (context.state === "suspended") {
+      await context.resume();
+    }
+    const playTone = (frequency, startTime, duration, gainValue) => {
+      const oscillator = context.createOscillator();
+      const gainNode = context.createGain();
+      oscillator.type = "triangle";
+      oscillator.frequency.setValueAtTime(frequency, startTime);
+      gainNode.gain.setValueAtTime(0.0001, startTime);
+      gainNode.gain.exponentialRampToValueAtTime(gainValue, startTime + 0.01);
+      gainNode.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+      oscillator.connect(gainNode);
+      gainNode.connect(context.destination);
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration + 0.02);
+    };
+
+    const now = context.currentTime;
+    playTone(880, now, 0.18, 0.18);
+    playTone(1174, now + 0.2, 0.2, 0.16);
+  } catch {
+    // ignore audio errors
+  }
+};
 
 const DashboardHome = () => {
   const { data: overview } = useDashboardOverview();
   const { data: bookings = [] } = useBookings();
-  const { data: contacts = [] } = useContacts();
+
   const { data: notifications = [] } = useNotifications();
   const { data: tours = [] } = usePublicTours();
   const { data: blogs = [] } = usePublicBlogs();
@@ -55,13 +94,25 @@ const DashboardHome = () => {
   const { data: services = [] } = useAdminContentList("service");
 
   const stats = overview?.stats || {};
-  const latestBookings = overview?.latestBookings || bookings.slice(0, 6);
+  const unreadBookingCodes = new Set(
+    notifications
+      .filter((item) => !item?.isRead && String(item?.type || "") === "Bookings")
+      .map((item) => `${item?.title || ""} ${item?.message || ""}`),
+  );
+
+  const latestBookings = [...(overview?.latestBookings || bookings)]
+    .sort((a, b) => {
+      const aRecent = isRecentlyReceived(a?.createdAt || a?.date);
+      const bRecent = isRecentlyReceived(b?.createdAt || b?.date);
+      if (aRecent !== bRecent) return Number(bRecent) - Number(aRecent);
+      const aTime = new Date(a?.createdAt || a?.date || 0).getTime();
+      const bTime = new Date(b?.createdAt || b?.date || 0).getTime();
+      return bTime - aTime;
+    })
+    .slice(0, 6);
 
   const unreadNotifications = notifications.filter((item) => !item.isRead).length;
-  const customPlanRequests = contacts.filter((item) =>
-    String(item.subject || "").toLowerCase().includes("custom tour plan request") ||
-    String(item.subject || "").toLowerCase().includes("custom plan"),
-  ).length;
+  const customPlanRequests = bookings.filter((item) => item.bookingType === "custom" || item.isCustomTour).length;
 
   const pendingPaymentVerifications = bookings.filter((item) => {
     const status = String(item.status || "").toLowerCase();
@@ -93,7 +144,7 @@ const DashboardHome = () => {
     {
       title: "Custom Requests",
       value: formatNumber(customPlanRequests),
-      hint: "From contact forms",
+      hint: "From custom booking form",
       icon: MessageSquare,
       tone: "text-violet-600 bg-violet-50 border-violet-100",
     },
@@ -128,9 +179,9 @@ const DashboardHome = () => {
       icon: ShieldCheck,
     },
     {
-      title: "Custom Plan Inquiries",
-      desc: "Handle tailored trip requests from contact forms.",
-      to: "/admin/contacts",
+      title: "Custom Booking Requests",
+      desc: "Review tailored trip requests saved in booking management.",
+      to: "/admin/bookings",
       icon: MessageSquare,
     },
     {
@@ -162,13 +213,25 @@ const DashboardHome = () => {
   return (
     <div className="space-y-8">
       <div className="rounded-3xl border border-slate-200 bg-white p-6 md:p-7 shadow-sm dark:bg-slate-900 dark:border-slate-700">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Admin Console</p>
-        <h1 className="mt-2 text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
-          Dashboard Overview
-        </h1>
-        <p className="mt-2 text-sm text-slate-500 dark:text-slate-300">
-          Monitor bookings, payments, requests, and content from one place.
-        </p>
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">Admin Console</p>
+            <h1 className="mt-2 text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
+              Dashboard Overview
+            </h1>
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-300">
+              Monitor bookings, payments, requests, and content from one place.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={playTestNotificationSound}
+            className="inline-flex items-center gap-2 self-start rounded-2xl border border-[var(--c-brand)]/25 bg-[var(--c-brand)]/10 px-4 py-2.5 text-xs font-black uppercase tracking-[0.14em] text-slate-900 transition hover:bg-[var(--c-brand)]/18"
+          >
+            <Volume2 size={15} />
+            Test Sound
+          </button>
+        </div>
       </div>
 
       <div className="flex items-end justify-between gap-3">
@@ -221,10 +284,15 @@ const DashboardHome = () => {
 
           <div className="divide-y divide-slate-100 dark:divide-slate-700">
             {latestBookings.length ? (
-              latestBookings.slice(0, 6).map((item) => (
-                <div key={item.id} className="px-5 py-3.5 flex items-center justify-between gap-3">
+              latestBookings.slice(0, 6).map((item) => {
+                const isLatest = isRecentlyReceived(item?.createdAt || item?.date);
+                return (
+                <div key={item.id} className={`px-5 py-3.5 flex items-center justify-between gap-3 ${isLatest ? "bg-[var(--c-brand)]/6" : ""}`}>
                   <div>
-                    <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{item.user || item.customer || "Guest"}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{item.user || item.customer || "Guest"}</p>
+                      {isLatest ? <span className="rounded-full bg-[var(--c-brand)]/14 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-[var(--c-brand)]">New</span> : null}
+                    </div>
                     <p className="text-xs text-slate-500 dark:text-slate-300">{item.tour || item.tourTitle || item.bookingCode || "Tour Booking"}</p>
                   </div>
                   <div className="text-right">
@@ -232,7 +300,7 @@ const DashboardHome = () => {
                     <p className="text-[10px] uppercase font-black tracking-[0.12em] text-slate-400 dark:text-slate-300">{item.status || "pending"}</p>
                   </div>
                 </div>
-              ))
+              );})
             ) : (
               <p className="px-5 py-10 text-sm text-slate-500 dark:text-slate-300">No booking data available yet.</p>
             )}
@@ -283,3 +351,8 @@ const DashboardHome = () => {
 };
 
 export default DashboardHome;
+
+
+
+
+
