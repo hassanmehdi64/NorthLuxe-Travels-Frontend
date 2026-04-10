@@ -1,10 +1,12 @@
-import { Search, MapPin, ShieldCheck, BadgeCheck, Headphones } from "lucide-react";
+import { createPortal } from "react-dom";
+import { Search, MapPin, ShieldCheck, BadgeCheck, Headphones, CalendarDays } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useMemo, useRef, useState } from "react";
-import PrettyDateField from "./PrettyDateField";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Calendar as UiCalendar } from "@/components/ui/calendar";
 import PlaceSearchInput from "../search/PlaceSearchInput";
 import { usePublicContentList, usePublicTours } from "../../hooks/useCms";
 import { buildPlaceSuggestions } from "../../utils/tourSearch";
+import HeroBackgroundSlider from "./HeroBackgroundSlider";
 
 const HERO_POINTS = [
   { icon: ShieldCheck, label: "Trusted partners" },
@@ -12,29 +14,140 @@ const HERO_POINTS = [
   { icon: Headphones, label: "Fast support" },
 ];
 
-const YOUTUBE_VIDEO_ID = "gu32w5wjsOM";
-const HERO_PLAYBACK_RATE = 0.5;
-const HERO_START_AT = 1;
-const HERO_LOOP_CUTOFF_SECONDS = 1.8;
+const formatDate = (date) => {
+  const yyyy = date.getFullYear();
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
+};
 
-const loadYouTubeApi = () =>
-  new Promise((resolve) => {
-    if (typeof window === "undefined") return resolve(null);
-    if (window.YT?.Player) return resolve(window.YT);
+const useIsMobile = (breakpoint = 640) => {
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < breakpoint);
 
-    const previousReady = window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady = () => {
-      if (typeof previousReady === "function") previousReady();
-      resolve(window.YT);
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < breakpoint);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [breakpoint]);
+
+  return isMobile;
+};
+
+const HeroDatePicker = ({ when, setWhen, placeholder = "When" }) => {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+  const panelRef = useRef(null);
+  const isMobile = useIsMobile(640);
+  const selectedDate = useMemo(() => (when ? new Date(when) : undefined), [when]);
+  const [pos, setPos] = useState({ top: 0, left: 0, width: 320 });
+
+  const updatePos = () => {
+    const el = wrapRef.current;
+    if (!el) return;
+
+    const rect = el.getBoundingClientRect();
+    const width = Math.min(320, window.innerWidth - 16);
+    const left = Math.min(window.innerWidth - width - 8, Math.max(8, rect.left));
+
+    setPos({
+      top: rect.bottom + 10 + window.scrollY,
+      left: left + window.scrollX,
+      width,
+    });
+  };
+
+  useLayoutEffect(() => {
+    if (!open || isMobile) return;
+    updatePos();
+  }, [open, isMobile]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onKey = (event) => event.key === "Escape" && setOpen(false);
+    const onResize = () => !isMobile && updatePos();
+    const onPointerDown = (event) => {
+      if (
+        wrapRef.current?.contains(event.target) ||
+        panelRef.current?.contains(event.target)
+      ) {
+        return;
+      }
+      setOpen(false);
     };
 
-    const existingScript = document.querySelector('script[src="https://www.youtube.com/iframe_api"]');
-    if (existingScript) return;
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onResize, true);
+    document.addEventListener("mousedown", onPointerDown);
 
-    const script = document.createElement("script");
-    script.src = "https://www.youtube.com/iframe_api";
-    document.head.appendChild(script);
-  });
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onResize, true);
+      document.removeEventListener("mousedown", onPointerDown);
+    };
+  }, [open, isMobile]);
+
+  const calendarContent = (
+    <UiCalendar
+      mode="single"
+      selected={selectedDate}
+      onSelect={(date) => {
+        if (!date) return;
+        setWhen(formatDate(date));
+        setOpen(false);
+      }}
+      className="mx-auto w-full max-w-[17.5rem] rounded-lg border bg-white shadow-[0_18px_40px_rgba(15,23,42,0.12)] sm:max-w-none"
+      fixedWeeks
+      captionLayout="dropdown"
+    />
+  );
+
+  return (
+    <div
+      ref={wrapRef}
+      className="relative flex items-center gap-3 border-[var(--c-border)] px-4 py-3.5 md:border-b-0 md:border-r md:py-4"
+    >
+      <CalendarDays size={18} className="shrink-0 text-[var(--c-muted)]" />
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="w-full text-left text-sm select-none"
+        style={{ color: "var(--c-text)" }}
+      >
+        {when ? when : <span style={{ color: "var(--c-muted)" }}>{placeholder}</span>}
+      </button>
+
+      {open &&
+        createPortal(
+          <>
+            {isMobile ? (
+              <div
+                ref={panelRef}
+                className="fixed inset-x-3 top-[4.6rem] z-[99999] sm:inset-x-auto sm:right-4"
+              >
+                <div className="mx-auto w-full max-w-[17.5rem] sm:max-w-[292px]">{calendarContent}</div>
+              </div>
+            ) : (
+              <div
+                ref={panelRef}
+                className="absolute z-[99999]"
+                style={{
+                  top: pos.top,
+                  left: pos.left,
+                  width: pos.width,
+                }}
+              >
+                {calendarContent}
+              </div>
+            )}
+          </>,
+          document.body,
+        )}
+    </div>
+  );
+};
 
 const TourMain = () => {
   const navigate = useNavigate();
@@ -43,125 +156,12 @@ const TourMain = () => {
 
   const [where, setWhere] = useState("");
   const [when, setWhen] = useState("");
-  const [videoReady, setVideoReady] = useState(false);
-  const [loopMaskVisible, setLoopMaskVisible] = useState(true);
-  const playerHostRef = useRef(null);
-  const playerRef = useRef(null);
-  const loopRestartingRef = useRef(false);
 
   const placeSuggestions = useMemo(
     () =>
       buildPlaceSuggestions({ tours, destinationItems }),
     [tours, destinationItems],
   );
-
-  useEffect(() => {
-    let cancelled = false;
-    let loopWatchInterval;
-
-    const mountPlayer = async () => {
-      const YT = await loadYouTubeApi();
-      if (!YT?.Player || !playerHostRef.current || cancelled) return;
-
-      if (playerRef.current?.destroy) {
-        playerRef.current.destroy();
-      }
-
-      playerRef.current = new YT.Player(playerHostRef.current, {
-        videoId: YOUTUBE_VIDEO_ID,
-        playerVars: {
-          autoplay: 1,
-          controls: 0,
-          disablekb: 1,
-          fs: 0,
-          iv_load_policy: 3,
-          loop: 1,
-          modestbranding: 1,
-          mute: 1,
-          playsinline: 1,
-          rel: 0,
-          start: HERO_START_AT,
-          playlist: YOUTUBE_VIDEO_ID,
-        },
-        events: {
-          onReady: (event) => {
-            event.target.mute();
-            try {
-              event.target.setPlaybackRate(HERO_PLAYBACK_RATE);
-            } catch {
-              // Ignore unsupported rate errors from YouTube.
-            }
-            event.target.playVideo();
-
-            loopWatchInterval = window.setInterval(() => {
-              try {
-                const duration = Number(event.target.getDuration?.() || 0);
-                const currentTime = Number(event.target.getCurrentTime?.() || 0);
-                const remaining = duration - currentTime;
-                if (duration > 0 && currentTime <= HERO_START_AT + 0.8) {
-                  loopRestartingRef.current = false;
-                }
-
-                if (duration > 0 && remaining <= HERO_LOOP_CUTOFF_SECONDS && !loopRestartingRef.current) {
-                  loopRestartingRef.current = true;
-                  setLoopMaskVisible(true);
-                  event.target.seekTo(HERO_START_AT, true);
-                  try {
-                    event.target.setPlaybackRate(HERO_PLAYBACK_RATE);
-                  } catch {
-                    // Ignore unsupported rate errors from YouTube.
-                  }
-                  event.target.playVideo();
-                }
-              } catch {
-                // Ignore polling issues from YouTube while player is not ready.
-              }
-            }, 250);
-          },
-          onStateChange: (event) => {
-            if (event.data === window.YT?.PlayerState?.PLAYING) {
-              setVideoReady(true);
-              loopRestartingRef.current = false;
-              setLoopMaskVisible(false);
-              try {
-                event.target.setPlaybackRate(HERO_PLAYBACK_RATE);
-              } catch {
-                // Ignore unsupported rate errors from YouTube.
-              }
-            }
-
-            if (event.data === window.YT?.PlayerState?.BUFFERING || event.data === window.YT?.PlayerState?.CUED) {
-              setLoopMaskVisible(true);
-            }
-
-            if (event.data === window.YT?.PlayerState?.ENDED) {
-              setLoopMaskVisible(true);
-              event.target.seekTo(HERO_START_AT, true);
-              try {
-                event.target.setPlaybackRate(HERO_PLAYBACK_RATE);
-              } catch {
-                // Ignore unsupported rate errors from YouTube.
-              }
-              event.target.playVideo();
-            }
-          },
-        },
-      });
-    };
-
-    mountPlayer();
-
-    return () => {
-      cancelled = true;
-      if (loopWatchInterval) {
-        window.clearInterval(loopWatchInterval);
-      }
-      if (playerRef.current?.destroy) {
-        playerRef.current.destroy();
-        playerRef.current = null;
-      }
-    };
-  }, []);
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -175,26 +175,8 @@ const TourMain = () => {
   };
 
   return (
-    <section className="relative flex min-h-[72vh] items-center justify-center overflow-hidden sm:-mx-[5px] md:min-h-[85vh]">
-      <div className="absolute inset-0 -z-10 overflow-hidden bg-black">
-        <img
-          src="/gb.jpg"
-          alt="Gilgit Baltistan travel"
-          className="absolute inset-0 z-0 h-full w-full object-cover opacity-45"
-        />
-        <div className={`absolute inset-0 z-10 scale-[1.35] transition-opacity duration-300 md:scale-[1.18] ${videoReady ? "opacity-100" : "opacity-0"}`}>
-          <div
-            ref={playerHostRef}
-            className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2"
-          />
-        </div>
-        <img
-          src="/gb.jpg"
-          alt="Gilgit Baltistan scenic overlay"
-          className={`absolute inset-0 z-20 h-full w-full object-cover transition-opacity duration-300 ${loopMaskVisible ? "opacity-100" : "opacity-0"}`}
-        />
-        <div className="absolute inset-0 z-30 bg-[linear-gradient(180deg,rgba(5,8,12,0.26),rgba(5,8,12,0.5))]" />
-      </div>
+    <section className="relative -mt-[72px] flex min-h-screen items-center justify-center overflow-hidden pt-[72px] sm:-mx-[5px]">
+      <HeroBackgroundSlider />
 
       <div className="text-center px-4 max-w-4xl w-full">
         <h1 className="text-white text-3xl md:text-5xl font-semibold leading-tight">
@@ -221,7 +203,7 @@ const TourMain = () => {
               />
             </div>
 
-            <PrettyDateField when={when} setWhen={setWhen} />
+            <HeroDatePicker when={when} setWhen={setWhen} />
 
             <button
               type="submit"

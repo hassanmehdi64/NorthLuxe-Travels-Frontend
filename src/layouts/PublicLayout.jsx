@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "../components/navbar/Navbar";
 import Footer from "../components/footer/Footer";
-import PublicTopStrip from "../components/common/PublicTopStrip";
 import WhatsAppFloatButton from "../components/common/WhatsAppFloatButton";
 import { useSettings } from "../hooks/useCms";
 
@@ -35,7 +34,6 @@ const PublicLayout = () => {
     <>
       <Navbar />
       <div className="pt-[72px] px-0 sm:px-[5px]">
-        <PublicTopStrip />
         <main>
           <Outlet />
         </main>
