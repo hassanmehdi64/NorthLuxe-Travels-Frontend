@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   BadgeCheck,
   CalendarDays,
+  ChevronDown,
   CreditCard,
   FileText,
   MapPinned,
@@ -14,6 +15,7 @@ import {
   PlusSquare,
   Printer,
   PencilLine,
+  Trash2,
 } from "lucide-react";
 import { useAdminTours, useBooking, useConfirmBookingPayment, useUpdateBooking } from "../../hooks/useCms";
 import { useToast } from "../../context/ToastContext";
@@ -99,16 +101,16 @@ const getStandardBookingDetails = (booking, fallbackTour = null) => {
 };
 
 const DetailRow = ({ label, value, accent = false, multiline = false }) => (
-  <div className={`gap-4 border-b border-slate-100 py-2.5 last:border-b-0 ${multiline ? "space-y-2" : "flex items-start justify-between"}`}>
-    <span className="text-sm font-medium text-slate-500">{label}</span>
+  <div className={`gap-3 border-b border-slate-100 py-1.5 last:border-b-0 ${multiline ? "space-y-1" : "flex items-start justify-between"}`}>
+    <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-slate-400">{label}</span>
     {multiline ? (
-      <p className="whitespace-pre-line rounded-2xl bg-slate-50 px-4 py-3 text-sm font-normal leading-7 text-slate-600">
+      <p className="whitespace-pre-line rounded-lg bg-slate-50 px-3 py-2 text-[13px] font-normal leading-5 text-slate-600">
         {value || "-"}
       </p>
     ) : (
       <span
         className={[
-          "text-sm font-semibold",
+          "text-[13px] font-medium leading-5",
           accent ? "text-slate-950" : "text-slate-700",
           "text-right",
         ].join(" ")}
@@ -120,14 +122,14 @@ const DetailRow = ({ label, value, accent = false, multiline = false }) => (
 );
 
 const SectionCard = ({ icon: Icon, title, children }) => (
-  <section className="rounded-[1.6rem] border border-slate-200 bg-white p-5 shadow-[0_14px_30px_rgba(15,23,42,0.04)]">
-    <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-      <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
-        <Icon size={18} />
+  <section className="rounded-[1rem] border border-slate-200 bg-white p-3.5 shadow-[0_8px_20px_rgba(15,23,42,0.035)]">
+    <div className="flex items-center gap-2 border-b border-slate-100 pb-2.5">
+      <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
+        <Icon size={14} />
       </span>
-      <h2 className="text-lg font-bold tracking-tight text-slate-950">{title}</h2>
+      <h2 className="text-[14px] font-semibold tracking-tight text-slate-950">{title}</h2>
     </div>
-    <div className="pt-3">{children}</div>
+    <div className="pt-2">{children}</div>
   </section>
 );
 
@@ -248,6 +250,7 @@ const BookingDetails = () => {
   const updateBooking = useUpdateBooking();
   const confirmBookingPayment = useConfirmBookingPayment();
   const [isItineraryFormOpen, setIsItineraryFormOpen] = useState(false);
+  const [openPlanDay, setOpenPlanDay] = useState(0);
   const [itineraryForm, setItineraryForm] = useState({
     planDays: [{ title: "", plan: "" }],
     title: "",
@@ -270,6 +273,7 @@ const BookingDetails = () => {
     const isCustomBooking = booking.bookingType === "custom" || booking.isCustomTour;
     const context = isCustomBooking ? getCustomRequestDetails(booking) : getStandardBookingDetails(booking, linkedTour);
     setItineraryForm(createItineraryDraft(booking, context, isCustomBooking));
+    setOpenPlanDay(0);
   }, [booking, linkedTour]);
 
   const updateStatus = (newStatus) => {
@@ -309,6 +313,7 @@ const BookingDetails = () => {
     if (!booking) return;
     const context = isCustomBooking ? getCustomRequestDetails(booking) : getStandardBookingDetails(booking, linkedTour);
     setItineraryForm(createItineraryDraft(booking, context, isCustomBooking));
+    setOpenPlanDay(0);
     setIsItineraryFormOpen(true);
   };
 
@@ -402,104 +407,143 @@ const BookingDetails = () => {
             body {
               margin: 0;
               font-family: Arial, sans-serif;
-              color: #0f172a;
-              background: #f8fafc;
+              color: #111827;
+              background: #ffffff;
               -webkit-print-color-adjust: exact;
               print-color-adjust: exact;
             }
             .sheet {
-              max-width: 900px;
+              max-width: 860px;
               margin: 0 auto;
               background: #ffffff;
-              padding: 32px 34px 40px;
-            }
-            .topbar {
-              height: 8px;
-              background: linear-gradient(90deg, ${brandColor}, rgba(19,221,180,0.18));
-              border-radius: 999px;
-              margin-bottom: 22px;
+              padding: 28px 30px 32px;
             }
             .header {
-              display: flex;
-              justify-content: space-between;
-              gap: 18px;
-              align-items: flex-start;
               padding-bottom: 18px;
-              border-bottom: 1px solid #e2e8f0;
+              border-bottom: 1px solid #e5e7eb;
+            }
+            .header-grid {
+              display: grid;
+              grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.85fr);
+              gap: 18px;
+              align-items: start;
             }
             .eyebrow {
-              font-size: 11px;
+              display: inline-flex;
+              align-items: center;
+              gap: 8px;
+              font-size: 10px;
               font-weight: 700;
               letter-spacing: 0.18em;
               text-transform: uppercase;
-              color: ${brandColor};
+              color: #4b5563;
               margin: 0 0 8px;
+            }
+            .eyebrow::before {
+              content: "";
+              width: 20px;
+              height: 1px;
+              border-radius: 999px;
+              background: #9ca3af;
             }
             .title {
               margin: 0;
-              font-size: 32px;
-              line-height: 1.08;
-              font-weight: 800;
-              color: #0f172a;
+              font-size: 28px;
+              line-height: 1.15;
+              letter-spacing: -0.02em;
+              font-weight: 700;
+              color: #111827;
             }
             .subtitle {
               margin: 10px 0 0;
-              font-size: 14px;
+              max-width: 100%;
+              font-size: 13px;
               line-height: 1.7;
-              color: #475569;
+              color: #4b5563;
             }
-            .meta-chip-wrap {
-              display: flex;
-              gap: 10px;
-              flex-wrap: wrap;
-              justify-content: flex-end;
+            .meta-panel {
+              border: 1px solid #e5e7eb;
+              border-radius: 12px;
+              background: #ffffff;
+              padding: 12px;
             }
-            .meta-chip {
-              min-width: 132px;
-              border: 1px solid #dbe5ef;
-              border-radius: 16px;
-              padding: 10px 12px;
-              background: #f8fafc;
+            .meta-grid {
+              display: grid;
+              grid-template-columns: repeat(2, minmax(0, 1fr));
+              gap: 8px;
             }
-            .meta-chip .label {
+            .meta-card {
+              border-radius: 8px;
+              background: #f9fafb;
+              border: 1px solid #e5e7eb;
+              padding: 10px 11px;
+            }
+            .meta-card .label {
+              font-size: 9px;
+              letter-spacing: 0.12em;
+              text-transform: uppercase;
+              color: #6b7280;
+              font-weight: 700;
+            }
+            .meta-card .value {
+              margin-top: 5px;
+              font-size: 13px;
+              line-height: 1.4;
+              color: #111827;
+              font-weight: 700;
+            }
+            .body {
+              padding-top: 22px;
+            }
+            .section {
+              margin-top: 22px;
+            }
+            .section-title {
+              margin: 0 0 10px;
               font-size: 10px;
               letter-spacing: 0.14em;
               text-transform: uppercase;
-              color: ${brandColor};
+              color: #6b7280;
               font-weight: 700;
             }
-            .meta-chip .value {
-              margin-top: 6px;
-              font-size: 14px;
-              color: #0f172a;
-              font-weight: 700;
+            .intro-grid {
+              display: grid;
+              grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+              gap: 12px;
             }
-            .section {
-              margin-top: 24px;
-            }
-            .section-title {
-              margin: 0 0 12px;
-              font-size: 13px;
-              letter-spacing: 0.18em;
-              text-transform: uppercase;
-              color: ${brandColor};
-              font-weight: 800;
-            }
+            .intro-card,
             .summary-card {
-              border: 1px solid #e2e8f0;
-              border-radius: 22px;
-              overflow: hidden;
+              border: 1px solid #e5e7eb;
+              border-radius: 12px;
               background: #ffffff;
               break-inside: avoid;
               page-break-inside: avoid;
+            }
+            .intro-card {
+              padding: 14px 16px;
+            }
+            .intro-title {
+              margin: 0;
+              font-size: 10px;
+              font-weight: 700;
+              letter-spacing: 0.12em;
+              text-transform: uppercase;
+              color: #6b7280;
+            }
+            .intro-value {
+              margin: 8px 0 0;
+              font-size: 13px;
+              line-height: 1.7;
+              color: #374151;
+              font-weight: 400;
             }
             table {
               width: 100%;
               border-collapse: collapse;
             }
             th, td {
-              padding: 14px 16px;
-              border-bottom: 1px solid #edf2f7;
+              padding: 12px 14px;
+              border-bottom: 1px solid #e5e7eb;
               text-align: left;
               vertical-align: top;
             }
@@ -508,75 +552,88 @@ const BookingDetails = () => {
             }
             th {
               width: 28%;
-              font-size: 11px;
+              font-size: 9px;
               letter-spacing: 0.12em;
               text-transform: uppercase;
-              color: ${brandColor};
-              font-weight: 800;
-              background: #fbfdff;
+              color: #6b7280;
+              font-weight: 700;
+              background: #f9fafb;
             }
             td {
-              font-size: 15px;
+              font-size: 13px;
               line-height: 1.7;
-              color: #0f172a;
-              font-weight: 600;
+              color: #111827;
+              font-weight: 500;
             }
             .day-card {
-              border: 1px solid #e2e8f0;
-              border-radius: 22px;
-              padding: 18px 20px;
-              margin-bottom: 14px;
-              background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+              border: 1px solid #e5e7eb;
+              border-radius: 12px;
+              padding: 14px 16px;
+              margin-bottom: 12px;
+              background: #ffffff;
               break-inside: avoid;
               page-break-inside: avoid;
             }
             .day-kicker {
               margin: 0;
-              font-size: 11px;
-              font-weight: 800;
-              letter-spacing: 0.18em;
+              font-size: 9px;
+              font-weight: 700;
+              letter-spacing: 0.14em;
               text-transform: uppercase;
-              color: ${brandColor};
+              color: #6b7280;
             }
             .day-title {
-              margin: 10px 0 0;
-              font-size: 20px;
-              line-height: 1.3;
-              color: #0f172a;
-              font-weight: 800;
+              margin: 8px 0 0;
+              font-size: 16px;
+              line-height: 1.35;
+              letter-spacing: -0.01em;
+              color: #111827;
+              font-weight: 700;
             }
             .day-plan {
-              margin: 10px 0 0;
-              font-size: 14px;
-              line-height: 1.85;
-              color: #475569;
+              margin: 8px 0 0;
+              font-size: 13px;
+              line-height: 1.75;
+              color: #4b5563;
               white-space: pre-line;
               font-weight: 400;
             }
             .notes-card {
-              border: 1px dashed #cbd5e1;
-              border-radius: 20px;
-              padding: 18px 20px;
-              background: #fcfefe;
+              border: 1px solid #e5e7eb;
+              border-radius: 12px;
+              padding: 14px 16px;
+              background: #ffffff;
               break-inside: avoid;
               page-break-inside: avoid;
             }
             .notes-text {
-              margin: 8px 0 0;
-              font-size: 14px;
-              line-height: 1.85;
-              color: #475569;
+              margin: 0;
+              font-size: 13px;
+              line-height: 1.75;
+              color: #4b5563;
               white-space: pre-line;
               font-weight: 400;
             }
-            .section {
-              break-inside: auto;
+            .footer-note {
+              margin-top: 18px;
+              padding-top: 12px;
+              border-top: 1px solid #e5e7eb;
+              font-size: 9px;
+              letter-spacing: 0.12em;
+              text-transform: uppercase;
+              color: #9ca3af;
+              font-weight: 600;
             }
             @media print {
+              body {
+                background: #ffffff;
+              }
               .sheet {
-                padding: 24px 26px 30px;
+                margin: 0 auto;
+                padding: 0;
               }
               .day-card,
+              .intro-card,
               .summary-card,
               .notes-card,
               table,
@@ -588,88 +645,113 @@ const BookingDetails = () => {
               }
             }
             @page {
-              margin: 12mm;
+              margin: 10mm;
             }
           </style>
         </head>
         <body>
           <div class="sheet">
-            <div class="topbar"></div>
             <div class="header">
-              <div>
-                <p class="eyebrow">${isCustomBooking ? "Custom Tour Plan" : "Standard Tour Plan"}</p>
-                <h1 class="title">${itinerary.title || "Created Tour Plan"}</h1>
-                <p class="subtitle">Prepared for ${booking.customer || "Customer"} from ${isCustomBooking ? `custom request ${booking.bookingCode || ""}` : `booking ${booking.bookingCode || ""}`}. This itinerary includes the approved route, plan structure, and final budget summary.</p>
-              </div>
-              <div class="meta-chip-wrap">
-                <div class="meta-chip">
-                  <div class="label">Booking Code</div>
-                  <div class="value">${booking.bookingCode || "-"}</div>
+              <div class="header-grid">
+                <div>
+                  <p class="eyebrow">${isCustomBooking ? "Custom Tour Plan" : "Standard Tour Plan"}</p>
+                  <h1 class="title">${itinerary.title || "Created Tour Plan"}</h1>
+                  <p class="subtitle">Prepared for ${booking.customer || "Customer"} from ${isCustomBooking ? `custom request ${booking.bookingCode || ""}` : `booking ${booking.bookingCode || ""}`}. This print view summarizes the approved route, travel setup, and day-wise itinerary in one clean document.</p>
                 </div>
-                <div class="meta-chip">
-                  <div class="label">Status</div>
-                  <div class="value">${prettifyValue(itinerary.status || "draft", "Draft")}</div>
-                </div>
-                <div class="meta-chip">
-                  <div class="label">Saved At</div>
-                  <div class="value">${itinerary.savedAt ? new Date(itinerary.savedAt).toLocaleString() : "Just now"}</div>
+                <div class="meta-panel">
+                  <div class="meta-grid">
+                    <div class="meta-card">
+                      <div class="label">Booking Code</div>
+                      <div class="value">${booking.bookingCode || "-"}</div>
+                    </div>
+                    <div class="meta-card">
+                      <div class="label">Plan Status</div>
+                      <div class="value">${prettifyValue(itinerary.status || "draft", "Draft")}</div>
+                    </div>
+                    <div class="meta-card">
+                      <div class="label">Saved At</div>
+                      <div class="value">${itinerary.savedAt ? new Date(itinerary.savedAt).toLocaleDateString() : "Just now"}</div>
+                    </div>
+                    <div class="meta-card">
+                      <div class="label">Budget</div>
+                      <div class="value">${itinerary.currency || booking.currency || "USD"} ${itinerary.finalBudget || booking.amount || 0}</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <section class="section">
-              <h2 class="section-title">Plan Summary</h2>
-              <div class="summary-card">
-                <table>
-                  <tbody>
-                    ${summaryRows
+            <div class="body">
+              <section class="section" style="margin-top:0;">
+                <h2 class="section-title">Overview</h2>
+                <div class="intro-grid">
+                  <div class="intro-card">
+                    <p class="intro-title">Prepared For</p>
+                    <p class="intro-value">${booking.customer || "Customer"}<br />${booking.email || "-"}<br />${booking.phone || "-"}</p>
+                  </div>
+                  <div class="intro-card">
+                    <p class="intro-title">${isCustomBooking ? "Trip Context" : "Booking Context"}</p>
+                    <p class="intro-value">${isCustomBooking ? `Requested destinations: ${request.preferredDestinations || "Flexible"}<br />Travel window: ${travelWindow || "Flexible"}` : `Tour: ${booking.tour || "Selected Tour"}<br />Travel date: ${standardDetails.travelDate || "Scheduled Tour"}`}</p>
+                  </div>
+                </div>
+              </section>
+
+              <section class="section">
+                <h2 class="section-title">Plan Summary</h2>
+                <div class="summary-card">
+                  <table>
+                    <tbody>
+                      ${summaryRows
+                        .map(
+                          ([label, value]) => `
+                            <tr>
+                              <th>${label}</th>
+                              <td>${value || "-"}</td>
+                            </tr>
+                          `,
+                        )
+                        .join("")}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+
+              <section class="section">
+                <h2 class="section-title">Day Wise Itinerary</h2>
+                ${printDays.length
+                  ? printDays
                       .map(
-                        ([label, value]) => `
-                          <tr>
-                            <th>${label}</th>
-                            <td>${value || "-"}</td>
-                          </tr>
+                        (item, index) => `
+                          <article class="day-card">
+                            <p class="day-kicker">Day ${index + 1}</p>
+                            <h3 class="day-title">${item.title || `Plan ${index + 1}`}</h3>
+                            <p class="day-plan">${item.plan || "No day plan added yet."}</p>
+                          </article>
                         `,
                       )
-                      .join("")}
-                  </tbody>
-                </table>
-              </div>
-            </section>
+                      .join("")
+                  : `
+                      <article class="day-card">
+                        <p class="day-kicker">Itinerary</p>
+                        <h3 class="day-title">Custom Plan</h3>
+                        <p class="day-plan">${(isCustomBooking ? request.requirements : standardDetails.requirements) || "No itinerary details added yet."}</p>
+                      </article>
+                    `}
+              </section>
 
-            <section class="section">
-              <h2 class="section-title">Day Wise Itinerary</h2>
-              ${printDays.length
-                ? printDays
-                    .map(
-                      (item, index) => `
-                        <article class="day-card">
-                          <p class="day-kicker">Day ${index + 1}</p>
-                          <h3 class="day-title">${item.title || `Plan ${index + 1}`}</h3>
-                          <p class="day-plan">${item.plan || "No day plan added yet."}</p>
-                        </article>
-                      `,
-                    )
-                    .join("")
-                : `
-                    <article class="day-card">
-                      <p class="day-kicker">Itinerary</p>
-                      <h3 class="day-title">Custom Plan</h3>
-                      <p class="day-plan">${(isCustomBooking ? request.requirements : standardDetails.requirements) || "No itinerary details added yet."}</p>
-                    </article>
-                  `}
-            </section>
+              ${extraNotes
+                ? `
+                  <section class="section">
+                    <h2 class="section-title">Extra Notes</h2>
+                    <div class="notes-card">
+                      <p class="notes-text">${extraNotes}</p>
+                    </div>
+                  </section>
+                `
+                : ""}
 
-            ${extraNotes
-              ? `
-                <section class="section">
-                  <h2 class="section-title">Extra Notes</h2>
-                  <div class="notes-card">
-                    <p class="notes-text">${extraNotes}</p>
-                  </div>
-                </section>
-              `
-              : ""}
+              <div class="footer-note">North Luxe Travel Plan Document</div>
+            </div>
           </div>
         </body>
       </html>
@@ -679,18 +761,18 @@ const BookingDetails = () => {
     setTimeout(() => win.print(), 350);
   };
   return (
-    <div className="mx-auto max-w-6xl space-y-3">
-      <div className="rounded-[1.9rem] border border-slate-200 bg-white p-6 shadow-[0_18px_40px_rgba(15,23,42,0.05)] md:p-7">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-          <div className="space-y-3">
-            <Link to="/admin/bookings" className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] text-slate-700 transition hover:border-[var(--c-brand)]/35 hover:text-[var(--c-brand)]">
+    <div className="mx-auto max-w-6xl space-y-1.5">
+      <div className="rounded-[1.1rem] border border-slate-200 bg-white p-3.5 shadow-[0_10px_24px_rgba(15,23,42,0.04)] md:p-4">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div className="space-y-1.5">
+            <Link to="/admin/bookings" className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-slate-700 transition hover:border-[var(--c-brand)]/35 hover:text-[var(--c-brand)]">
               <ArrowLeft size={14} />
               Back to Bookings
             </Link>
             <div>
-              <p className="text-[11px] font-black uppercase tracking-[0.18em] text-[var(--c-brand)]">Booking Details</p>
-              <h1 className="mt-2 text-[1.9rem] font-semibold tracking-[-0.04em] text-slate-950 md:text-[2.25rem]">Booking #{booking.bookingCode}</h1>
-              <p className="mt-2 text-sm text-slate-500">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">Booking Details</p>
+              <h1 className="mt-0.5 text-[1.35rem] font-semibold tracking-[-0.03em] text-slate-950 md:text-[1.6rem]">Booking #{booking.bookingCode}</h1>
+              <p className="mt-1 text-[12px] leading-5 text-slate-500">
                 {isCustomBooking
                   ? "Review the submitted custom trip request and create the itinerary inside the same request record."
                   : "Review customer details, payment progress, and booking setup in one place."}
@@ -698,13 +780,13 @@ const BookingDetails = () => {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2.5">
-            <span className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] ${statusStyles[booking.status] || "bg-slate-100 text-slate-700 border-slate-200"}`}>
+          <div className="flex flex-wrap gap-2">
+            <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.1em] ${statusStyles[booking.status] || "bg-slate-100 text-slate-700 border-slate-200"}`}>
               <BadgeCheck size={14} />
               {prettifyValue(booking.status, "Pending")}
             </span>
             {!isCustomBooking ? (
-              <span className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] ${paymentStyles[booking.payment] || "bg-slate-100 text-slate-700 border-slate-200"}`}>
+              <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.1em] ${paymentStyles[booking.payment] || "bg-slate-100 text-slate-700 border-slate-200"}`}>
                 <Wallet size={14} />
                 {booking.payment || "Pending"}
               </span>
@@ -712,15 +794,15 @@ const BookingDetails = () => {
           </div>
         </div>
 
-        <div className="mt-5 grid gap-2 md:grid-cols-4">
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5"><p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">Customer</p><p className="mt-1.5 text-sm font-semibold text-slate-900">{booking.customer || "-"}</p></div>
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5"><p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{isCustomBooking ? "Destinations" : "Tour"}</p><p className="mt-1.5 text-sm font-semibold text-slate-900">{isCustomBooking ? request.preferredDestinations : booking.tour || "-"}</p></div>
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5"><p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{isCustomBooking ? "Travel Window" : "Advance"}</p><p className="mt-1.5 text-sm font-semibold text-slate-900">{isCustomBooking ? travelWindow || "Flexible" : `${booking.currency} ${booking.advanceAmount || 0}`}</p></div>
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3.5"><p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">{isCustomBooking ? "Budget" : "Remaining"}</p><p className="mt-1.5 text-sm font-semibold text-slate-900">{isCustomBooking ? request.budget : `${booking.currency} ${booking.remainingAmount || 0}`}</p></div>
+        <div className="mt-2.5 grid gap-1.5 md:grid-cols-4">
+          <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"><p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">Customer</p><p className="mt-0.5 text-[13px] font-medium leading-5 text-slate-900">{booking.customer || "-"}</p></div>
+          <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"><p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{isCustomBooking ? "Destinations" : "Tour"}</p><p className="mt-0.5 text-[13px] font-medium leading-5 text-slate-900">{isCustomBooking ? request.preferredDestinations : booking.tour || "-"}</p></div>
+          <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"><p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{isCustomBooking ? "Travel Window" : "Advance"}</p><p className="mt-0.5 text-[13px] font-medium leading-5 text-slate-900">{isCustomBooking ? travelWindow || "Flexible" : `${booking.currency} ${booking.advanceAmount || 0}`}</p></div>
+          <div className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5"><p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-400">{isCustomBooking ? "Budget" : "Remaining"}</p><p className="mt-0.5 text-[13px] font-medium leading-5 text-slate-900">{isCustomBooking ? request.budget : `${booking.currency} ${booking.remainingAmount || 0}`}</p></div>
         </div>
       </div>
 
-      <div className="grid gap-3 xl:grid-cols-2">
+      <div className="grid gap-1.5 xl:grid-cols-2">
         <SectionCard icon={UserRound} title="Customer Info">
           <DetailRow label="Name" value={booking.customer} accent />
           <DetailRow label="Email" value={booking.email} />
@@ -810,128 +892,147 @@ const BookingDetails = () => {
       ) : null}
 
       {isItineraryFormOpen ? (
-        <section className="rounded-[1.6rem] border border-slate-200 bg-white p-5 shadow-[0_14px_30px_rgba(15,23,42,0.04)]">
+        <section className="rounded-[1.4rem] border border-slate-200 bg-white p-4 shadow-[0_14px_30px_rgba(15,23,42,0.04)]">
           <div className="border-b border-slate-100 pb-4">
             <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">Edit Itinerary</p>
-            <h2 className="mt-2 text-xl font-bold tracking-tight text-slate-950">Tour Plan Builder</h2>
-            <p className="mt-1 text-sm text-slate-500">The selected tour data is prefilled here. Update the itinerary and save it for this booking.</p>
+            <h2 className="mt-1.5 text-lg font-bold tracking-tight text-slate-950">Tour Plan Builder</h2>
+            <p className="mt-1 text-[13px] text-slate-500">The selected tour data is prefilled here. Update the itinerary and save it for this booking.</p>
           </div>
-          <form onSubmit={handleSaveItinerary} className="mt-5 grid gap-4 md:grid-cols-2">
+          <form onSubmit={handleSaveItinerary} className="mt-4 grid gap-3 md:grid-cols-2">
             <label className="space-y-2">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Itinerary Title</span>
-              <input className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.title} onChange={(e) => setItineraryForm((prev) => ({ ...prev, title: e.target.value }))} />
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Itinerary Title</span>
+              <input className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.title} onChange={(e) => setItineraryForm((prev) => ({ ...prev, title: e.target.value }))} />
             </label>
             <label className="space-y-2">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Route</span>
-              <input className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.route} onChange={(e) => setItineraryForm((prev) => ({ ...prev, route: e.target.value }))} />
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Route</span>
+              <input className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.route} onChange={(e) => setItineraryForm((prev) => ({ ...prev, route: e.target.value }))} />
             </label>
             <label className="space-y-2">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Duration</span>
-              <input className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.durationLabel} onChange={(e) => setItineraryForm((prev) => ({ ...prev, durationLabel: e.target.value }))} />
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Duration</span>
+              <input className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.durationLabel} onChange={(e) => setItineraryForm((prev) => ({ ...prev, durationLabel: e.target.value }))} />
             </label>
             <div className="grid grid-cols-[110px_minmax(0,1fr)] gap-3">
               <label className="space-y-2">
-                <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Currency</span>
-                <input className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.currency} onChange={(e) => setItineraryForm((prev) => ({ ...prev, currency: e.target.value }))} />
+                <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Currency</span>
+                <input className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.currency} onChange={(e) => setItineraryForm((prev) => ({ ...prev, currency: e.target.value }))} />
               </label>
               <label className="space-y-2">
-                <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Final Budget</span>
-                <input type="number" min="0" className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.finalBudget} onChange={(e) => setItineraryForm((prev) => ({ ...prev, finalBudget: Number(e.target.value || 0) }))} />
+                <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Final Budget</span>
+                <input type="number" min="0" className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.finalBudget} onChange={(e) => setItineraryForm((prev) => ({ ...prev, finalBudget: Number(e.target.value || 0) }))} />
               </label>
             </div>
             <label className="space-y-2">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Hotel Plan</span>
-              <input className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.hotelPlan} onChange={(e) => setItineraryForm((prev) => ({ ...prev, hotelPlan: e.target.value }))} />
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Hotel Plan</span>
+              <input className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.hotelPlan} onChange={(e) => setItineraryForm((prev) => ({ ...prev, hotelPlan: e.target.value }))} />
             </label>
             <label className="space-y-2">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Vehicle Plan</span>
-              <input className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.vehiclePlan} onChange={(e) => setItineraryForm((prev) => ({ ...prev, vehiclePlan: e.target.value }))} />
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Vehicle Plan</span>
+              <input className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.vehiclePlan} onChange={(e) => setItineraryForm((prev) => ({ ...prev, vehiclePlan: e.target.value }))} />
             </label>
             <label className="space-y-2 md:col-span-2">
               <div className="flex items-center justify-between gap-3">
-                <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Day-wise Itinerary</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Day-wise Itinerary</span>
                 <button
                   type="button"
-                  onClick={() =>
+                  onClick={() => {
                     setItineraryForm((prev) => ({
                       ...prev,
                       planDays: [...prev.planDays, { title: "", plan: "" }],
-                    }))
-                  }
-                  className="inline-flex items-center gap-2 rounded-lg border border-sky-200 px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-sky-700 transition hover:bg-sky-50"
+                    }));
+                    setOpenPlanDay(itineraryForm.planDays.length);
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-sky-200 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-sky-700 transition hover:bg-sky-50"
                 >
-                  <PlusSquare size={14} />
+                  <PlusSquare size={13} />
                   Add Day
                 </button>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {itineraryForm.planDays.map((item, index) => (
-                  <div key={`itinerary-day-${index}`} className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <p className="text-sm font-bold text-slate-900">{`Day ${index + 1}`}</p>
-                      {itineraryForm.planDays.length > 1 ? (
-                        <button
-                          type="button"
-                          onClick={() =>
+                  <div key={`itinerary-day-${index}`} className="overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
+                    <button
+                      type="button"
+                      onClick={() => setOpenPlanDay((prev) => (prev === index ? -1 : index))}
+                      className="flex w-full items-center justify-between gap-3 px-3 py-2.5 text-left"
+                    >
+                      <p className="text-sm font-medium text-slate-900">{`Day ${index + 1}${item.title ? `: ${item.title}` : ""}`}</p>
+                      <div className="flex items-center gap-2">
+                        <ChevronDown size={15} className={`text-slate-500 transition-transform ${openPlanDay === index ? "rotate-180" : ""}`} />
+                      </div>
+                    </button>
+
+                    {openPlanDay === index ? (
+                      <div className="space-y-2 border-t border-slate-200 px-3 py-3">
+                        <input
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 outline-none focus:border-sky-300"
+                          value={item.title}
+                          onChange={(e) =>
                             setItineraryForm((prev) => ({
                               ...prev,
-                              planDays: prev.planDays.filter((_, dayIndex) => dayIndex !== index),
+                              planDays: prev.planDays.map((dayItem, dayIndex) =>
+                                dayIndex === index ? { ...dayItem, title: e.target.value } : dayItem,
+                              ),
                             }))
                           }
-                          className="text-xs font-bold uppercase tracking-[0.12em] text-rose-600 transition hover:text-rose-700"
-                        >
-                          Remove
-                        </button>
-                      ) : null}
-                    </div>
-                    <div className="space-y-3">
-                      <input
-                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300"
-                        value={item.title}
-                        onChange={(e) =>
-                          setItineraryForm((prev) => ({
-                            ...prev,
-                            planDays: prev.planDays.map((dayItem, dayIndex) =>
-                              dayIndex === index ? { ...dayItem, title: e.target.value } : dayItem,
-                            ),
-                          }))
-                        }
-                        placeholder="Day title e.g. Arrival in Skardu"
-                      />
-                      <textarea
-                        rows={5}
-                        className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300"
-                        value={item.plan}
-                        onChange={(e) =>
-                          setItineraryForm((prev) => ({
-                            ...prev,
-                            planDays: prev.planDays.map((dayItem, dayIndex) =>
-                              dayIndex === index ? { ...dayItem, plan: e.target.value } : dayItem,
-                            ),
-                          }))
-                        }
-                        placeholder="Add the day plan, places covered, transport, meals, and highlights."
-                      />
-                    </div>
+                          placeholder="Day title"
+                        />
+                        <textarea
+                          rows={4}
+                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 outline-none focus:border-sky-300"
+                          value={item.plan}
+                          onChange={(e) =>
+                            setItineraryForm((prev) => ({
+                              ...prev,
+                              planDays: prev.planDays.map((dayItem, dayIndex) =>
+                                dayIndex === index ? { ...dayItem, plan: e.target.value } : dayItem,
+                              ),
+                            }))
+                          }
+                          placeholder="Short day plan"
+                        />
+                        {itineraryForm.planDays.length > 1 ? (
+                          <div className="flex justify-end">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setItineraryForm((prev) => ({
+                                  ...prev,
+                                  planDays: prev.planDays.filter((_, dayIndex) => dayIndex !== index),
+                                }));
+                                setOpenPlanDay((prev) => {
+                                  if (prev === index) return Math.max(0, index - 1);
+                                  if (prev > index) return prev - 1;
+                                  return prev;
+                                });
+                              }}
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-rose-200 px-3 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 hover:text-rose-700"
+                            >
+                              <Trash2 size={12} />
+                              Remove Day
+                            </button>
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
                   </div>
                 ))}
               </div>
             </label>
             <label className="space-y-2 md:col-span-2">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Extra Notes</span>
-              <textarea rows={5} className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.planDetails} onChange={(e) => setItineraryForm((prev) => ({ ...prev, planDetails: e.target.value }))} placeholder="Add overall notes, inclusions, exclusions, payment notes, or anything extra for the final tour plan." />
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Extra Notes</span>
+              <textarea rows={4} className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.planDetails} onChange={(e) => setItineraryForm((prev) => ({ ...prev, planDetails: e.target.value }))} placeholder="Extra notes" />
             </label>
             <label className="space-y-2 md:col-span-2 max-w-[220px]">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-500">Plan Status</span>
-              <select className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.status} onChange={(e) => setItineraryForm((prev) => ({ ...prev, status: e.target.value }))}>
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Plan Status</span>
+              <select className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.status} onChange={(e) => setItineraryForm((prev) => ({ ...prev, status: e.target.value }))}>
                 <option value="draft">Draft</option>
                 <option value="final">Final</option>
               </select>
             </label>
             <div className="md:col-span-2 flex flex-wrap gap-3 pt-2">
-              <button type="submit" className="inline-flex items-center gap-2 rounded-xl bg-sky-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-sky-700"><FileText size={16} />Save Itinerary</button>
-              <button type="button" onClick={handlePrintTourPlan} className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 px-5 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"><Printer size={16} />Print Final Itinerary</button>
-              <button type="button" onClick={() => setIsItineraryFormOpen(false)} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Close</button>
+              <button type="submit" className="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-700"><FileText size={15} />Save Itinerary</button>
+              <button type="button" onClick={handlePrintTourPlan} className="inline-flex items-center gap-2 rounded-lg border border-emerald-200 px-4 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"><Printer size={15} />Print Final Itinerary</button>
+              <button type="button" onClick={() => setIsItineraryFormOpen(false)} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Close</button>
             </div>
           </form>
         </section>
@@ -955,32 +1056,32 @@ const BookingDetails = () => {
         </SectionCard>
       ) : null}
 
-      <div className="rounded-[1.6rem] border border-slate-200 bg-white p-5 shadow-[0_14px_30px_rgba(15,23,42,0.04)]">
-        <div className="flex flex-wrap gap-3">
-          <>
-            <button onClick={handleOpenItineraryEditor} className="inline-flex items-center gap-2 rounded-xl border border-sky-200 px-5 py-3 text-sm font-semibold text-sky-700 transition hover:bg-sky-50">
-              <PencilLine size={16} />
+      <div className="rounded-[1rem] border border-slate-200 bg-white p-3 shadow-[0_8px_18px_rgba(15,23,42,0.03)]">
+        <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-wrap gap-2">
+            <button onClick={handleOpenItineraryEditor} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50/70 px-3.5 py-2 text-[13px] font-medium text-sky-700 transition hover:bg-sky-100/80">
+              <PencilLine size={14} />
               Edit Itinerary
             </button>
             {!isCustomBooking ? (
               <>
                 {booking.status === "pending" ? (
-                  <button onClick={() => updateStatus("confirmed")} className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700"><BadgeCheck size={16} />Confirm Booking</button>
+                  <button onClick={() => updateStatus("confirmed")} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[var(--c-brand)] px-3.5 py-2 text-[13px] font-medium text-white transition hover:opacity-95"><BadgeCheck size={14} />Confirm Booking</button>
                 ) : null}
                 {booking.status !== "cancelled" ? (
-                  <button onClick={() => updateStatus("cancelled")} className="inline-flex items-center gap-2 rounded-xl border border-rose-200 px-5 py-3 text-sm font-semibold text-rose-600 transition hover:bg-rose-50"><XCircle size={16} />Cancel Booking</button>
+                  <button onClick={() => updateStatus("cancelled")} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-rose-200 bg-rose-50/70 px-3.5 py-2 text-[13px] font-medium text-rose-600 transition hover:bg-rose-100/80"><XCircle size={14} />Cancel Booking</button>
                 ) : null}
                 {!booking.paymentVerified && booking.paymentMethod !== "pay_on_arrival" ? (
-                  <button onClick={verifyAdvancePayment} className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 px-5 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"><Wallet size={16} />Verify Advance Payment</button>
+                  <button onClick={verifyAdvancePayment} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50/70 px-3.5 py-2 text-[13px] font-medium text-emerald-700 transition hover:bg-emerald-100/80"><Wallet size={14} />Verify Advance Payment</button>
                 ) : null}
               </>
             ) : null}
-          </>
-          <div className="ml-auto flex flex-wrap gap-3">
+          </div>
+          <div className="flex flex-wrap gap-2 lg:justify-end">
             {hasSavedItinerary ? (
-              <button onClick={handlePrintTourPlan} className="inline-flex items-center gap-2 rounded-xl border border-emerald-200 px-5 py-3 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"><Printer size={16} />Print Tour Plan</button>
+              <button onClick={handlePrintTourPlan} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50/60 px-3.5 py-2 text-[13px] font-medium text-emerald-700 transition hover:bg-emerald-100/80"><Printer size={14} />Print Tour Plan</button>
             ) : null}
-            <Link to="/admin/bookings" className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-5 py-3 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"><ArrowLeft size={16} />Back to List</Link>
+            <Link to="/admin/bookings" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2 text-[13px] font-medium text-slate-700 transition hover:bg-slate-100"><ArrowLeft size={14} />Back to List</Link>
           </div>
         </div>
       </div>

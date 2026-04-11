@@ -131,15 +131,15 @@ function Calendar({
           ) : null}
 
           {openMenu === "year" ? (
-            <div className="absolute right-0 top-full z-20 mt-2 w-20 rounded-xl border border-slate-200 bg-white p-1.5 shadow-[0_18px_36px_rgba(15,23,42,0.12)] sm:w-24">
-              <div className="max-h-44 overflow-y-auto pr-1 sm:max-h-56">
+            <div className="absolute right-0 top-full z-20 mt-2 w-[4.5rem] rounded-xl border border-slate-200 bg-white p-1 shadow-[0_18px_36px_rgba(15,23,42,0.12)] sm:w-[5rem]">
+              <div className="calendar-year-scroll max-h-44 overflow-y-auto sm:max-h-56">
                 {years.map((item) => (
                   <button
                     key={item}
                     type="button"
                     onClick={() => selectYear(item)}
                     className={cn(
-                      "flex w-full rounded-lg px-2 py-1.5 text-xs font-medium transition sm:py-2 sm:text-sm",
+                      "flex w-full rounded-lg px-1.5 py-1.5 text-[11px] font-medium transition sm:py-2 sm:text-xs",
                       item === displayMonth.getFullYear()
                         ? "bg-slate-950 text-white"
                         : "text-slate-700 hover:bg-slate-100",
@@ -169,14 +169,14 @@ function Calendar({
         onMonthChange={handleMonthChange}
         className="p-0"
         classNames={{
-          months: "flex flex-col",
-          month: "space-y-3",
+          months: "flex flex-col items-stretch",
+          month: "w-full space-y-3",
           month_caption: "hidden",
           nav: "hidden",
           month_grid: "w-full border-collapse",
-          weekdays: "flex",
-          weekday: "w-8 text-center text-[10px] font-normal text-slate-500 sm:w-9 sm:text-[11px]",
-          week: "mt-1.5 flex w-max",
+          weekdays: "flex w-full justify-between",
+          weekday: "flex h-8 w-8 items-center justify-center text-center text-[10px] font-normal text-slate-500 sm:h-9 sm:w-9 sm:text-[11px]",
+          week: "mt-1.5 flex w-full justify-between",
           day: "h-8 w-8 p-0 text-center text-sm sm:h-9 sm:w-9",
           day_button:
             "h-8 w-8 rounded-full p-0 text-sm font-normal text-slate-900 transition hover:bg-slate-100 sm:h-9 sm:w-9 sm:text-[15px]",

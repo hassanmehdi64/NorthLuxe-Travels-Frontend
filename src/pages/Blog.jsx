@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import BlogHero from "../components/blog/BlogHero";
+import PageHero from "../components/common/PageHero";
 import BlogGrid from "../components/blog/BlogGrid";
 import BlogSidebar from "../components/blog/BlogSidebar";
 import BlogPagination from "../components/blog/BlogPagination";
@@ -49,7 +49,14 @@ const BlogPage = () => {
 
   return (
     <main className="bg-theme-bg">
-      <BlogHero />
+      <PageHero
+        page="blog"
+        label="Blog hero"
+        tag="Blog"
+        title="Travel"
+        accent="Journal"
+        text="Stories, guides, and field insights for planning unforgettable journeys across Gilgit-Baltistan."
+      />
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14 lg:py-16 grid lg:grid-cols-4 gap-6 lg:gap-10">
         {/* Blog List */}

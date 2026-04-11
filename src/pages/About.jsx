@@ -1,4 +1,4 @@
-import HeroSection from "../components/about/HeroSection";
+import PageHero from "../components/common/PageHero";
 import OurStory from "../components/about/OurStory";
 import TeamSection from "../components/about/TeamSection";
 import GallerySection from "../components/about/GallerySection";
@@ -7,7 +7,14 @@ import RelatedSection from "../components/about/RelatedSection";
 const About = () => {
   return (
     <main className="bg-theme-bg text-theme">
-      <HeroSection />
+      <PageHero
+        page="about"
+        label="About hero"
+        tag="About"
+        title="About"
+        accent="North Luxe"
+        text="We combine local knowledge, practical planning, and reliable on-ground support so every trip feels smooth, safe, and memorable."
+      />
       <OurStory />
       <TeamSection />
       <RelatedSection />

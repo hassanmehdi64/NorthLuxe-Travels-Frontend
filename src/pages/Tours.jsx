@@ -1,4 +1,4 @@
-import ToursHero from "../components/tours/ToursHero";
+import PageHero from "../components/common/PageHero";
 import ToursFilter from "../components/tours/ToursFilter";
 import ToursList from "../components/tours/ToursList";
 import { useEffect, useMemo, useState } from "react";
@@ -97,7 +97,13 @@ const Tours = () => {
 
   return (
     <main className="bg-theme-bg text-theme">
-      <ToursHero />
+      <PageHero
+        page="tours"
+        label="Tours hero"
+        tag="Explore Tours"
+        title="Discover Pakistan Beautifully"
+        text="Browse verified tour plans with transparent pricing, trusted support, and smooth booking from start to finish."
+      />
       <ToursFilter
         filters={filters}
         setFilters={setFilters}

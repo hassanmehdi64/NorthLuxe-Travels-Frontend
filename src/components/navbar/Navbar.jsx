@@ -2,6 +2,8 @@ import { createElement, useEffect, useMemo, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import { Heart, Menu, Search, ShoppingBag, X } from "lucide-react";
 import { getCart, getWishlist } from "../../features/commerce/storage";
+import { useSettings } from "../../hooks/useCms";
+import { getNavbarColors } from "../../lib/siteTheme";
 
 const ActionLink = ({ to, icon, label, count = 0 }) => (
   <Link
@@ -20,6 +22,7 @@ const ActionLink = ({ to, icon, label, count = 0 }) => (
 );
 
 const Navbar = () => {
+  const { data: settings } = useSettings(true);
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -77,15 +80,17 @@ const Navbar = () => {
   }, [isOpen]);
 
   const handleLinkClick = () => setIsOpen(false);
+  const navColors = getNavbarColors(settings);
 
   return (
     <>
       <nav
         className={`fixed inset-x-0 top-0 z-40 border-b transition-all duration-300 ${
           isScrolled
-            ? "border-white/15 bg-[rgba(9,20,41,0.94)] shadow-[0_10px_30px_rgba(2,8,23,0.2)] backdrop-blur-xl"
-            : "border-white/10 bg-[rgba(9,20,41,0.88)] backdrop-blur-md"
+            ? "border-white/15 shadow-[0_10px_30px_rgba(2,8,23,0.2)] backdrop-blur-xl"
+            : "border-white/10 backdrop-blur-md"
         }`}
+        style={{ background: isScrolled ? navColors.scrolled : navColors.main }}
       >
         <div className="w-full px-4 sm:px-6 lg:px-10">
           <div className="flex h-15 items-center justify-between gap-2.5 sm:h-16 sm:gap-4">
@@ -152,11 +157,12 @@ const Navbar = () => {
 
       <div
         id="mobile-navbar-drawer"
-        className={`fixed inset-0 z-40 origin-top overflow-hidden bg-[rgba(9,20,41,0.985)] transition-[max-height,opacity] duration-200 ease-out sm:left-auto sm:right-6 sm:top-[4.5rem] sm:bottom-auto sm:h-auto sm:max-h-[calc(100vh-6rem)] sm:w-[24rem] sm:rounded-2xl sm:border sm:border-white/12 sm:shadow-[0_20px_50px_rgba(2,8,23,0.32)] xl:hidden ${
+        className={`fixed inset-0 z-40 origin-top overflow-hidden transition-[max-height,opacity] duration-200 ease-out sm:left-auto sm:right-6 sm:top-[4.5rem] sm:bottom-auto sm:h-auto sm:max-h-[calc(100vh-6rem)] sm:w-[24rem] sm:rounded-2xl sm:border sm:border-white/12 sm:shadow-[0_20px_50px_rgba(2,8,23,0.32)] xl:hidden ${
           isOpen
             ? "pointer-events-auto max-h-screen opacity-100 sm:max-h-[calc(100vh-6rem)]"
             : "pointer-events-none max-h-0 opacity-0"
         }`}
+        style={{ background: navColors.mobile }}
       >
         <div className="flex h-screen flex-col overflow-hidden sm:h-auto sm:max-h-[calc(100vh-6rem)]">
           <div className="flex h-15 items-center justify-between gap-3 border-b border-white/10 px-4 sm:hidden">

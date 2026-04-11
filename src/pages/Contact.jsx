@@ -1,4 +1,4 @@
-import ContactHero from "../components/contact/ontactHero";
+import PageHero from "../components/common/PageHero";
 import ContactInfo from "../components/contact/ContactInfo";
 import ContactForm from "../components/contact/ContactForm";
 import ContactMap from "../components/contact/ContactMap";
@@ -6,7 +6,13 @@ import ContactMap from "../components/contact/ContactMap";
 const ContactPage = () => {
   return (
     <main className="bg-theme-bg">
-      <ContactHero />
+      <PageHero
+        page="contact"
+        label="Contact hero"
+        tag="Contact"
+        title="Plan Your Trip With Confidence"
+        text="Send your travel requirements and our team will respond with clear guidance, itinerary options, and practical support."
+      />
 
       <section className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 py-10 lg:py-12 grid lg:grid-cols-2 gap-5 lg:gap-6">
         <ContactInfo />

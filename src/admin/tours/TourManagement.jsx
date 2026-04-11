@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Edit2, Plus, Printer, Trash2, X, Map, ListTodo } from "lucide-react";
+import { ChevronDown, Edit2, Plus, Printer, Trash2, X, Map, ListTodo } from "lucide-react";
 import { useAdminTours, useCreateTour, useDeleteTour, useUpdateTour, useUpdateBooking } from "../../hooks/useCms";
 import { useToast } from "../../context/ToastContext";
 import { getApiErrorMessage } from "../../lib/apiError";
@@ -11,6 +11,7 @@ const initialForm = {
   durationDays: 5,
   durationLabel: "",
   price: 0,
+  discountPercent: 0,
   currency: "USD",
   image: "",
   shortDescription: "",
@@ -47,6 +48,7 @@ const TourManagement = () => {
   const [sourceBookingId, setSourceBookingId] = useState("");
   const [sourceBookingCode, setSourceBookingCode] = useState("");
   const [tourAction, setTourAction] = useState({ type: "", tour: null });
+  const [isItineraryOpen, setIsItineraryOpen] = useState(false);
 
   useEffect(() => {
     const prefill = location.state?.prefill;
@@ -58,6 +60,7 @@ const TourManagement = () => {
     setSourceBookingId(nextBookingId);
     setSourceBookingCode(nextBookingCode);
     setIsFormOpen(true);
+    setIsItineraryOpen(false);
     setForm({
       ...initialForm,
       ...prefill,
@@ -186,6 +189,7 @@ const TourManagement = () => {
       setForm(initialForm);
       setSourceBookingId("");
       setSourceBookingCode("");
+      setIsItineraryOpen(false);
       closeTourAction();
     } catch (error) {
       toast.error("Save failed", getApiErrorMessage(error, "Could not save tour."));
@@ -219,6 +223,7 @@ const TourManagement = () => {
             setSourceBookingId("");
             setSourceBookingCode("");
             setForm(initialForm);
+            setIsItineraryOpen(false);
             setIsFormOpen((value) => !value);
           }}
           className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-slate-900 text-white text-sm font-bold"
@@ -257,6 +262,10 @@ const TourManagement = () => {
             <input className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100" type="number" placeholder="Price" value={form.price} onChange={(e) => setForm((p) => ({ ...p, price: Number(e.target.value) }))} required />
           </label>
           <label className="space-y-2">
+            <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Discount %</span>
+            <input className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100" type="number" min="0" max="95" placeholder="e.g. 15" value={form.discountPercent} onChange={(e) => setForm((p) => ({ ...p, discountPercent: Math.max(0, Math.min(95, Number(e.target.value || 0))) }))} />
+          </label>
+          <label className="space-y-2">
             <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Available Seats</span>
             <input className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100" type="number" placeholder="Seats" value={form.availableSeats} onChange={(e) => setForm((p) => ({ ...p, availableSeats: Number(e.target.value) }))} />
           </label>
@@ -272,84 +281,101 @@ const TourManagement = () => {
             <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Detailed Description</span>
             <textarea rows={5} className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100" placeholder="Tour overview, highlights, inclusions, and important notes" value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} />
           </label>
-          <div className="md:col-span-3 rounded-3xl border border-slate-200 bg-slate-50 p-5 dark:border-slate-700 dark:bg-slate-800/70">
-            <div className="flex items-center justify-between gap-3">
+          <div className="md:col-span-3 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800/70">
+            <button
+              type="button"
+              onClick={() => setIsItineraryOpen((value) => !value)}
+              className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition hover:bg-slate-100/70 dark:hover:bg-slate-800"
+            >
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--c-brand)]">Standard Tour Itinerary</p>
-                <h3 className="mt-2 text-lg font-bold text-slate-900 dark:text-slate-100">Day-wise plan builder</h3>
+                <h3 className="mt-1 text-sm font-bold text-slate-900 dark:text-slate-100">Day-wise Itinerary</h3>
               </div>
-              <button
-                type="button"
-                onClick={() =>
-                  setForm((p) => ({
-                    ...p,
-                    itinerary: [...p.itinerary, { day: p.itinerary.length + 1, title: "", description: "" }],
-                  }))
-                }
-                className="inline-flex items-center gap-2 rounded-xl border border-sky-200 bg-white px-4 py-2.5 text-xs font-black uppercase tracking-[0.14em] text-sky-700 transition hover:bg-sky-50 dark:bg-slate-900"
-              >
-                <Plus size={14} />
-                Add Day
-              </button>
-            </div>
-            <div className="mt-4 space-y-3">
-              {form.itinerary.map((item, index) => (
-                <div key={`tour-itinerary-${index}`} className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900">
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <div className="inline-flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-slate-100">
-                      <ListTodo size={16} className="text-[var(--c-brand)]" />
-                      {`Day ${index + 1}`}
-                    </div>
-                    {form.itinerary.length > 1 ? (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setForm((p) => ({
-                            ...p,
-                            itinerary: p.itinerary
-                              .filter((_, itineraryIndex) => itineraryIndex !== index)
-                              .map((entry, entryIndex) => ({ ...entry, day: entryIndex + 1 })),
-                          }))
-                        }
-                        className="inline-flex items-center gap-1 text-xs font-bold uppercase tracking-[0.12em] text-rose-600 transition hover:text-rose-700"
-                      >
-                        <X size={14} />
-                        Remove
-                      </button>
-                    ) : null}
-                  </div>
-                  <div className="grid gap-3 md:grid-cols-[260px_minmax(0,1fr)]">
-                    <input
-                      className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
-                      placeholder="Day title e.g. Arrival in Hunza"
-                      value={item.title}
-                      onChange={(e) =>
-                        setForm((p) => ({
-                          ...p,
-                          itinerary: p.itinerary.map((entry, entryIndex) =>
-                            entryIndex === index ? { ...entry, title: e.target.value } : entry,
-                          ),
-                        }))
-                      }
-                    />
-                    <textarea
-                      rows={4}
-                      className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
-                      placeholder="Describe the day plan, sightseeing, hotel stay, transport, and highlights"
-                      value={item.description}
-                      onChange={(e) =>
-                        setForm((p) => ({
-                          ...p,
-                          itinerary: p.itinerary.map((entry, entryIndex) =>
-                            entryIndex === index ? { ...entry, description: e.target.value } : entry,
-                          ),
-                        }))
-                      }
-                    />
-                  </div>
+              <ChevronDown
+                size={16}
+                className={`text-slate-500 transition-transform duration-200 ${isItineraryOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+
+            {isItineraryOpen ? (
+              <div className="border-t border-slate-200 px-4 py-4 dark:border-slate-700">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-300">Add each day briefly and keep the plan easy to scan.</p>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm((p) => ({
+                        ...p,
+                        itinerary: [...p.itinerary, { day: p.itinerary.length + 1, title: "", description: "" }],
+                      }))
+                    }
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-sky-200 bg-white px-3 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-sky-700 transition hover:bg-sky-50 dark:bg-slate-900"
+                  >
+                    <Plus size={13} />
+                    Add Day
+                  </button>
                 </div>
-              ))}
-            </div>
+
+                <div className="mt-3 space-y-2.5">
+                  {form.itinerary.map((item, index) => (
+                    <div key={`tour-itinerary-${index}`} className="rounded-xl border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900">
+                      <div className="mb-2 flex items-center justify-between gap-3">
+                        <div className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-900 dark:text-slate-100">
+                          <ListTodo size={14} className="text-[var(--c-brand)]" />
+                          {`Day ${index + 1}`}
+                        </div>
+                        {form.itinerary.length > 1 ? (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setForm((p) => ({
+                                ...p,
+                                itinerary: p.itinerary
+                                  .filter((_, itineraryIndex) => itineraryIndex !== index)
+                                  .map((entry, entryIndex) => ({ ...entry, day: entryIndex + 1 })),
+                              }))
+                            }
+                            className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-[0.12em] text-rose-600 transition hover:text-rose-700"
+                          >
+                            <X size={12} />
+                            Remove
+                          </button>
+                        ) : null}
+                      </div>
+                      <div className="grid gap-2 md:grid-cols-[220px_minmax(0,1fr)]">
+                        <input
+                          className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
+                          placeholder="Day title"
+                          value={item.title}
+                          onChange={(e) =>
+                            setForm((p) => ({
+                              ...p,
+                              itinerary: p.itinerary.map((entry, entryIndex) =>
+                                entryIndex === index ? { ...entry, title: e.target.value } : entry,
+                              ),
+                            }))
+                          }
+                        />
+                        <textarea
+                          rows={3}
+                          className="w-full rounded-lg border border-slate-200 p-2.5 text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100"
+                          placeholder="Short day plan"
+                          value={item.description}
+                          onChange={(e) =>
+                            setForm((p) => ({
+                              ...p,
+                              itinerary: p.itinerary.map((entry, entryIndex) =>
+                                entryIndex === index ? { ...entry, description: e.target.value } : entry,
+                              ),
+                            }))
+                          }
+                        />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </div>
           <label className="md:col-span-3 space-y-2">
             <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Allowed Hotel Category Keys</span>
@@ -427,7 +453,16 @@ const TourManagement = () => {
                     </p>
                     <p className="text-xs text-slate-400">{tour.location}</p>
                   </td>
-                  <td className="px-6 py-4 font-bold">{tour.currency} {tour.price}</td>
+                  <td className="px-6 py-4 font-bold">
+                    <div className="flex items-center gap-2">
+                      <span>{tour.currency} {tour.price}</span>
+                      {Number(tour.discountPercent || 0) > 0 ? (
+                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.12em] text-amber-700">
+                          {tour.discountPercent}% Off
+                        </span>
+                      ) : null}
+                    </div>
+                  </td>
                   <td className="px-6 py-4">{tour.availableSeats}</td>
                   <td className="px-6 py-4 capitalize">{tour.status}</td>
                   <td className="px-6 py-4">
@@ -446,6 +481,7 @@ const TourManagement = () => {
                           setIsFormOpen(true);
                           setSourceBookingId("");
                           setSourceBookingCode("");
+                          setIsItineraryOpen(false);
                           setForm({
                             ...initialForm,
                             ...tour,

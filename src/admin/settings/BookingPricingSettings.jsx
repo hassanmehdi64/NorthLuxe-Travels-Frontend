@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { ChevronDown, Plus, Trash2 } from "lucide-react";
 import {
   SUPPORTED_PAYMENT_METHODS,
   ensurePaymentConfig,
@@ -90,6 +90,25 @@ const ACCOUNT_DETAIL_TABS = [
   { key: "extra", label: "Extra" },
   { key: "notes", label: "Notes" },
 ];
+
+const SECTION_META = {
+  methods: {
+    title: "Payments",
+    text: "Manage payment methods and receiving accounts.",
+  },
+  pricing: {
+    title: "Pricing",
+    text: "Update booking charges and core rate values.",
+  },
+  hotels: {
+    title: "Hotels",
+    text: "Edit hotel categories and their daily rates.",
+  },
+  vehicles: {
+    title: "Vehicles",
+    text: "Edit vehicle types and their daily rates.",
+  },
+};
 
 const BookingPricingSettings = ({ settings, setSettings }) => {
   const pricing = ensurePricingShape(settings);
@@ -348,20 +367,28 @@ const BookingPricingSettings = ({ settings, setSettings }) => {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 rounded-[1.5rem] border border-slate-200 bg-white p-2">
+      <div className="space-y-3">
         {SETTINGS_TABS.map((tab) => (
-          <button
-            key={tab.key}
-            type="button"
-            onClick={() => setActiveSettingsTab(tab.key)}
-            className={`rounded-xl px-4 py-2.5 text-sm font-bold transition ${
-              activeSettingsTab === tab.key
-                ? "bg-slate-900 text-white"
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
-            }`}
-          >
-            {tab.label}
-          </button>
+          <div key={tab.key} className="overflow-hidden rounded-[1.5rem] border border-slate-200 bg-white shadow-sm">
+            <button
+              type="button"
+              onClick={() =>
+                setActiveSettingsTab((current) => (current === tab.key ? "" : tab.key))
+              }
+              className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left transition hover:bg-slate-50/80"
+            >
+              <div>
+                <p className="text-sm font-bold text-slate-900">{SECTION_META[tab.key]?.title || tab.label}</p>
+                <p className="mt-1 text-xs text-slate-400">{SECTION_META[tab.key]?.text || ""}</p>
+              </div>
+              <ChevronDown
+                size={18}
+                className={`text-slate-400 transition-transform duration-200 ${
+                  activeSettingsTab === tab.key ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+          </div>
         ))}
       </div>
 

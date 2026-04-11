@@ -26,6 +26,22 @@ const cardReveal = {
   }),
 };
 
+const getDiscountPercent = (tour) => {
+  const directPercent = Number(tour?.discountPercent ?? tour?.discount ?? tour?.salePercent ?? 0);
+  if (directPercent > 0) return Math.round(directPercent);
+
+  const originalPrice = Number(tour?.originalPrice || 0);
+  const currentPrice = Number(tour?.price || 0);
+  if (originalPrice > currentPrice && currentPrice > 0) {
+    const percentOff = Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
+    if (percentOff > 0) return percentOff;
+  }
+
+  return 0;
+};
+
+const formatMoney = (currency, amount) => `${currency} ${Number(amount || 0).toLocaleString()}`;
+
 const TourCard = ({ tour, index = 0 }) => {
   const toast = useToast();
   const seatsLeft = Number(tour?.availableSeats || 0);
@@ -40,6 +56,9 @@ const TourCard = ({ tour, index = 0 }) => {
   const totalDays = Number(tour?.durationDays || 0);
   const placesLabel = getTourPlacesLabel(tour, buildDisplayItinerary(tour));
   const cardDelay = Math.min(index * 0.08, 0.36);
+  const discountPercent = getDiscountPercent(tour);
+  const currentPrice = Number(tour?.price || 0);
+  const showDiscountPriceBadge = discountPercent > 0 && currentPrice > 0;
 
   const handleWishlist = () => {
     const added = toggleWishlist(tour);
@@ -75,6 +94,37 @@ const TourCard = ({ tour, index = 0 }) => {
           whileHover={{ scale: 1.045 }}
           transition={{ duration: 1.15, ease: [0.16, 1, 0.3, 1] }}
         />
+
+        {showDiscountPriceBadge ? (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.82, y: -10, rotate: -8 }}
+            whileInView={{ opacity: 1, scale: 1, y: 0, rotate: -6 }}
+            whileHover={{ y: -2, rotate: -9, scale: 1.03 }}
+            transition={{ duration: 0.45, delay: cardDelay + 0.1, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true, amount: 0.6 }}
+            className="absolute right-3 top-3 z-[2]"
+          >
+            <motion.div
+              animate={{
+                boxShadow: [
+                  "0 10px 22px rgba(249,115,22,0.28)",
+                  "0 14px 30px rgba(244,63,94,0.42)",
+                  "0 10px 22px rgba(249,115,22,0.28)",
+                ],
+                opacity: [1, 0.72, 1],
+              }}
+              transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
+              className="rounded-full border border-white/80 bg-gradient-to-r from-rose-500 via-orange-500 to-amber-400 px-3 py-1.5 text-white"
+            >
+              <div className="text-[9px] font-black uppercase tracking-[0.16em] leading-none">
+                {discountPercent}% OFF
+              </div>
+              <div className="mt-1 text-[11px] font-black leading-none">
+                {formatMoney(tour?.currency, currentPrice)}
+              </div>
+            </motion.div>
+          </motion.div>
+        ) : null}
 
         <div className="absolute bottom-3 left-3 flex gap-1.5">
           <div className="bg-theme-text/80 backdrop-blur-md text-white px-2 py-1 rounded-lg flex items-center gap-1 text-[10px] font-bold">

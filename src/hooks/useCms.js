@@ -64,6 +64,15 @@ const setCachedPublicTours = (items) => {
   }
 };
 
+const mergePublicTours = (networkItems = [], cachedItems = []) => {
+  const cachedById = new Map(cachedItems.map((item) => [String(item?.id || ""), item]));
+
+  return networkItems.map((item) => {
+    const cachedItem = cachedById.get(String(item?.id || ""));
+    return cachedItem ? { ...item, ...cachedItem } : item;
+  });
+};
+
 const keys = {
   toursPublic: ["tours", "public"],
   toursAdmin: ["tours", "admin"],
@@ -97,8 +106,10 @@ export const usePublicTours = () =>
       try {
         const items = await apiClient.get("/tours/public").then(unwrap).then((d) => d.items || []);
         if (Array.isArray(items) && items.length) {
-          setCachedPublicTours(items);
-          return items;
+          const cachedItems = getCachedPublicTours();
+          const mergedItems = mergePublicTours(items, cachedItems);
+          setCachedPublicTours(mergedItems);
+          return mergedItems;
         }
 
         const cachedItems = getCachedPublicTours();
@@ -174,7 +185,9 @@ export const useCreateTour = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (payload) => apiClient.post("/tours", payload).then(unwrap).then((d) => d.item),
-    onSuccess: () => {
+    onSuccess: (createdItem) => {
+      const cachedItems = getCachedPublicTours();
+      setCachedPublicTours([createdItem, ...cachedItems.filter((item) => item.id !== createdItem.id)]);
       qc.invalidateQueries({ queryKey: keys.toursAdmin });
       qc.invalidateQueries({ queryKey: keys.toursPublic });
       qc.invalidateQueries({ queryKey: keys.dashboard });
@@ -187,7 +200,13 @@ export const useUpdateTour = () => {
   return useMutation({
     mutationFn: ({ id, ...payload }) =>
       apiClient.patch(`/tours/${id}`, payload).then(unwrap).then((d) => d.item),
-    onSuccess: () => {
+    onSuccess: (updatedItem) => {
+      const cachedItems = getCachedPublicTours();
+      setCachedPublicTours(
+        cachedItems.length
+          ? cachedItems.map((item) => (item.id === updatedItem.id ? { ...item, ...updatedItem } : item))
+          : [updatedItem],
+      );
       qc.invalidateQueries({ queryKey: keys.toursAdmin });
       qc.invalidateQueries({ queryKey: keys.toursPublic });
       qc.invalidateQueries({ queryKey: keys.dashboard });
@@ -199,7 +218,11 @@ export const useDeleteTour = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (id) => apiClient.delete(`/tours/${id}`),
-    onSuccess: () => {
+    onSuccess: (_result, id) => {
+      const cachedItems = getCachedPublicTours();
+      if (cachedItems.length) {
+        setCachedPublicTours(cachedItems.filter((item) => item.id !== id));
+      }
       qc.invalidateQueries({ queryKey: keys.toursAdmin });
       qc.invalidateQueries({ queryKey: keys.toursPublic });
       qc.invalidateQueries({ queryKey: keys.dashboard });
