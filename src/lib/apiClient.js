@@ -1,6 +1,11 @@
 import axios from "axios";
 
-const baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const productionApiUrl = "https://north-luxe-backend.vercel.app/api";
+const localApiUrl = "http://localhost:5000/api";
+
+const baseURL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? productionApiUrl : localApiUrl);
 
 export const apiClient = axios.create({
   baseURL,

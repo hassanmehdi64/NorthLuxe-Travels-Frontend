@@ -24,7 +24,7 @@ const Testimonials = () => {
         <div className="absolute -bottom-20 left-0 h-72 w-72 rounded-full bg-[var(--c-brand)]/8 blur-3xl" />
       </div>
 
-      <div className="relative w-full px-8 sm:px-10 lg:px-14 xl:px-16">
+      <div className="relative mx-auto w-full max-w-[1240px] px-4 sm:px-6 lg:px-10 xl:px-0">
         <div className="mb-6 lg:mb-8">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div className="space-y-2 max-w-2xl">
@@ -58,17 +58,18 @@ const Testimonials = () => {
         </div>
 
         {stories.length ? (
-          <div className="w-full rounded-2xl border border-theme bg-theme-surface p-4 md:p-5 lg:p-6 pb-9 testimonial-swiper-container">
+          <div className="w-full rounded-2xl border border-theme bg-theme-surface p-3 pb-8 sm:p-4 sm:pb-9 md:p-5 lg:p-6 testimonial-swiper-container">
             <Swiper
               modules={[Pagination, Autoplay]}
-              spaceBetween={20}
+              spaceBetween={14}
               slidesPerView={1}
               loop={stories.length > 3}
               autoplay={{ delay: 4500, disableOnInteraction: false }}
               pagination={{ clickable: true, dynamicBullets: true }}
               grabCursor
               breakpoints={{
-                768: { slidesPerView: 2, spaceBetween: 20 },
+                640: { slidesPerView: 2, spaceBetween: 16 },
+                900: { slidesPerView: 2, spaceBetween: 20 },
                 1024: { slidesPerView: 3, spaceBetween: 24 },
               }}
               className="!pb-10"
@@ -105,6 +106,16 @@ const Testimonials = () => {
           opacity: 1;
           width: 16px;
           border-radius: 4px;
+        }
+        .testimonial-message {
+          display: -webkit-box;
+          -webkit-line-clamp: 5;
+          -webkit-box-orient: vertical;
+        }
+        @media (max-width: 480px) {
+          .testimonial-message {
+            -webkit-line-clamp: 6;
+          }
         }
       `}</style>
     </section>

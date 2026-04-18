@@ -8,6 +8,19 @@ import "swiper/css/effect-coverflow";
 import { usePublicContentItem, usePublicContentList } from "../hooks/useCms";
 
 const MAX_SLIDER_IMAGES = 6;
+const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80";
+
+const DetailPill = ({ icon: Icon, label, value }) => (
+  <div className="flex min-w-0 items-center gap-3 rounded-2xl border border-theme bg-white px-4 py-3 shadow-[0_10px_22px_rgba(15,23,42,0.05)]">
+    <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
+      <Icon size={16} />
+    </span>
+    <div className="min-w-0">
+      <p className="text-[10px] font-black uppercase tracking-[0.14em] text-muted">{label}</p>
+      <p className="mt-0.5 truncate text-sm font-bold text-theme">{value || "Flexible"}</p>
+    </div>
+  </div>
+);
 
 const ActivityDetails = () => {
   const { slug } = useParams();
@@ -15,6 +28,18 @@ const ActivityDetails = () => {
   const { data: backendActivities = [] } = usePublicContentList("activity");
 
   const activity = backendActivity || null;
+
+  if (isLoading) {
+    return (
+      <section className="bg-theme-bg py-12 lg:py-14">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-theme bg-theme-surface py-16 text-center text-sm font-semibold text-muted">
+            Loading activity details...
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   if (!activity && !isLoading) {
     return (
@@ -35,7 +60,7 @@ const ActivityDetails = () => {
     .slice(0, 3);
   const baseGallery = activity.gallery?.length
     ? activity.gallery
-    : [activity.image || activity.coverImage].filter(Boolean);
+    : [activity.image || activity.coverImage || FALLBACK_IMAGE].filter(Boolean);
   const heroImages = (
     activity.meta?.heroSliderImages?.length
       ? activity.meta.heroSliderImages.filter(Boolean)
@@ -44,10 +69,11 @@ const ActivityDetails = () => {
   const includes = activity.includes?.length ? activity.includes : [];
   const canAutoSlideHero = heroImages.length > 1;
   const heroBulletCount = heroImages.length;
+  const safeHeroImages = heroImages.length ? heroImages : [FALLBACK_IMAGE];
   const heroGallery =
-    heroImages.length >= 3
-      ? heroImages
-      : Array.from({ length: Math.max(3, heroImages.length) }, (_, index) => heroImages[index % heroImages.length]);
+    safeHeroImages.length >= 3
+      ? safeHeroImages
+      : Array.from({ length: Math.max(3, safeHeroImages.length) }, (_, index) => safeHeroImages[index % safeHeroImages.length]);
   const heroRenderSlides = canAutoSlideHero
     ? Array.from({ length: Math.max(heroGallery.length * 3, 9) }, (_, index) => heroGallery[index % heroGallery.length])
     : heroGallery;
@@ -74,48 +100,26 @@ const ActivityDetails = () => {
       ];
 
   return (
-    <section className="py-10 md:py-12 bg-theme-bg">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14 space-y-7">
-        <header className="space-y-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[var(--c-brand)]">Activity Details</p>
-          <h1 className="max-w-4xl text-[1.72rem] font-semibold leading-[1.05] tracking-[-0.035em] text-theme md:text-[2.35rem]">
-            {activity.title}
-          </h1>
-          <p className="max-w-3xl text-sm leading-7 text-muted md:text-base">
-            {activity.shortDescription || activity.description}
-          </p>
-          <div className="flex flex-wrap gap-2.5">
-            <div className="inline-flex min-w-[165px] items-center gap-2.5 rounded-[1.15rem] border border-[rgba(15,23,42,0.08)] bg-white px-3.5 py-2.5 shadow-[0_8px_20px_rgba(15,23,42,0.03)]">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
-                <MapPin size={15} />
-              </span>
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted">Location</p>
-                <p className="mt-0.5 text-[0.95rem] font-semibold text-theme">{activity.location}</p>
-              </div>
-            </div>
-            <div className="inline-flex min-w-[165px] items-center gap-2.5 rounded-[1.15rem] border border-[rgba(15,23,42,0.08)] bg-white px-3.5 py-2.5 shadow-[0_8px_20px_rgba(15,23,42,0.03)]">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
-                <Clock3 size={15} />
-              </span>
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted">Duration</p>
-                <p className="mt-0.5 text-[0.95rem] font-semibold text-theme">{activity.duration}</p>
-              </div>
-            </div>
-            <div className="inline-flex min-w-[165px] items-center gap-2.5 rounded-[1.15rem] border border-[rgba(15,23,42,0.08)] bg-white px-3.5 py-2.5 shadow-[0_8px_20px_rgba(15,23,42,0.03)]">
-              <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
-                <Mountain size={15} />
-              </span>
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted">Level</p>
-                <p className="mt-0.5 text-[0.95rem] font-semibold text-theme">{activity.level}</p>
-              </div>
-            </div>
+    <section className="bg-theme-bg py-8 md:py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <header className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-end">
+          <div className="space-y-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[var(--c-brand)]">Activity Details</p>
+            <h1 className="max-w-4xl text-[1.9rem] font-bold leading-[1.05] tracking-tight text-theme md:text-[2.6rem]">
+              {activity.title}
+            </h1>
+            <p className="max-w-3xl text-sm leading-7 text-muted md:text-base">
+              {activity.shortDescription || activity.description}
+            </p>
+          </div>
+          <div className="grid gap-2.5 sm:grid-cols-3 lg:grid-cols-1">
+            <DetailPill icon={MapPin} label="Location" value={activity.location} />
+            <DetailPill icon={Clock3} label="Duration" value={activity.duration} />
+            <DetailPill icon={Mountain} label="Level" value={activity.level} />
           </div>
         </header>
 
-        <div className="mx-auto max-w-[1280px] overflow-hidden rounded-[1.45rem] border border-[rgba(15,23,42,0.08)] bg-theme-surface px-3 py-3 shadow-[0_12px_24px_rgba(15,23,42,0.05)] sm:px-4 sm:py-4">
+        <div className="mx-auto overflow-hidden rounded-2xl border border-theme bg-theme-surface px-3 py-3 shadow-[0_14px_28px_rgba(15,23,42,0.06)] sm:px-4 sm:py-4">
           <Swiper
             modules={[Pagination, Autoplay, EffectCoverflow]}
             effect="coverflow"

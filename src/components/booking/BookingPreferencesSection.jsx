@@ -84,7 +84,7 @@ const BookingPreferencesSection = ({
   });
 
   return (
-    <div className="space-y-4 rounded-xl border border-booking bg-white p-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)]">
+    <div className="space-y-4 rounded-xl border border-booking bg-white p-3.5 shadow-[0_8px_20px_rgba(15,23,42,0.04)] sm:p-4">
       <div>
         <p className="text-sm font-semibold text-theme">Payment</p>
         <p className="mt-1 text-[13px] leading-5 text-muted">
@@ -138,7 +138,7 @@ const BookingPreferencesSection = ({
       ) : null}
 
       {isManualPayment ? (
-        <div className="space-y-3 rounded-xl border border-booking bg-booking-soft p-3.5">
+        <div className="space-y-3 rounded-xl border border-booking bg-booking-soft p-3 sm:p-3.5">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="flex items-center gap-2 text-sm font-semibold text-theme">
@@ -150,11 +150,11 @@ const BookingPreferencesSection = ({
               </p>
             </div>
             {selectedReceivingAccount ? (
-              <div className="rounded-xl border border-booking bg-white px-3 py-2 text-left shadow-sm sm:min-w-[220px]">
+              <div className="min-w-0 rounded-xl border border-booking bg-white px-3 py-2 text-left shadow-sm sm:min-w-[220px]">
                 <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
                   {selectedReceivingAccount.bankName || selectedReceivingAccount.label || "Account"}
                 </p>
-                <p className="mt-1 text-base font-black text-theme">
+                <p className="mt-1 break-words text-sm font-black text-theme sm:text-base">
                   {selectedReceivingAccount.accountNumber || "Account number missing"}
                 </p>
                 {selectedReceivingAccount.accountTitle ? (

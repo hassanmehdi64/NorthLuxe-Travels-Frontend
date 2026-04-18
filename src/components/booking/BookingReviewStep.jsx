@@ -56,9 +56,9 @@ const BookingReviewStep = ({
       : "No online payment proof is needed before booking submission.";
 
   return (
-    <div className="space-y-4 p-4 sm:p-5 md:p-6">
+    <div className="min-w-0 space-y-4 p-3.5 sm:p-5 md:p-6">
       <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-[linear-gradient(180deg,rgba(123,231,196,0.1),rgba(255,255,255,0.96))] p-3.5 md:p-4.5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
-        <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1">
             <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-subheading">
               Quote Summary
@@ -67,11 +67,11 @@ const BookingReviewStep = ({
               Standard Route Estimate
             </p>
           </div>
-          <div className="rounded-xl bg-white/80 px-3 py-2 text-right shadow-[0_6px_16px_rgba(15,23,42,0.05)]">
+          <div className="rounded-xl bg-white/80 px-3 py-2 text-left shadow-[0_6px_16px_rgba(15,23,42,0.05)] sm:text-right">
             <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-textMuted">
               Total Amount
             </p>
-            <p className="text-lg font-semibold text-heading">
+            <p className="break-words text-base font-semibold text-heading sm:text-lg">
               {formatCurrencyAmount(quoteData?.totalAmount, currency)}
             </p>
           </div>
@@ -105,7 +105,7 @@ const BookingReviewStep = ({
               <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-textMuted">
                 {item.label}
               </p>
-              <p className="mt-1 text-[13px] font-semibold text-heading">
+              <p className="mt-1 break-words text-[13px] font-semibold text-heading">
                 {item.value}
               </p>
             </div>
@@ -141,7 +141,7 @@ const BookingReviewStep = ({
 
       {isManualPayment && selectedReceivingAccount ? (
         <div className="rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white p-3.5 md:p-4 space-y-4">
-          <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-subheading">
                 Manual Payment Details
@@ -150,11 +150,11 @@ const BookingReviewStep = ({
                 Double-check the receiving account and the client payment details before submitting the booking.
               </p>
             </div>
-            <div className="rounded-xl bg-[rgba(19,221,180,0.08)] px-3 py-2 text-right">
+            <div className="rounded-xl bg-[rgba(19,221,180,0.08)] px-3 py-2 text-left sm:text-right">
               <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-textMuted">
                 Account Number
               </p>
-              <p className="mt-1 text-[15px] font-black tracking-tight text-heading">
+              <p className="mt-1 break-words text-sm font-black tracking-tight text-heading sm:text-[15px]">
                 {selectedReceivingAccount.accountNumber || "Add in admin"}
               </p>
             </div>
@@ -211,7 +211,7 @@ const BookingReviewStep = ({
           <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-textMuted">
             {transactionReferenceLabel}
           </p>
-          <p className="mt-2 text-[13px] leading-5 text-heading">{form.transactionReference}</p>
+          <p className="mt-2 break-words text-[13px] leading-5 text-heading">{form.transactionReference}</p>
         </div>
       ) : null}
 
@@ -220,7 +220,7 @@ const BookingReviewStep = ({
           <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-textMuted">
             Custom Requirements
           </p>
-          <p className="mt-2 text-[13px] leading-5 text-heading">{form.customRequirements}</p>
+          <p className="mt-2 break-words text-[13px] leading-5 text-heading">{form.customRequirements}</p>
         </div>
       ) : null}
 

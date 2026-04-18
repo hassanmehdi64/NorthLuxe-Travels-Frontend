@@ -154,8 +154,8 @@ const BookingTravelSection = ({
   onBack,
   onNext,
 }) => (
-  <div className="rounded-xl border border-booking bg-white p-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)] space-y-3.5">
-    <div className="rounded-xl border border-booking-soft bg-booking-soft p-3">
+  <div className="space-y-3.5 rounded-xl border border-booking bg-white p-3.5 shadow-[0_8px_20px_rgba(15,23,42,0.04)] sm:p-4">
+    <div className="rounded-xl border border-booking-soft bg-booking-soft p-2.5 sm:p-3">
       <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
         <label>
           <span className="ql-label">Start Date</span>
@@ -195,7 +195,7 @@ const BookingTravelSection = ({
       </div>
     </div>
 
-    <div className="rounded-xl border border-booking-soft bg-booking-soft p-3">
+    <div className="rounded-xl border border-booking-soft bg-booking-soft p-2.5 sm:p-3">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <label className="space-y-2">
           <span className="ql-label mb-0 text-[10px] normal-case tracking-[0.08em]">Departure Time</span>
@@ -249,7 +249,7 @@ const BookingTravelSection = ({
       </div>
     </div>
 
-    <div className="rounded-xl border border-booking-soft bg-booking-soft p-3 space-y-3.5">
+    <div className="space-y-3.5 rounded-xl border border-booking-soft bg-booking-soft p-2.5 sm:p-3">
       <label className="inline-flex items-center gap-2 text-sm text-textMain">
         <input
           type="checkbox"

@@ -41,7 +41,7 @@ const BookingDropdown = ({
   }, [open, options.length]);
 
   return (
-    <div className="relative" ref={menuRef}>
+    <div className="relative min-w-0" ref={menuRef}>
       <button
         type="button"
         className={`w-full rounded-xl border px-3 py-2.5 text-left text-sm text-theme transition ${
@@ -73,11 +73,11 @@ const BookingDropdown = ({
 
       {!disabled && open ? (
         <div
-          className={`absolute z-[120] w-full overflow-hidden rounded-xl border border-[rgba(15,23,42,0.12)] bg-white p-1.5 shadow-[0_16px_32px_rgba(15,23,42,0.12)] ${
+          className={`absolute z-[120] max-h-[min(18rem,70vh)] w-full min-w-0 overflow-hidden rounded-xl border border-[rgba(15,23,42,0.12)] bg-white p-1.5 shadow-[0_16px_32px_rgba(15,23,42,0.12)] ${
             openUpward ? "bottom-full mb-2" : "top-full mt-2"
           }`}
         >
-          <div className="max-h-60 space-y-1 overflow-auto">
+          <div className="max-h-[inherit] space-y-1 overflow-auto">
             {options.map((item) => {
               const isActive = item.value === value;
               return (
@@ -94,9 +94,9 @@ const BookingDropdown = ({
                       : "bg-white text-theme hover:bg-[#f7f8fa]"
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className={`truncate ${isActive ? "font-bold" : "font-semibold"}`}>
+                  <div className="flex min-w-0 items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className={`break-words ${isActive ? "font-bold" : "font-semibold"}`}>
                         {item.label}
                       </p>
                       {item.description ? (

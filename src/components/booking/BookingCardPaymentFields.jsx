@@ -121,8 +121,8 @@ const BookingCardPaymentFields = ({
     (!confirmedPayment && (!stripe || !clientSecret));
 
   return (
-    <div className="space-y-4 rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white p-4 md:p-5">
-      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[rgba(15,23,42,0.06)] pb-3">
+    <div className="min-w-0 space-y-4 rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white p-3.5 sm:p-4 md:p-5">
+      <div className="flex flex-col items-stretch gap-3 border-b border-[rgba(15,23,42,0.06)] pb-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-[9px] font-bold uppercase tracking-[0.14em] text-subheading">
             Debit Card Payment
@@ -131,22 +131,22 @@ const BookingCardPaymentFields = ({
             Enter the card details below to pay securely.
           </p>
         </div>
-        <div className="rounded-xl bg-[rgba(19,221,180,0.08)] px-3 py-2 text-right">
+        <div className="rounded-xl bg-[rgba(19,221,180,0.08)] px-3 py-2 text-left sm:text-right">
           <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-textMuted">
             Client Pays Now
           </p>
-          <p className="text-[15px] font-semibold text-heading">{amountLabel}</p>
+          <p className="break-words text-sm font-semibold text-heading sm:text-[15px]">{amountLabel}</p>
         </div>
       </div>
 
-      <div className="rounded-xl border border-[rgba(15,23,42,0.08)] bg-slate-50 px-4 py-3 text-[13px] leading-5 text-textMuted">
+      <div className="break-words rounded-xl border border-[rgba(15,23,42,0.08)] bg-slate-50 px-3.5 py-3 text-[13px] leading-5 text-textMuted sm:px-4">
         Card holder: <span className="font-semibold text-heading">{customerName || "Not added yet"}</span>
         {email ? <span> | Receipt: <span className="font-semibold text-heading">{email}</span></span> : null}
         {!email && phone ? <span> | Contact: <span className="font-semibold text-heading">{phone}</span></span> : null}
       </div>
 
       {confirmedPayment ? (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-[13px] text-emerald-800">
+        <div className="break-words rounded-2xl border border-emerald-200 bg-emerald-50 px-3.5 py-3 text-[13px] text-emerald-800 sm:px-4">
           Payment has already been confirmed with reference <strong>{confirmedPayment.transactionReference}</strong>. Submit the booking to finish the process.
         </div>
       ) : (

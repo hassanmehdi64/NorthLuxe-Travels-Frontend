@@ -646,15 +646,15 @@ const Booking = () => {
   };
 
   return (
-    <section className="min-h-[calc(100vh-4rem)] bg-theme-bg py-6 md:py-8">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="min-h-[calc(100vh-4rem)] bg-theme-bg py-4 sm:py-6 md:py-8">
+      <div className="mx-auto w-full max-w-6xl px-3 sm:px-5 lg:px-8">
         <div className="ql-form-shell booking-form-shell [&_.ql-label]:text-[10px] [&_.ql-label]:tracking-[0.12em] [&_.ql-input]:text-[13px] [&_.ql-input]:py-2 [&_.ql-input]:px-3 [&_.ql-textarea]:text-[13px] [&_.ql-textarea]:px-3 [&_.ql-textarea]:py-2 [&_.ql-btn-primary]:text-[13px] [&_.ql-btn-secondary]:text-[13px]">
           <BookingHeader isCustomBooking={isCustomBooking} action={action} />
 
           {step === 1 ? (
-            <div className="p-4 md:p-5">
-              <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px] xl:gap-5 xl:items-start">
-                <div className="space-y-3.5">
+            <div className="p-3 sm:p-4 md:p-5">
+              <div className="grid min-w-0 gap-3.5 lg:gap-4 xl:grid-cols-[minmax(0,1fr)_280px] xl:gap-5 xl:items-start">
+                <div className="min-w-0 space-y-3.5">
                   {isStandardBooking ? (
                     <BookingTourSummary
                       selectedTour={selectedTour}

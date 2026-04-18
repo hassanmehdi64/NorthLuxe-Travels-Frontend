@@ -3,9 +3,9 @@ import { Check, MoveUpRight } from "lucide-react";
 import { formatCurrencyAmount } from "../../utils/currency";
 
 const BookingSidebar = ({ popularPlans, selectedTourId, setForm }) => (
-  <aside className="space-y-4 xl:sticky xl:top-24 xl:self-start">
+  <aside className="min-w-0 space-y-4 xl:sticky xl:top-24 xl:self-start">
     <div className="overflow-hidden rounded-2xl border border-booking bg-white shadow-[0_14px_30px_rgba(15,23,42,0.08)]">
-      <div className="border-b border-booking bg-booking-soft px-4 py-3.5">
+      <div className="border-b border-booking bg-booking-soft px-3.5 py-3 sm:px-4 sm:py-3.5">
         <p className="text-[9px] font-black uppercase tracking-[0.18em] text-[var(--c-brand-dark)]">
           Suggested tours
         </p>
@@ -14,24 +14,24 @@ const BookingSidebar = ({ popularPlans, selectedTourId, setForm }) => (
         </p>
       </div>
 
-      <div className="divide-y divide-[var(--c-border)]">
+      <div className="flex gap-3 overflow-x-auto p-3 sm:p-3.5 xl:block xl:divide-y xl:divide-[var(--c-border)] xl:overflow-visible xl:p-0">
         {popularPlans.map((plan) => (
           <button
             key={plan.id}
             type="button"
             onClick={() => setForm((p) => ({ ...p, tourId: plan.id }))}
-            className={`group relative w-full px-4 py-3.5 text-left transition-all duration-200 ${
+            className={`group relative w-[245px] shrink-0 rounded-xl border px-3 py-3 text-left transition-all duration-200 xl:w-full xl:rounded-none xl:border-0 xl:px-4 xl:py-3.5 ${
               selectedTourId === plan.id ? "bg-[#e7fbf3]" : "bg-white hover:bg-[#f8fffc]"
             }`}
           >
             <span
               aria-hidden="true"
-              className={`absolute left-0 top-0 h-full w-1 transition ${
+              className={`absolute left-0 top-0 h-full w-1 rounded-l-xl transition xl:rounded-l-none ${
                 selectedTourId === plan.id ? "bg-[var(--c-brand)]" : "bg-transparent"
               }`}
             />
 
-            <div className="flex items-start gap-3">
+            <div className="flex min-w-0 items-start gap-3">
               <span
                 className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border transition ${
                   selectedTourId === plan.id
@@ -43,8 +43,8 @@ const BookingSidebar = ({ popularPlans, selectedTourId, setForm }) => (
               </span>
 
               <div className="min-w-0 flex-1">
-                <div className="flex items-start justify-between gap-3">
-                  <p className="line-clamp-2 text-sm font-semibold leading-snug text-[#243746]">
+                <div className="flex min-w-0 items-start justify-between gap-2">
+                  <p className="line-clamp-2 min-w-0 text-sm font-semibold leading-snug text-[#243746]">
                     {plan.title}
                   </p>
                   {plan.featured ? (
@@ -58,7 +58,7 @@ const BookingSidebar = ({ popularPlans, selectedTourId, setForm }) => (
                   {plan.location} | {plan.durationLabel || `${plan.durationDays} Days`}
                 </p>
 
-                <div className="mt-2 flex items-center justify-between gap-3">
+                <div className="mt-2 flex items-center justify-between gap-2">
                   <p className="text-sm font-bold text-[#345060]">
                     {formatCurrencyAmount(plan.price, plan.currency)}
                   </p>
