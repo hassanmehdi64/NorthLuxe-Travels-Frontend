@@ -14,9 +14,9 @@ const youtubePreviewImage = "/gb.jpg";
 
 const WhyChooseUs = () => {
   return (
-    <section className="py-12 lg:py-14 bg-theme-bg w-full">
+    <section className="py-8 lg:py-10 bg-theme-bg w-full">
       <div className="w-full border-y border-theme bg-theme-surface">
-        <div className="w-full px-8 sm:px-10 lg:px-14 xl:px-16 py-6 md:py-8 lg:py-10">
+        <div className="w-full px-8 sm:px-10 lg:px-14 xl:px-16 py-6 md:py-7 lg:py-8">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-10 items-center">
             <div className="max-w-2xl">
               <h2 className="text-3xl md:text-4xl font-bold text-theme tracking-tight">

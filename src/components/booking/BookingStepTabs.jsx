@@ -10,8 +10,8 @@ const BookingStepTabs = ({
   isTravelSectionValid,
   onStepChange,
 }) => (
-  <div className="rounded-2xl border border-theme bg-theme-surface p-2 shadow-[0_8px_18px_rgba(15,23,42,0.05)]">
-    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+  <div className="rounded-xl border border-booking bg-booking-soft p-1.5">
+    <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-3">
       {STEP_ITEMS.map((item) => {
         const canOpen =
           item.id === 1 ||
@@ -23,12 +23,12 @@ const BookingStepTabs = ({
             type="button"
             disabled={!canOpen}
             onClick={() => canOpen && onStepChange(item.id)}
-            className={`rounded-xl border px-3 py-2.5 text-left transition ${
+            className={`rounded-lg border px-3 py-2 text-left transition ${
               activeSection === item.id
-                ? "border-[rgba(15,23,42,0.16)] bg-white text-theme shadow-[0_8px_18px_rgba(15,23,42,0.06)]"
+                ? "border-booking bg-white text-theme shadow-sm"
                 : canOpen
-                  ? "cursor-pointer border-theme bg-theme-bg text-heading hover:border-[rgba(15,23,42,0.16)] hover:bg-white"
-                  : "cursor-not-allowed border-[#e5eaef] bg-[#f7f8fa] text-muted opacity-70"
+                  ? "cursor-pointer border-booking-soft bg-white/70 text-heading hover:border-booking hover:bg-white"
+                  : "cursor-not-allowed border-slate-200 bg-slate-50 text-muted opacity-70"
             }`}
           >
             <p className="text-[10px] font-bold uppercase tracking-[0.12em]">Step {item.id}</p>

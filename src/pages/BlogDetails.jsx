@@ -83,8 +83,8 @@ const BlogDetails = () => {
   }
 
   return (
-    <main className="bg-theme-bg pb-20">
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 md:pt-12">
+    <main className="bg-theme-bg pb-16">
+      <section className="mx-auto max-w-6xl px-4 pt-8 sm:px-6 md:pt-10 lg:px-8">
         <Link
           to="/blog"
           className="inline-flex items-center gap-2 rounded-full border border-theme bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-theme transition hover:border-[var(--c-brand)]/35 hover:text-[var(--c-brand)]"
@@ -93,7 +93,7 @@ const BlogDetails = () => {
           Back to Blog
         </Link>
 
-        <div className="mt-6 space-y-4">
+        <div className="mt-5 space-y-4">
           <div className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-[0.14em] text-muted">
             {blog.category ? (
               <span className="inline-flex items-center gap-1.5 rounded-full border border-theme bg-white px-3 py-1.5 text-theme">
@@ -111,7 +111,7 @@ const BlogDetails = () => {
             </span>
           </div>
 
-          <h1 className="max-w-4xl text-[2rem] font-semibold leading-[1.05] tracking-[-0.04em] text-theme md:text-[2.7rem]">
+          <h1 className="max-w-4xl text-[2rem] font-semibold leading-[1.08] tracking-[-0.04em] text-theme md:text-[2.7rem]">
             {blog.title}
           </h1>
 
@@ -121,24 +121,24 @@ const BlogDetails = () => {
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <div className="overflow-hidden rounded-[1.75rem] border border-theme bg-theme-surface shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
+      <section className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 lg:px-8">
+        <div className="overflow-hidden rounded-[1.5rem] border border-theme bg-theme-surface shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
           <img
             src={heroImage}
             alt={blog.title}
-            className="h-[260px] w-full object-cover object-center sm:h-[340px] lg:h-[420px]"
+            className="h-[250px] w-full object-cover object-center sm:h-[320px] lg:h-[390px]"
           />
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_220px] lg:items-start">
-          <article className="min-w-0 rounded-[1.75rem] border border-theme bg-theme-surface p-5 shadow-[0_14px_34px_rgba(15,23,42,0.04)] md:p-7 lg:p-8">
-            <div className="space-y-5">
+      <section className="mx-auto max-w-6xl px-4 pt-6 sm:px-6 lg:px-8">
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-stretch">
+          <article className="min-w-0 rounded-[1.5rem] border border-theme bg-theme-surface p-5 shadow-[0_14px_34px_rgba(15,23,42,0.04)] md:p-7 lg:p-8">
+            <div className="space-y-4">
               {contentParagraphs.map((paragraph, index) => (
                 <p
                   key={`${paragraph.slice(0, 36)}-${index}`}
-                  className="text-[15px] leading-8 text-theme/85 md:text-[16px]"
+                  className="text-[15px] leading-7 text-theme/85 md:text-[16px] md:leading-8"
                 >
                   {paragraph}
                 </p>
@@ -146,21 +146,21 @@ const BlogDetails = () => {
             </div>
           </article>
 
-          <aside className="rounded-[1.5rem] border border-theme bg-theme-surface p-4 shadow-[0_12px_28px_rgba(15,23,42,0.04)] lg:sticky lg:top-24">
-            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-muted">Quick Note</p>
-            <p className="mt-3 text-sm leading-7 text-muted">
+          <aside className="flex h-full flex-col justify-start rounded-[1.5rem] border border-theme bg-theme-surface p-5 shadow-[0_12px_28px_rgba(15,23,42,0.04)] sm:p-6 lg:sticky lg:top-24">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[var(--c-brand)]">Quick Note</p>
+            <p className="mt-5 text-sm leading-7 text-muted">
               Explore this article for practical travel insight, destination context, and planning ideas from North Luxe Travels.
             </p>
           </aside>
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+      <section className="mx-auto max-w-6xl px-4 pt-5 sm:px-6 lg:px-8">
         <div className="grid gap-4 md:grid-cols-2">
           {prev ? (
             <Link
               to={`/blog/${prev.slug}`}
-              className="group flex items-center gap-3 rounded-[1.4rem] border border-theme bg-theme-surface px-5 py-4 shadow-[0_12px_24px_rgba(15,23,42,0.03)] transition hover:border-[var(--c-brand)]/35 hover:shadow-[0_16px_30px_rgba(15,23,42,0.06)]"
+              className="group flex min-h-[76px] items-center gap-3 rounded-[1.25rem] border border-theme bg-theme-surface px-5 py-4 shadow-[0_12px_24px_rgba(15,23,42,0.03)] transition hover:border-[var(--c-brand)]/35 hover:shadow-[0_16px_30px_rgba(15,23,42,0.06)]"
             >
               <ArrowLeftCircle className="text-[var(--c-brand)]" size={22} />
               <div>
@@ -173,7 +173,7 @@ const BlogDetails = () => {
           {next ? (
             <Link
               to={`/blog/${next.slug}`}
-              className="group flex items-center justify-between gap-3 rounded-[1.4rem] border border-theme bg-theme-surface px-5 py-4 shadow-[0_12px_24px_rgba(15,23,42,0.03)] transition hover:border-[var(--c-brand)]/35 hover:shadow-[0_16px_30px_rgba(15,23,42,0.06)]"
+              className="group flex min-h-[76px] items-center justify-between gap-3 rounded-[1.25rem] border border-theme bg-theme-surface px-5 py-4 shadow-[0_12px_24px_rgba(15,23,42,0.03)] transition hover:border-[var(--c-brand)]/35 hover:shadow-[0_16px_30px_rgba(15,23,42,0.06)]"
             >
               <div>
                 <p className="text-[10px] font-black uppercase tracking-[0.14em] text-muted">Next</p>
@@ -185,10 +185,10 @@ const BlogDetails = () => {
         </div>
       </section>
 
-      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
-        <div className="rounded-[1.75rem] border border-theme bg-theme-surface p-5 shadow-[0_14px_34px_rgba(15,23,42,0.04)] md:p-6">
+      <section className="mx-auto max-w-6xl px-4 pt-4 sm:px-6 lg:px-8">
+        <div className="rounded-[1.5rem] border border-theme bg-theme-surface p-5 shadow-[0_14px_34px_rgba(15,23,42,0.04)] md:p-6">
           <h2 className="text-[1.35rem] font-semibold tracking-[-0.03em] text-theme md:text-[1.6rem]">Related Articles</h2>
-          <RelatedBlogs currentBlog={blog} blogs={blogs} hideHeading className="mt-6" />
+          <RelatedBlogs currentBlog={blog} blogs={blogs} hideHeading className="mt-3" />
         </div>
       </section>
     </main>

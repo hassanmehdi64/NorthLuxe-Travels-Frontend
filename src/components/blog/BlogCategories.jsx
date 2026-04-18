@@ -1,10 +1,10 @@
 const BlogCategories = ({ categories, active, onChange }) => {
   return (
     <div>
-      <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-muted mb-4">
+      <h4 className="mb-3 text-[11px] font-black uppercase tracking-[0.2em] text-muted">
         Categories
       </h4>
-      <ul className="space-y-2.5">
+      <ul className="space-y-2">
         {categories.map((cat) => (
           <li key={cat}>
             <button

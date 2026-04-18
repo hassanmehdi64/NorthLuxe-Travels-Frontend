@@ -611,15 +611,15 @@ const Booking = () => {
   };
 
   return (
-    <section className="min-h-[calc(100vh-4rem)] bg-theme-bg py-8 md:py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="min-h-[calc(100vh-4rem)] bg-theme-bg py-6 md:py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="ql-form-shell booking-form-shell [&_.ql-label]:text-[10px] [&_.ql-label]:tracking-[0.12em] [&_.ql-input]:text-[13px] [&_.ql-input]:py-2 [&_.ql-input]:px-3 [&_.ql-textarea]:text-[13px] [&_.ql-textarea]:px-3 [&_.ql-textarea]:py-2 [&_.ql-btn-primary]:text-[13px] [&_.ql-btn-secondary]:text-[13px]">
           <BookingHeader isCustomBooking={isCustomBooking} action={action} />
 
           {step === 1 ? (
-            <div className="p-3.5 sm:p-4.5 md:p-5">
-              <div className="grid xl:grid-cols-[minmax(0,1fr)_320px] gap-4 md:gap-5 xl:gap-6 items-start">
-                <div className="space-y-4">
+            <div className="p-4 md:p-5">
+              <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px] xl:gap-5 xl:items-start">
+                <div className="space-y-3.5">
                   {isStandardBooking ? <BookingTourSummary selectedTour={selectedTour} /> : null}
 
                   <BookingStepTabs

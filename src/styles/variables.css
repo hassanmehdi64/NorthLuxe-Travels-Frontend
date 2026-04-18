@@ -9,6 +9,9 @@
   --c-text:    #0F172A;  /* Slate Dark */
   --c-muted:   #475569;  /* Darker muted for better light-mode readability */
   --c-border:  #E6F2EE;  /* Soft Mint Border */
+  --c-booking-border: #9FDCCB; /* Booking form borders */
+  --c-booking-border-soft: #CBECE3;
+  --c-booking-surface: #F2FCF8;
   --c-hover:   #ECFDF7;  /* Soft Mint Hover */
 
   /* =====================================================

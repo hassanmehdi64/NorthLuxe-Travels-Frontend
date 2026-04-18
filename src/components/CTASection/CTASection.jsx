@@ -3,7 +3,7 @@ import { ArrowRight, CalendarCheck2, ShieldCheck, Sparkles } from "lucide-react"
 
 const CTASection = () => {
   return (
-    <section className="py-12 lg:py-14 bg-theme-bg">
+    <section className="py-8 lg:py-10 bg-theme-bg">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-14 xl:px-16">
         <div className="rounded-2xl border border-theme bg-theme-surface overflow-hidden">
           <div className="grid lg:grid-cols-[1.2fr_1fr]">

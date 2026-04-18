@@ -16,9 +16,16 @@ const cardReveal = {
   }),
 };
 
-const DestinationCard = ({ destination, index = 0, compact = false }) => {
+const DestinationCard = ({ destination, index = 0, compact = false, small = false, seasonal = false }) => {
   const href = destination?.href || "/destinations";
   const cardDelay = Math.min(index * 0.08, 0.36);
+  const heightClass = seasonal
+    ? "h-[170px] sm:h-[185px] lg:h-[200px]"
+    : small
+    ? "h-[185px] sm:h-[200px] lg:h-[220px]"
+    : compact
+      ? "h-[170px] sm:h-[190px] lg:h-[210px]"
+      : "h-[250px] sm:h-[280px] lg:h-[300px]";
 
   return (
     <MotionLink
@@ -29,9 +36,7 @@ const DestinationCard = ({ destination, index = 0, compact = false }) => {
       whileInView="visible"
       whileHover={{ y: -5, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } }}
       viewport={{ once: true, amount: 0.2 }}
-      className={`group relative block w-full overflow-hidden rounded-2xl border border-theme bg-theme-surface shadow-[0_10px_20px_rgba(15,23,42,0.08)] hover:shadow-[0_18px_34px_rgba(15,23,42,0.14)] transition-[box-shadow,transform] duration-500 will-change-transform ${
-        compact ? "h-[170px] sm:h-[190px] lg:h-[210px]" : "h-[250px] sm:h-[280px] lg:h-[300px]"
-      }`}
+      className={`group relative block w-full overflow-hidden rounded-2xl border border-theme bg-theme-surface shadow-[0_10px_20px_rgba(15,23,42,0.08)] hover:shadow-[0_18px_34px_rgba(15,23,42,0.14)] transition-[box-shadow,transform] duration-500 will-change-transform ${heightClass}`}
     >
       <motion.img
         src={destination?.image}
@@ -42,14 +47,14 @@ const DestinationCard = ({ destination, index = 0, compact = false }) => {
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
 
-      <div className={`absolute inset-0 flex flex-col justify-end ${compact ? "p-3.5 sm:p-4" : "p-5"}`}>
+      <div className={`absolute inset-0 flex flex-col justify-end ${seasonal ? "p-3.5 sm:p-4" : small ? "p-4" : compact ? "p-3.5 sm:p-4" : "p-5"}`}>
         <div className="translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-          <h3 className={`${compact ? "text-base sm:text-lg" : "text-xl"} font-bold text-white tracking-tight`}>
+          <h3 className={`${seasonal || small ? "text-base sm:text-lg" : compact ? "text-base sm:text-lg" : "text-xl"} font-bold text-white tracking-tight`}>
             {destination?.title}
           </h3>
 
           <div className="max-h-0 opacity-0 group-hover:max-h-14 group-hover:opacity-100 transition-all duration-500 ease-out overflow-hidden">
-            <p className={`mt-1 text-white/85 leading-relaxed line-clamp-2 ${compact ? "text-[11px]" : "text-[12px]"}`}>
+            <p className={`mt-1 text-white/85 leading-relaxed line-clamp-2 ${seasonal || small || compact ? "text-[11px]" : "text-[12px]"}`}>
               {destination?.description}
             </p>
           </div>

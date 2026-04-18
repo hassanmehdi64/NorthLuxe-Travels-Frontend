@@ -18,14 +18,14 @@ const Testimonials = () => {
     : "5.0";
 
   return (
-    <section className="relative py-12 lg:py-14 bg-theme-bg overflow-hidden">
+    <section className="relative py-8 lg:py-10 bg-theme-bg overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute -top-20 right-0 h-72 w-72 rounded-full bg-[var(--c-brand)]/12 blur-3xl" />
         <div className="absolute -bottom-20 left-0 h-72 w-72 rounded-full bg-[var(--c-brand)]/8 blur-3xl" />
       </div>
 
       <div className="relative w-full px-8 sm:px-10 lg:px-14 xl:px-16">
-        <div className="mb-10 lg:mb-12">
+        <div className="mb-6 lg:mb-8">
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
             <div className="space-y-2 max-w-2xl">
               <div className="inline-flex items-center gap-3">

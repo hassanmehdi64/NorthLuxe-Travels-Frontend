@@ -16,7 +16,7 @@
   --c-muted: #475569;
 
   /* UI Elements */
-  --c-border: #E6F2EE;
+  --c-border: #e2e2e2bb;
   --c-hover: #ECFDF7;
   
   /* Overlays */
@@ -43,6 +43,9 @@
 .text-brand { color: var(--c-brand); }
 
 .border-theme { border-color: var(--c-border); }
+.border-booking { border-color: var(--c-booking-border); }
+.border-booking-soft { border-color: var(--c-booking-border-soft); }
+.bg-booking-soft { background-color: var(--c-booking-surface); }
 
 /* =====================================================
    BUTTONS (Refined Interactive States)

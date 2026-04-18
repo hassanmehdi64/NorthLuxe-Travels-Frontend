@@ -7,6 +7,9 @@
 
   .booking-form-shell {
     overflow: visible;
+    border-radius: 1.25rem;
+    border-color: var(--c-booking-border);
+    box-shadow: 0 16px 38px rgba(15, 23, 42, 0.1);
   }
 
   .ql-form-header {
@@ -32,32 +35,32 @@
 
   .ql-input {
     @apply w-full rounded-xl px-3 py-2.5 text-sm outline-none transition-all;
-    border: 1px solid var(--c-border);
+    border: 1px solid var(--c-booking-border-soft);
     background: var(--c-surface);
     color: var(--c-text);
   }
 
   .ql-input:focus {
-    border-color: rgba(15, 23, 42, 0.18);
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.06);
+    border-color: var(--c-booking-border);
+    box-shadow: 0 0 0 3px rgba(var(--c-brand-rgb), 0.16);
   }
 
   .ql-select {
     @apply w-full rounded-xl px-3 py-2.5 text-sm outline-none transition-all appearance-none;
-    border: 1px solid var(--c-border);
+    border: 1px solid var(--c-booking-border-soft);
     background: var(--c-surface);
     color: var(--c-text);
   }
 
   .ql-select:hover {
-    border-color: rgba(15, 23, 42, 0.16);
+    border-color: var(--c-booking-border);
     background: #ffffff;
     box-shadow: none;
   }
 
   .ql-select:focus {
-    border-color: rgba(15, 23, 42, 0.18);
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.06);
+    border-color: var(--c-booking-border);
+    box-shadow: 0 0 0 3px rgba(var(--c-brand-rgb), 0.16);
   }
 
   .ql-select option {
@@ -82,20 +85,20 @@
 
   .booking-select {
     border-radius: 16px;
-    border: 1px solid var(--c-border);
+    border: 1px solid var(--c-booking-border);
     background: var(--c-surface);
     box-shadow: none;
   }
 
   .booking-select:hover {
-    border-color: rgba(15, 23, 42, 0.16);
+    border-color: var(--c-booking-border);
     background: #ffffff;
     box-shadow: none;
   }
 
   .booking-select:focus {
-    border-color: rgba(15, 23, 42, 0.18);
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.06);
+    border-color: var(--c-booking-border);
+    box-shadow: 0 0 0 3px rgba(var(--c-brand-rgb), 0.16);
   }
 
   .booking-select option {
@@ -105,14 +108,14 @@
 
   .ql-textarea {
     @apply w-full rounded-xl px-3 py-2.5 text-sm outline-none transition-all resize-none leading-relaxed;
-    border: 1px solid var(--c-border);
+    border: 1px solid var(--c-booking-border-soft);
     background: var(--c-surface);
     color: var(--c-text);
   }
 
   .ql-textarea:focus {
-    border-color: rgba(15, 23, 42, 0.18);
-    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.06);
+    border-color: var(--c-booking-border);
+    box-shadow: 0 0 0 3px rgba(var(--c-brand-rgb), 0.16);
   }
 
   .ql-check {

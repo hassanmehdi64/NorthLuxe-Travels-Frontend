@@ -3,6 +3,7 @@ import PageHero from "../components/common/PageHero";
 import BlogGrid from "../components/blog/BlogGrid";
 import BlogSidebar from "../components/blog/BlogSidebar";
 import BlogPagination from "../components/blog/BlogPagination";
+import SeasonalJourneys from "../components/seasonal-journeys/SeasonalJourneys";
 import { usePublicBlogs } from "../hooks/useCms";
 
 const POSTS_PER_PAGE = 6;
@@ -58,10 +59,12 @@ const BlogPage = () => {
         text="Stories, guides, and field insights for planning unforgettable journeys across Gilgit-Baltistan."
       />
 
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-14 lg:py-16 grid lg:grid-cols-4 gap-6 lg:gap-10">
+      <SeasonalJourneys compactPage />
+
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-10 lg:pb-12 pt-4 grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px] lg:gap-8">
         {/* Blog List */}
-        <div className="lg:col-span-3">
-          <div className="flex items-center justify-between mb-8 pb-5 border-b border-theme">
+        <div>
+          <div className="flex items-center justify-between mb-6 pb-4 border-b border-theme">
             <p className="text-[11px] font-black uppercase tracking-[0.25em] text-muted">
               Articles
             </p>

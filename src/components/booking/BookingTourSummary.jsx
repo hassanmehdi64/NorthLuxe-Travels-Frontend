@@ -2,7 +2,7 @@ const BookingTourSummary = ({ selectedTour }) => {
   if (!selectedTour) return null;
 
   return (
-    <div className="rounded-2xl border border-[#cfe9de] bg-[linear-gradient(180deg,#f9fffc_0%,#f3fbf7_100%)] p-3.5 md:p-4 shadow-[0_10px_20px_rgba(15,23,42,0.08)]">
+    <div className="rounded-xl border border-booking bg-booking-soft p-3.5">
       <p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#4c6472]">
         Booking Summary
       </p>
@@ -24,7 +24,7 @@ const BookingTourSummary = ({ selectedTour }) => {
             {selectedTour.durationLabel || `${selectedTour.durationDays} Days`}
           </p>
         </div>
-        <p className="inline-flex items-center justify-self-start rounded-full border border-[#8fdcc2] bg-[#e7faf2] px-3 py-1 text-sm font-bold text-[#123245] shadow-[0_6px_14px_rgba(123,231,196,0.2)] sm:col-span-2 md:col-span-1 md:justify-self-end">
+        <p className="inline-flex items-center justify-self-start rounded-full border border-[#8fdcc2] bg-[#e7faf2] px-3 py-1 text-sm font-bold text-[#123245] sm:col-span-2 md:col-span-1 md:justify-self-end">
           {selectedTour.currency}{" "}
           {Number(selectedTour.price || 0).toLocaleString()}
         </p>

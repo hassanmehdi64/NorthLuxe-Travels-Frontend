@@ -15,9 +15,9 @@ const RelatedBlogs = ({ currentBlog, blogs, hideHeading = false, className = "mt
         </h3>
       ) : null}
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className={hideHeading ? "grid max-w-4xl gap-4 md:grid-cols-2 lg:grid-cols-3" : "grid gap-4 md:grid-cols-2 lg:grid-cols-3"}>
         {related.map((blog) => (
-          <BlogCard key={blog.id} blog={blog} />
+          <BlogCard key={blog.id} blog={blog} compact={hideHeading} />
         ))}
       </div>
     </section>

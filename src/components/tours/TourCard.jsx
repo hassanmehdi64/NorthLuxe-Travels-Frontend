@@ -26,21 +26,33 @@ const cardReveal = {
   }),
 };
 
+const formatMoney = (currency, amount) =>
+  `${currency} ${Number(amount || 0).toLocaleString()}`;
+
+const parsePrice = (value) => {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  const cleaned = String(value || "").replace(/[^\d.-]+/g, "");
+  const parsed = Number(cleaned);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
 const getDiscountPercent = (tour) => {
-  const directPercent = Number(tour?.discountPercent ?? tour?.discount ?? tour?.salePercent ?? 0);
+  const directPercent = parsePrice(
+    tour?.discountPercent ?? tour?.discount ?? tour?.salePercent ?? 0,
+  );
   if (directPercent > 0) return Math.round(directPercent);
 
-  const originalPrice = Number(tour?.originalPrice || 0);
-  const currentPrice = Number(tour?.price || 0);
+  const originalPrice = parsePrice(tour?.originalPrice);
+  const currentPrice = parsePrice(tour?.price);
   if (originalPrice > currentPrice && currentPrice > 0) {
-    const percentOff = Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
+    const percentOff = Math.round(
+      ((originalPrice - currentPrice) / originalPrice) * 100,
+    );
     if (percentOff > 0) return percentOff;
   }
 
   return 0;
 };
-
-const formatMoney = (currency, amount) => `${currency} ${Number(amount || 0).toLocaleString()}`;
 
 const TourCard = ({ tour, index = 0 }) => {
   const toast = useToast();
@@ -57,13 +69,14 @@ const TourCard = ({ tour, index = 0 }) => {
   const placesLabel = getTourPlacesLabel(tour, buildDisplayItinerary(tour));
   const cardDelay = Math.min(index * 0.08, 0.36);
   const discountPercent = getDiscountPercent(tour);
-  const currentPrice = Number(tour?.price || 0);
+  const currentPrice = parsePrice(tour?.price);
   const showDiscountPriceBadge = discountPercent > 0 && currentPrice > 0;
 
   const handleWishlist = () => {
     const added = toggleWishlist(tour);
     setWishlistVersion((value) => value + 1);
-    if (added) toast.success("Added to wishlist", `${tour?.title} is saved for later.`);
+    if (added)
+      toast.success("Added to wishlist", `${tour?.title} is saved for later.`);
     else toast.info("Removed from wishlist", `${tour?.title} was removed.`);
   };
 
@@ -82,10 +95,12 @@ const TourCard = ({ tour, index = 0 }) => {
       custom={cardDelay}
       initial="hidden"
       whileInView="visible"
-      whileHover={{ y: -5, transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] } }}
+      whileHover={{
+        y: -5,
+        transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
+      }}
       viewport={{ once: true, amount: 0.2 }}
-      className="group h-full flex flex-col rounded-2xl bg-theme-surface border border-theme shadow-[0_10px_20px_rgba(15,23,42,0.08)] hover:border-[var(--c-brand)] transition-[border-color,box-shadow] duration-500 hover:shadow-[0_18px_34px_rgba(15,23,42,0.14)] overflow-hidden will-change-transform"
-    >
+      className="group h-full flex flex-col rounded-2xl bg-theme-surface border border-theme shadow-[0_10px_20px_rgba(15,23,42,0.08)] hover:border-[var(--c-brand)] transition-[border-color,box-shadow] duration-500 hover:shadow-[0_18px_34px_rgba(15,23,42,0.14)] overflow-hidden will-change-transform">
       <div className="relative h-44 sm:h-48 overflow-hidden">
         <motion.img
           src={tour?.image}
@@ -100,10 +115,13 @@ const TourCard = ({ tour, index = 0 }) => {
             initial={{ opacity: 0, scale: 0.82, y: -10, rotate: -8 }}
             whileInView={{ opacity: 1, scale: 1, y: 0, rotate: -6 }}
             whileHover={{ y: -2, rotate: -9, scale: 1.03 }}
-            transition={{ duration: 0.45, delay: cardDelay + 0.1, ease: [0.22, 1, 0.36, 1] }}
+            transition={{
+              duration: 0.45,
+              delay: cardDelay + 0.1,
+              ease: [0.22, 1, 0.36, 1],
+            }}
             viewport={{ once: true, amount: 0.6 }}
-            className="absolute right-3 top-3 z-[2]"
-          >
+            className="absolute right-3 top-3 z-[2]">
             <motion.div
               animate={{
                 boxShadow: [
@@ -113,9 +131,12 @@ const TourCard = ({ tour, index = 0 }) => {
                 ],
                 opacity: [1, 0.72, 1],
               }}
-              transition={{ duration: 1.2, repeat: Infinity, ease: "easeInOut" }}
-              className="rounded-full border border-white/80 bg-gradient-to-r from-rose-500 via-orange-500 to-amber-400 px-3 py-1.5 text-white"
-            >
+              transition={{
+                duration: 1.2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="rounded-full border border-white/80 bg-gradient-to-r from-rose-500 via-orange-500 to-amber-400 px-3 py-1.5 text-white">
               <div className="text-[9px] font-black uppercase tracking-[0.16em] leading-none">
                 {discountPercent}% OFF
               </div>
@@ -128,7 +149,10 @@ const TourCard = ({ tour, index = 0 }) => {
 
         <div className="absolute bottom-3 left-3 flex gap-1.5">
           <div className="bg-theme-text/80 backdrop-blur-md text-white px-2 py-1 rounded-lg flex items-center gap-1 text-[10px] font-bold">
-            <Star size={10} className="fill-[var(--c-brand)] stroke-[var(--c-brand)]" />
+            <Star
+              size={10}
+              className="fill-[var(--c-brand)] stroke-[var(--c-brand)]"
+            />
             {ratingText}
           </div>
           {!isAvailable && (
@@ -182,9 +206,11 @@ const TourCard = ({ tour, index = 0 }) => {
                 : "border-theme text-theme hover:bg-theme-bg"
             }`}
             aria-label="Add to wishlist"
-            title="Add to wishlist"
-          >
-            <Heart size={14} className={savedInWishlist ? "fill-current" : ""} />
+            title="Add to wishlist">
+            <Heart
+              size={14}
+              className={savedInWishlist ? "fill-current" : ""}
+            />
           </button>
 
           <button
@@ -192,15 +218,13 @@ const TourCard = ({ tour, index = 0 }) => {
             onClick={handleCart}
             className="inline-flex items-center justify-center rounded-xl border border-theme text-theme hover:bg-theme-bg px-2.5 sm:px-3 py-2.5 transition"
             aria-label="Add to cart"
-            title="Add to cart"
-          >
+            title="Add to cart">
             <ShoppingBag size={14} />
           </button>
 
           <Link
             to={`/tours/${slugOrId}`}
-            className="flex-1 btn-brand text-[10px] sm:text-[11px] py-2.5 rounded-xl shadow-sm active:scale-95 font-bold uppercase tracking-wider flex justify-center items-center"
-          >
+            className="flex-1 btn-brand text-[10px] sm:text-[11px] py-2.5 rounded-xl shadow-sm active:scale-95 font-bold uppercase tracking-wider flex justify-center items-center">
             Book Now
           </Link>
         </div>

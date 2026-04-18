@@ -135,8 +135,12 @@ const TourManagement = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    const discountPercentValue = Number(form.discountPercent);
     const payload = {
       ...form,
+      discountPercent: Number.isFinite(discountPercentValue)
+        ? Math.max(0, Math.min(95, discountPercentValue))
+        : 0,
       itinerary: form.itinerary
         .map((item, index) => ({
           day: index + 1,

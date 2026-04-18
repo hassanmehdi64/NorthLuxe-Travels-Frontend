@@ -9,7 +9,7 @@ const BookingTravelerSection = ({
   isTravelerSectionValid,
   onNext,
 }) => (
-  <div className="rounded-2xl border border-theme bg-theme-surface p-3 md:p-3.5 shadow-[0_6px_14px_rgba(15,23,42,0.05)] space-y-3.5">
+  <div className="rounded-xl border border-booking bg-white p-4 shadow-[0_8px_20px_rgba(15,23,42,0.04)] space-y-3.5">
     <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
       <label>
         <span className="ql-label">Full Name</span>

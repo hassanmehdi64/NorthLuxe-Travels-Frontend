@@ -7,15 +7,15 @@ import "swiper/css";
 import DestinationCard from "../featured-destinations/DestinationCard";
 import { getDynamicSeasonPackages } from "./seasonalJourneysData";
 
-const SeasonalJourneys = () => {
+const SeasonalJourneys = ({ compactPage = false }) => {
   const { data: tours = [] } = usePublicTours();
   const { data: seasonEntries = [] } = usePublicContentList("season");
   const seasons = useMemo(() => getDynamicSeasonPackages(seasonEntries, tours), [seasonEntries, tours]);
 
   return (
-    <section className="bg-theme-bg py-12 lg:py-14 ql-scroll-reveal" data-ql-reveal>
-      <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-10 xl:px-14">
-        <div className="mb-8 md:mb-10">
+    <section className={`${compactPage ? "py-8 lg:py-10" : "py-12 lg:py-14"} bg-theme-bg ql-scroll-reveal`} data-ql-reveal>
+      <div className={`${compactPage ? "max-w-7xl px-4 sm:px-6 lg:px-8" : "max-w-[1600px] px-4 sm:px-6 lg:px-10 xl:px-14"} mx-auto`}>
+        <div className={compactPage ? "mb-5 md:mb-6" : "mb-8 md:mb-10"}>
           <div className="max-w-2xl space-y-2">
             <div className="inline-flex items-center gap-3">
               <span className="h-px w-8 bg-[var(--c-brand)]" />
@@ -47,9 +47,9 @@ const SeasonalJourneys = () => {
               spaceBetween={16}
               breakpoints={{
                 0: { slidesPerView: 1.15 },
-                640: { slidesPerView: 2.1 },
-                1024: { slidesPerView: 3.1 },
-                1280: { slidesPerView: 3.2 },
+                640: { slidesPerView: compactPage ? 2.25 : 2.1 },
+                1024: { slidesPerView: compactPage ? 3.25 : 3.1 },
+                1280: { slidesPerView: compactPage ? 3.35 : 3.2 },
               }}
             >
               {seasons.map((season, index) => (
@@ -64,7 +64,8 @@ const SeasonalJourneys = () => {
                         href: `/seasons/${season.slug}`,
                       }}
                       index={index}
-                      compact
+                      seasonal={compactPage}
+                      compact={!compactPage}
                     />
                   </div>
                 </SwiperSlide>

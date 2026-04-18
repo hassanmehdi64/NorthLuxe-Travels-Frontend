@@ -3,6 +3,7 @@ import OurStory from "../components/about/OurStory";
 import TeamSection from "../components/about/TeamSection";
 import GallerySection from "../components/about/GallerySection";
 import RelatedSection from "../components/about/RelatedSection";
+import OurAchievements from "../components/achievements/OurAchievements";
 
 const About = () => {
   return (
@@ -16,6 +17,7 @@ const About = () => {
         text="We combine local knowledge, practical planning, and reliable on-ground support so every trip feels smooth, safe, and memorable."
       />
       <OurStory />
+      <OurAchievements />
       <TeamSection />
       <RelatedSection />
       <GallerySection />

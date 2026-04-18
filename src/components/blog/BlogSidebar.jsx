@@ -9,9 +9,9 @@ const BlogSidebar = ({
   onCategoryChange,
 }) => {
   return (
-    <aside className="lg:col-span-1">
-      <div className="sticky top-24 rounded-2xl border border-theme bg-theme-surface p-6 shadow-sm">
-        <p className="text-[10px] font-black uppercase tracking-[0.24em] text-muted mb-6">
+    <aside>
+      <div className="sticky top-24 rounded-2xl border border-theme bg-theme-surface p-5 shadow-sm">
+        <p className="mb-5 text-[10px] font-black uppercase tracking-[0.24em] text-muted">
           Filter Articles
         </p>
         <BlogSearch value={search} onChange={onSearch} />

@@ -17,8 +17,8 @@ const AllDestinations = () => {
   }, [backendDestinations, tours]);
 
   return (
-    <section className="bg-theme-bg py-12 lg:py-14">
-      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-14">
+    <section className="bg-theme-bg py-10 lg:py-12">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <FeaturePageHeader
           eyebrow="Explore"
           title="All"
@@ -27,12 +27,13 @@ const AllDestinations = () => {
         />
 
         {destinations.length ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:gap-5">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {destinations.map((destination, index) => (
               <DestinationCard
                 key={destination.id || destination.slug || `${destination.title}-${index}`}
                 destination={destination}
                 index={index}
+                small
               />
             ))}
           </div>
