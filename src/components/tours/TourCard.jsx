@@ -10,6 +10,7 @@ import {
   getTourPlacesLabel,
   getTourPlanLabel,
 } from "../tour-details/tourDetailsData";
+import { formatCurrencyAmount } from "../../utils/currency";
 
 const MotionArticle = motion.article;
 const cardReveal = {
@@ -25,9 +26,6 @@ const cardReveal = {
     },
   }),
 };
-
-const formatMoney = (currency, amount) =>
-  `${currency} ${Number(amount || 0).toLocaleString()}`;
 
 const parsePrice = (value) => {
   if (typeof value === "number" && Number.isFinite(value)) return value;
@@ -141,7 +139,7 @@ const TourCard = ({ tour, index = 0 }) => {
                 {discountPercent}% OFF
               </div>
               <div className="mt-1 text-[11px] font-black leading-none">
-                {formatMoney(tour?.currency, currentPrice)}
+                {formatCurrencyAmount(currentPrice, tour?.currency)}
               </div>
             </motion.div>
           </motion.div>

@@ -16,7 +16,8 @@ const ContactInfo = () => {
       </div>
 
       <p className="text-sm md:text-base text-muted leading-relaxed">
-        Reach out for bookings, route planning, and custom trip support across the Northern regions.
+        Reach out for bookings, route planning, and custom trip support across
+        the Northern regions.
       </p>
 
       <div className="space-y-3">
@@ -34,7 +35,7 @@ const ContactInfo = () => {
             <Phone className="text-[var(--c-brand)]" size={16} />
           </span>
           <p className="text-theme text-sm md:text-base leading-snug">
-            {settings?.sitePhone || "+92 3XX XXX XXXX"}
+            {settings?.sitePhone || "+92 3455927507"}
           </p>
         </div>
 

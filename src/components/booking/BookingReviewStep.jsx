@@ -2,6 +2,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import { CreditCard } from "lucide-react";
 import BookingCardPaymentFields from "./BookingCardPaymentFields";
 import { stripePromise } from "../../lib/stripe";
+import { displayCurrency, formatCurrencyAmount } from "../../utils/currency";
 
 const SummaryCard = ({ label, value, detail }) => (
   <div className="rounded-xl border border-[rgba(15,23,42,0.06)] bg-white/80 px-3.5 py-3">
@@ -40,6 +41,7 @@ const BookingReviewStep = ({
 }) => {
   const isManualPayment = selectedPaymentMethod?.mode === "manual";
   const isArrivalPayment = selectedPaymentMethod?.mode === "arrival";
+  const currency = displayCurrency(selectedTour?.currency);
 
   const paymentPlanLabel = !form.paymentMethod || form.paymentMethod === "pay_on_arrival"
     ? "On Arrival"
@@ -70,7 +72,7 @@ const BookingReviewStep = ({
               Total Amount
             </p>
             <p className="text-lg font-semibold text-heading">
-              {selectedTour?.currency || "USD"} {quoteData?.totalAmount}
+              {formatCurrencyAmount(quoteData?.totalAmount, currency)}
             </p>
           </div>
         </div>
@@ -81,11 +83,11 @@ const BookingReviewStep = ({
             { label: "Travelers", value: `${quoteData?.guests ?? 0}` },
             {
               label: "Advance Due",
-              value: `${selectedTour?.currency || "USD"} ${quoteData?.advanceAmount ?? 0}`,
+              value: formatCurrencyAmount(quoteData?.advanceAmount ?? 0, currency),
             },
             {
               label: "Remaining",
-              value: `${selectedTour?.currency || "USD"} ${quoteData?.remainingAmount ?? 0}`,
+              value: formatCurrencyAmount(quoteData?.remainingAmount ?? 0, currency),
             },
             {
               label: "Payment Method",
@@ -170,7 +172,7 @@ const BookingReviewStep = ({
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <SummaryCard label="Sender Name" value={form.manualSenderName || "Not added yet"} />
             <SummaryCard label="Sender Number / Account" value={form.manualSenderNumber || "Not added yet"} />
-            <SummaryCard label="Amount Sent" value={form.manualSentAmount ? `${selectedTour?.currency || "USD"} ${form.manualSentAmount}` : "Not added yet"} />
+            <SummaryCard label="Amount Sent" value={form.manualSentAmount ? formatCurrencyAmount(form.manualSentAmount, currency) : "Not added yet"} />
             <SummaryCard label="Payment Date" value={form.manualSentAt ? new Date(form.manualSentAt).toLocaleString() : "Not added yet"} />
           </div>
 

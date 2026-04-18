@@ -9,6 +9,21 @@ const iconByType = {
   info: Info,
 };
 
+const toastStyleByType = {
+  success: {
+    iconWrap: "bg-[rgba(19,221,180,0.16)] text-[var(--c-brand-dark)] ring-[rgba(19,221,180,0.28)]",
+    bar: "bg-[var(--c-brand)]",
+  },
+  error: {
+    iconWrap: "bg-rose-50 text-rose-600 ring-rose-100",
+    bar: "bg-rose-500",
+  },
+  info: {
+    iconWrap: "bg-sky-50 text-sky-600 ring-sky-100",
+    bar: "bg-sky-500",
+  },
+};
+
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
@@ -37,26 +52,32 @@ export const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={api}>
       {children}
-      <div className="fixed top-6 right-6 z-[200] space-y-3 w-full max-w-sm">
+      <div className="fixed inset-x-3 top-4 z-[200] space-y-3 sm:inset-x-auto sm:right-5 sm:top-5 sm:w-full sm:max-w-[22rem]">
         {toasts.map((toast) => {
           const Icon = iconByType[toast.type] || iconByType.info;
+          const style = toastStyleByType[toast.type] || toastStyleByType.info;
           return (
             <div
               key={toast.id}
-              className="bg-[#121920] border border-[#2a3641] text-[#f5f1e8] rounded-2xl shadow-2xl px-4 py-3 animate-in fade-in slide-in-from-right-4 duration-300"
+              className="group relative overflow-hidden rounded-2xl border border-white/80 bg-white/95 px-4 py-3.5 text-theme shadow-[0_18px_45px_rgba(15,23,42,0.18)] backdrop-blur-xl animate-in fade-in slide-in-from-top-2 sm:slide-in-from-right-5 duration-300"
             >
-              <div className="flex items-start gap-3">
-                <Icon size={18} className="text-[#c8a977] mt-0.5 shrink-0" />
+              <div className={`absolute inset-x-0 bottom-0 h-1 origin-left animate-[toast-progress_3.5s_linear_forwards] ${style.bar}`} />
+              <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(135deg,rgba(19,221,180,0.08),rgba(255,255,255,0)_55%)]" />
+              <div className="relative flex items-start gap-3">
+                <span className={`mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1 ${style.iconWrap}`}>
+                  <Icon size={18} strokeWidth={2.4} />
+                </span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold tracking-tight">{toast.title}</p>
+                  <p className="text-[14px] font-black tracking-tight text-theme">{toast.title}</p>
                   {toast.message ? (
-                    <p className="text-xs text-[#d6d2c8] mt-1 leading-relaxed">{toast.message}</p>
+                    <p className="mt-1 text-[12.5px] leading-5 text-muted">{toast.message}</p>
                   ) : null}
                 </div>
                 <button
                   type="button"
                   onClick={() => removeToast(toast.id)}
-                  className="text-[#a7a39a] hover:text-white"
+                  className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted transition hover:bg-theme-bg hover:text-theme"
+                  aria-label="Dismiss notification"
                 >
                   <X size={16} />
                 </button>

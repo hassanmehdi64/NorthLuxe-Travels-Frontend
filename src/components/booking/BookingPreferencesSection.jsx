@@ -44,7 +44,6 @@ const BookingPreferencesSection = ({
   const isManualPayment = selectedPaymentMethod?.mode === "manual";
   const paymentPlanDisabled = !selectedPaymentMethod?.supportsPlan;
   const referenceLabel = selectedPaymentMethod?.referenceLabel || "Transaction Reference";
-
   const paymentMethodOptions = paymentMethods.map((item) => ({
     value: item.key,
     label: item.label,

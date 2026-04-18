@@ -1,11 +1,14 @@
 import { useEffect } from "react";
 import { ReceiptText, RotateCcw, ShieldCheck } from "lucide-react";
+import { displayCurrency } from "../../utils/currency";
 
 const BookingSuccessStep = ({
   bookingResult,
   onBackToTours,
   onReset,
 }) => {
+  const currency = displayCurrency(bookingResult?.currency);
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -29,8 +32,9 @@ const BookingSuccessStep = ({
           Booking Submitted Successfully
         </h2>
         <p className="mx-auto mt-2 max-w-2xl text-[13px] leading-6 text-emerald-700 sm:text-sm">
-          Your booking request has been submitted successfully. Our team will
-          review the details and confirm your booking within 2 hours.
+          Your booking request has been submitted successfully. We have sent a
+          confirmation email to your inbox, and our team will review the details
+          within 2 hours.
         </p>
 
         <div className="mx-auto mt-5 grid max-w-3xl gap-3 text-left sm:grid-cols-2 lg:grid-cols-3">
@@ -52,10 +56,10 @@ const BookingSuccessStep = ({
           </div>
           <div className="rounded-2xl border border-[rgba(34,197,94,0.14)] bg-white/85 px-4 py-3 sm:col-span-2 lg:col-span-1 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-200">
             <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-emerald-700/80">
-              Confirmation Time
+              Email Status
             </p>
             <p className="mt-1 text-sm font-semibold text-heading">
-              Within 2 Hours
+              Sent to Inbox
             </p>
           </div>
         </div>
@@ -66,14 +70,14 @@ const BookingSuccessStep = ({
           <ReceiptText size={16} className="ql-icon" /> Booking Summary
         </p>
         <p>
-          Total: {bookingResult?.currency || "USD"} {bookingResult?.amount || 0}
+          Total: {currency} {bookingResult?.amount || 0}
         </p>
         <p>
-          Advance: {bookingResult?.currency || "USD"}{" "}
+          Advance: {currency}{" "}
           {bookingResult?.advanceAmount || 0}
         </p>
         <p>
-          Remaining: {bookingResult?.currency || "USD"}{" "}
+          Remaining: {currency}{" "}
           {bookingResult?.remainingAmount || 0}
         </p>
       </div>

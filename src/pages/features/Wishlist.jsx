@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import FeaturePageHeader from "../../components/features/FeaturePageHeader";
 import { addToCart, clearWishlist, getWishlist, removeFromWishlist } from "../../features/commerce/storage";
 import { useToast } from "../../context/ToastContext";
+import { formatCurrencyAmount } from "../../utils/currency";
 
 const WishlistPage = () => {
   const [items, setItems] = useState([]);
@@ -74,7 +75,7 @@ const WishlistPage = () => {
                     </p>
                     <h3 className="mt-2 text-lg font-bold text-theme line-clamp-2">{item.title}</h3>
                     <p className="mt-1 text-sm text-muted">
-                      {item.durationDays} days | {item.currency} {Number(item.price || 0).toLocaleString()}
+                      {item.durationDays} days | {formatCurrencyAmount(item.price, item.currency)}
                     </p>
                     <div className="mt-4 flex gap-2">
                       <button

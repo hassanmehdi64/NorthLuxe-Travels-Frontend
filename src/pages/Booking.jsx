@@ -30,6 +30,7 @@ import {
 } from "../components/booking/paymentConfig";
 import { useToast } from "../context/ToastContext";
 import { stripePublishableKey } from "../lib/stripe";
+import { displayCurrency } from "../utils/currency";
 
 const EMPTY_CARD_INTENT = {
   requestKey: "",
@@ -194,7 +195,8 @@ const Booking = () => {
   }, [hasLockedTour, selectedTour, hotelOptions]);
 
   const visibleVehicleOptions = useMemo(() => {
-    if (!hasLockedTour || !selectedTour?.availableOptions?.vehicleTypes?.length) {
+    const selectedVehicleTypes = selectedTour?.availableOptions?.vehicleTypes || [];
+    if (!selectedVehicleTypes.length) {
       return vehicleOptions;
     }
 
@@ -202,14 +204,15 @@ const Booking = () => {
       String(value || "")
         .trim()
         .toLowerCase()
+        .replace(/[_-]+/g, " ")
         .replace(/\s+/g, "_");
 
     const toLabel = (value) =>
       String(value || "")
         .replace(/[_-]+/g, " ")
-        .replace(/\w/g, (char) => char.toUpperCase());
+        .replace(/\b\w/g, (char) => char.toUpperCase());
 
-    const matchedOptions = selectedTour.availableOptions.vehicleTypes
+    const matchedOptions = selectedVehicleTypes
       .map((allowedKey) => {
         const normalizedAllowedKey = normalizeKey(allowedKey);
         const matched = vehicleOptions.find(
@@ -226,7 +229,7 @@ const Booking = () => {
       .filter((item, index, arr) => arr.findIndex((option) => option.key === item.key) === index);
 
     return matchedOptions;
-  }, [hasLockedTour, selectedTour, vehicleOptions]);
+  }, [selectedTour, vehicleOptions]);
 
   useEffect(() => {
     if (!visibleVehicleOptions.length) return;
@@ -240,11 +243,13 @@ const Booking = () => {
     }
   }, [visibleVehicleOptions, form.facilities.vehicleType]);
 
-  const paymentCurrency = selectedTour?.currency || settings?.currency || "USD";
+  const paymentCurrency = displayCurrency(selectedTour?.currency || settings?.currency);
   const cardChargeAmount = useMemo(() => {
     if (!quoteData || !isCardPayment) return 0;
-    return Number(quoteData.advanceAmount || 0);
-  }, [quoteData, isCardPayment]);
+    return form.paymentPlan === "full"
+      ? Number(quoteData.totalAmount || 0)
+      : Number(quoteData.advanceAmount || 0);
+  }, [quoteData, isCardPayment, form.paymentPlan]);
   const cardIntentKey = useMemo(() => {
     if (!quoteData || !isCardPayment) return "";
     return [form.paymentMethod, form.paymentPlan, paymentCurrency, cardChargeAmount].join(":");
@@ -318,7 +323,7 @@ const Booking = () => {
           clientSecret: result.clientSecret || "",
           paymentIntentId: result.paymentIntentId || "",
           amount: Number(result.amount || cardChargeAmount),
-          currency: result.currency || paymentCurrency,
+          currency: displayCurrency(result.currency || paymentCurrency),
           error: result.clientSecret ? "" : "Secure payment session could not be prepared.",
           status: result.clientSecret ? "ready" : "error",
         });
@@ -360,8 +365,16 @@ const Booking = () => {
     selectedTour?.title,
   ]);
 
-  const buildBookingPayload = (paymentOverrides = {}) => ({
+  const buildQuotePayload = () => ({
     ...form,
+    facilities: {
+      ...form.facilities,
+      hotelType: form.facilities.hotelEnabled ? form.facilities.hotelType : "no_hotel",
+    },
+  });
+
+  const buildBookingPayload = (paymentOverrides = {}) => ({
+    ...buildQuotePayload(),
     paymentMethod: form.paymentMethod,
     bookingType,
     isCustomTour: bookingType === "custom",
@@ -384,10 +397,6 @@ const Booking = () => {
           sentAt: "",
         },
     notes: [form.notes, selectedPaymentMethod?.instructions].filter(Boolean).join(" "),
-    facilities: {
-      ...form.facilities,
-      hotelType: form.facilities.hotelEnabled ? form.facilities.hotelType : "no_hotel",
-    },
   });
 
   const validateForm = () => {
@@ -499,14 +508,7 @@ const Booking = () => {
     setCardIntent(EMPTY_CARD_INTENT);
 
     try {
-      const payload = {
-        ...form,
-        facilities: {
-          ...form.facilities,
-          hotelType: form.facilities.hotelEnabled ? form.facilities.hotelType : "no_hotel",
-        },
-      };
-      const response = await quoteBooking.mutateAsync(payload);
+      const response = await quoteBooking.mutateAsync(buildQuotePayload());
       setQuoteData(response.quote);
 
       if (isCardPayment) {
@@ -527,13 +529,46 @@ const Booking = () => {
     }
   };
 
+  useEffect(() => {
+    if (activeSection !== 3 || !isTravelerSectionValid || !isTravelSectionValid) return;
+
+    let ignore = false;
+    const timer = window.setTimeout(async () => {
+      try {
+        const response = await quoteBooking.mutateAsync(buildQuotePayload());
+        if (!ignore) setQuoteData(response.quote);
+      } catch {
+        if (!ignore) setQuoteData(null);
+      }
+    }, 250);
+
+    return () => {
+      ignore = true;
+      window.clearTimeout(timer);
+    };
+  }, [
+    activeSection,
+    isTravelerSectionValid,
+    isTravelSectionValid,
+    form.tourId,
+    form.travelDate,
+    form.endDate,
+    form.flexibleDates,
+    form.adults,
+    form.children,
+    form.facilities.hotelEnabled,
+    form.facilities.hotelType,
+    form.facilities.vehicleType,
+    quoteBooking.mutateAsync,
+  ]);
+
   const canConfirmBooking = useMemo(() => Boolean(quoteData), [quoteData]);
 
   const finishBookingSubmission = async (paymentOverrides = {}) => {
     const booking = await createBooking.mutateAsync(buildBookingPayload(paymentOverrides));
     setBookingResult(booking);
     setStep(3);
-    toast.success("Booking confirmed", "Confirmation workflow has been triggered.");
+    toast.success("Booking submitted", "A confirmation email has been sent to the customer inbox.");
   };
 
   const submitBooking = async (existingPayment = confirmedCardPayment) => {
@@ -620,7 +655,16 @@ const Booking = () => {
             <div className="p-4 md:p-5">
               <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_280px] xl:gap-5 xl:items-start">
                 <div className="space-y-3.5">
-                  {isStandardBooking ? <BookingTourSummary selectedTour={selectedTour} /> : null}
+                  {isStandardBooking ? (
+                    <BookingTourSummary
+                      selectedTour={selectedTour}
+                      quoteData={quoteData}
+                      quoteLoading={quoteBooking.isPending}
+                      paymentPlan={form.paymentPlan}
+                      paymentCurrency={paymentCurrency}
+                      isArrivalPayment={isPayOnArrival}
+                    />
+                  ) : null}
 
                   <BookingStepTabs
                     activeSection={activeSection}
@@ -667,6 +711,9 @@ const Booking = () => {
                       paymentMethods={paymentMethods}
                       selectedPaymentMethod={selectedPaymentMethod}
                       selectedReceivingAccount={selectedReceivingAccount}
+                      quoteData={quoteData}
+                      quoteLoading={quoteBooking.isPending}
+                      paymentCurrency={paymentCurrency}
                       isTravelerSectionValid={isTravelerSectionValid}
                       isTravelSectionValid={isTravelSectionValid}
                       isPreferencesSectionValid={isPreferencesSectionValid}

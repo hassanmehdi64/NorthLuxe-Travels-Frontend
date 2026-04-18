@@ -94,7 +94,7 @@ const getStandardBookingDetails = (booking, fallbackTour = null) => {
     requirements: booking.specialRequirements || booking.notes || tourDetails.description || tourDetails.shortDescription || "",
     durationLabel: tourDetails.durationLabel || fallbackDuration,
     finalBudget: Number(booking.amount || booking.totalAmount || tourDetails.price || 0),
-    currency: booking.currency || tourDetails.currency || "USD",
+    currency: booking.currency || tourDetails.currency || "PKR",
     itinerary: Array.isArray(tourDetails.itinerary) ? tourDetails.itinerary : [],
     description: tourDetails.description || tourDetails.shortDescription || "",
   };
@@ -234,7 +234,7 @@ const createItineraryDraft = (booking, context, isCustomBooking) => {
     route: hasMeaningfulSavedItinerary && savedItinerary.route ? savedItinerary.route : preferredRoute || booking.tour || "",
     durationLabel: hasMeaningfulSavedItinerary && savedItinerary.durationLabel ? savedItinerary.durationLabel : fallbackDuration,
     finalBudget: hasMeaningfulSavedItinerary && Number(savedItinerary.finalBudget || 0) > 0 ? savedItinerary.finalBudget : fallbackBudget,
-    currency: (hasMeaningfulSavedItinerary && savedItinerary.currency) || context.currency || booking.currency || "USD",
+    currency: (hasMeaningfulSavedItinerary && savedItinerary.currency) || context.currency || booking.currency || "PKR",
     hotelPlan: hasMeaningfulSavedItinerary && savedItinerary.hotelPlan ? savedItinerary.hotelPlan : prettifyValue(context.hotelPreference, "Not selected"),
     vehiclePlan: hasMeaningfulSavedItinerary && savedItinerary.vehiclePlan ? savedItinerary.vehiclePlan : prettifyValue(context.vehiclePreference, "Not selected"),
     planDetails: legacyPlanDays.length ? "" : savedItinerary.planDetails || "",
@@ -257,7 +257,7 @@ const BookingDetails = () => {
     route: "",
     durationLabel: "",
     finalBudget: 0,
-    currency: "USD",
+    currency: "PKR",
     hotelPlan: "",
     vehiclePlan: "",
     planDetails: "",
@@ -380,7 +380,7 @@ const BookingDetails = () => {
           ["Requested Destinations", request.preferredDestinations || "Flexible"],
           ["Route", itinerary.route || request.sourceTourTitle || "-"],
           ["Duration", itinerary.durationLabel || travelWindow || "Custom Duration"],
-          ["Final Budget", `${itinerary.currency || booking.currency || "USD"} ${itinerary.finalBudget || 0}`],
+          ["Final Budget", `${itinerary.currency || booking.currency || "PKR"} ${itinerary.finalBudget || 0}`],
           ["Hotel Plan", itinerary.hotelPlan || prettifyValue(request.hotelPreference, "Not selected")],
           ["Vehicle Plan", itinerary.vehiclePlan || prettifyValue(request.vehiclePreference, "Not selected")],
         ]
@@ -388,7 +388,7 @@ const BookingDetails = () => {
           ["Tour", booking.tour || "Selected Tour"],
           ["Route", itinerary.route || standardDetails.route || "-"],
           ["Travel Date", standardDetails.travelDate || "Scheduled Tour"],
-          ["Final Budget", `${itinerary.currency || booking.currency || "USD"} ${itinerary.finalBudget || booking.amount || 0}`],
+          ["Final Budget", `${itinerary.currency || booking.currency || "PKR"} ${itinerary.finalBudget || booking.amount || 0}`],
           ["Hotel Plan", itinerary.hotelPlan || prettifyValue(standardDetails.hotelPreference, "Not selected")],
           ["Vehicle Plan", itinerary.vehiclePlan || prettifyValue(standardDetails.vehiclePreference, "Not selected")],
         ];
@@ -674,7 +674,7 @@ const BookingDetails = () => {
                     </div>
                     <div class="meta-card">
                       <div class="label">Budget</div>
-                      <div class="value">${itinerary.currency || booking.currency || "USD"} ${itinerary.finalBudget || booking.amount || 0}</div>
+                      <div class="value">${itinerary.currency || booking.currency || "PKR"} ${itinerary.finalBudget || booking.amount || 0}</div>
                     </div>
                   </div>
                 </div>
@@ -865,7 +865,7 @@ const BookingDetails = () => {
               <DetailRow label="Itinerary Title" value={savedItinerary.title} accent />
               <DetailRow label="Route" value={savedItinerary.route || request.preferredDestinations} />
               <DetailRow label="Duration" value={savedItinerary.durationLabel || travelWindow || "Custom Duration"} />
-              <DetailRow label="Final Budget" value={`${savedItinerary.currency || booking.currency || "USD"} ${savedItinerary.finalBudget || 0}`} />
+              <DetailRow label="Final Budget" value={`${savedItinerary.currency || booking.currency || "PKR"} ${savedItinerary.finalBudget || 0}`} />
               <DetailRow label="Hotel Plan" value={savedItinerary.hotelPlan || prettifyValue(request.hotelPreference, "Not selected")} />
               <DetailRow label="Vehicle Plan" value={savedItinerary.vehiclePlan || prettifyValue(request.vehiclePreference, "Not selected")} />
               <DetailRow label="Status" value={prettifyValue(savedItinerary.status, "Draft")} />

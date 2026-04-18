@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { displayCurrency } from "../../utils/currency";
 import { ChevronDown, Star } from "lucide-react";
 
 export const TourBookingSidebar = ({ tour, ratingValue, reviewCount }) => (
@@ -17,7 +18,7 @@ export const TourBookingSidebar = ({ tour, ratingValue, reviewCount }) => (
       <Link to={`/book/${tour.id}`} className="inline-flex items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-[12px] font-semibold ql-btn-primary whitespace-nowrap">Book This Tour</Link>
       <Link
         to="/custom-plan-request"
-        state={{ sourceTour: { id: tour.id, title: tour.title, location: tour.location, price: tour.price, currency: tour.currency } }}
+        state={{ sourceTour: { id: tour.id, title: tour.title, location: tour.location, price: tour.price, currency: displayCurrency(tour.currency) } }}
         className="inline-flex items-center justify-center rounded-xl px-3 py-2.5 text-[12px] font-semibold ql-btn-secondary whitespace-nowrap"
       >
         Custom Request

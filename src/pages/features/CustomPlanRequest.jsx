@@ -7,6 +7,7 @@ import "react-day-picker/dist/style.css";
 import FeaturePageHeader from "../../components/features/FeaturePageHeader";
 import { useCreatePublicBooking } from "../../hooks/useCms";
 import { useToast } from "../../context/ToastContext";
+import { formatCurrencyAmount } from "../../utils/currency";
 
 const DESTINATION_OPTIONS = [
   "Hunza",
@@ -335,11 +336,12 @@ const CustomPlanRequest = () => {
     ...createInitialForm(sourceTour),
     budget:
       sourceTour?.price && sourceTour?.currency
-        ? `${sourceTour.currency} ${sourceTour.price}`
+        ? formatCurrencyAmount(sourceTour.price, sourceTour.currency)
         : "",
   }));
   const [submitting, setSubmitting] = useState(false);
   const [submissionNotice, setSubmissionNotice] = useState(null);
+  const noticeRef = useRef(null);
 
   const subject = useMemo(
     () =>
@@ -420,15 +422,15 @@ const CustomPlanRequest = () => {
       });
       toast.success("Request submitted", "Your custom booking request is now saved in bookings.");
       setSubmissionNotice({
-        title: "Request Submitted Successfully",
+        title: "Custom Plan Request Sent",
         message:
-          "Your custom tour plan request has been received. Your request has been added to booking management. Our team will review it and contact you shortly with the next steps.",
+          "Your request has been received and a confirmation email has been sent to your inbox. Our team will review your preferences and contact you shortly with the next steps.",
       });
       setForm({
         ...createInitialForm(sourceTour),
         budget:
           sourceTour?.price && sourceTour?.currency
-            ? `${sourceTour.currency} ${sourceTour.price}`
+            ? formatCurrencyAmount(sourceTour.price, sourceTour.currency)
             : "",
       });
     } catch (error) {
@@ -440,6 +442,17 @@ const CustomPlanRequest = () => {
       setSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    if (!submissionNotice) return;
+
+    window.requestAnimationFrame(() => {
+      const top = noticeRef.current
+        ? noticeRef.current.getBoundingClientRect().top + window.scrollY - 96
+        : 0;
+      window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
+    });
+  }, [submissionNotice]);
 
   const toggleDestination = (value) => {
     setForm((prev) => {
@@ -481,7 +494,7 @@ const CustomPlanRequest = () => {
         />
 
         {submissionNotice ? (
-          <div className="ql-form-shell px-6 py-8 text-center">
+          <div ref={noticeRef} className="ql-form-shell px-6 py-8 text-center">
             <div className="mx-auto max-w-2xl rounded-[24px] border border-[rgba(123,231,196,0.34)] bg-[linear-gradient(180deg,rgba(234,253,245,0.96),rgba(255,255,255,0.98))] px-6 py-7 shadow-[0_14px_34px_rgba(123,231,196,0.16)]">
               <p className="text-lg font-semibold text-theme">{submissionNotice.title}</p>
               <p className="mt-3 text-sm leading-7 text-muted">{submissionNotice.message}</p>

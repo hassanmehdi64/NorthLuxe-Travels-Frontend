@@ -97,7 +97,7 @@ const openTourPlanPrint = (booking) => {
         <div class="grid">
           <div class="card"><div class="label">${isCustomBooking ? "Requested Destinations" : "Tour"}</div><div class="value">${isCustomBooking ? request.preferredDestinations : booking.tour || "Selected Tour"}</div></div>
           <div class="card"><div class="label">${isCustomBooking ? "Travel Window" : "Travel Date"}</div><div class="value">${isCustomBooking ? `${request.startDate}${request.endDate && request.endDate !== "Flexible" ? ` - ${request.endDate}` : ""}` : new Date(booking.date || booking.createdAt).toLocaleDateString()}</div></div>
-          <div class="card"><div class="label">Final Budget</div><div class="value">${itinerary.currency || booking.currency || "USD"} ${itinerary.finalBudget || booking.amount || 0}</div></div>
+          <div class="card"><div class="label">Final Budget</div><div class="value">${itinerary.currency || booking.currency || "PKR"} ${itinerary.finalBudget || booking.amount || 0}</div></div>
           <div class="card"><div class="label">Duration</div><div class="value">${itinerary.durationLabel || (isCustomBooking ? "Custom Duration" : "Scheduled Tour")}</div></div>
         </div>
         <div class="card" style="margin-top: 16px;"><div class="label">Itinerary Details</div><div class="value">${itinerary.planDetails || request.requirements || booking.specialRequirements || "No itinerary details added yet."}</div></div>
@@ -328,7 +328,7 @@ const BookingManagement = () => {
                     <td className="px-8 py-6 text-center">
                       {isCustomBooking ? (
                         <div className="inline-flex flex-col items-center gap-1.5">
-                          <span className="text-sm font-black text-slate-900 dark:text-slate-100">{getSavedItinerary(booking)?.title || getSavedItinerary(booking)?.finalBudget ? `${getSavedItinerary(booking).currency || "USD"} ${getSavedItinerary(booking).finalBudget || 0}` : request.budget}</span>
+                          <span className="text-sm font-black text-slate-900 dark:text-slate-100">{getSavedItinerary(booking)?.title || getSavedItinerary(booking)?.finalBudget ? `${getSavedItinerary(booking).currency || "PKR"} ${getSavedItinerary(booking).finalBudget || 0}` : request.budget}</span>
                           <span className="text-[10px] font-black uppercase tracking-tighter text-sky-600">{request.persons ? `${request.persons} person(s)` : "Guests not set"}</span>
                           <span className="text-[10px] uppercase text-slate-400">{prettifyValue(request.vehiclePreference, "Vehicle flexible")}</span>
                           <span className="text-[10px] uppercase text-slate-400">{prettifyValue(request.hotelPreference, "Hotel flexible")}</span>
@@ -435,7 +435,7 @@ const BookingManagement = () => {
                         </td>
                         <td className="px-6 py-4">
                           <p className="text-sm font-black text-slate-900 dark:text-slate-100">{getSavedItinerary(booking)?.title || "Created Tour Plan"}</p>
-                          <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">{`${prettifyValue(getSavedItinerary(booking)?.status, "Draft")} ? ${getSavedItinerary(booking)?.currency || "USD"} ${getSavedItinerary(booking)?.finalBudget || 0}`}</p>
+                          <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">{`${prettifyValue(getSavedItinerary(booking)?.status, "Draft")} ? ${getSavedItinerary(booking)?.currency || "PKR"} ${getSavedItinerary(booking)?.finalBudget || 0}`}</p>
                         </td>
                         <td className="px-6 py-4 text-sm font-semibold text-slate-600 dark:text-slate-300">{customTab ? request.preferredDestinations : booking.tour || "Selected Tour"}</td>
                         <td className="px-6 py-4">

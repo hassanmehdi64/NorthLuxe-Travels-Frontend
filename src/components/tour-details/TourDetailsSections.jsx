@@ -1,9 +1,23 @@
 import { ChevronDown, Clock3, MapPin, Wallet } from "lucide-react";
+import { formatCurrencyAmount } from "../../utils/currency";
 
-const formatStartingPrice = (value) => {
-  const amount = Number(value || 0);
-  return Number.isFinite(amount) ? amount.toLocaleString() : value;
-};
+const InfoCard = ({ icon: Icon, label, value, className = "" }) => (
+  <div
+    className={`flex min-h-[76px] min-w-0 items-center gap-2.5 rounded-2xl border border-[rgba(15,23,42,0.08)] bg-white px-3 py-2.5 shadow-[0_8px_20px_rgba(15,23,42,0.03)] sm:min-h-[84px] sm:gap-3 sm:px-3.5 ${className}`}
+  >
+    <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--c-brand)]/10 text-[var(--c-brand)] sm:h-9 sm:w-9">
+      <Icon size={15} />
+    </span>
+    <div className="min-w-0">
+      <p className="text-[9px] font-bold uppercase tracking-[0.16em] text-muted sm:text-[10px]">
+        {label}
+      </p>
+      <p className="mt-1 truncate text-[0.88rem] font-semibold leading-tight text-theme sm:text-[0.95rem]">
+        {value}
+      </p>
+    </div>
+  </div>
+);
 
 export const TourDetailsHeader = ({ tour }) => {
   const durationText = tour.durationLabel || `${tour.durationDays || 0} Days`;
@@ -21,38 +35,14 @@ export const TourDetailsHeader = ({ tour }) => {
         {tour.title}
       </h1>
 
-      <div className="flex flex-wrap gap-2.5">
-        <div className="inline-flex min-w-[165px] items-center gap-2.5 rounded-[1.15rem] border border-[rgba(15,23,42,0.08)] bg-white px-3.5 py-2.5 shadow-[0_8px_20px_rgba(15,23,42,0.03)]">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
-            <Wallet size={15} />
-          </span>
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted">Starting From</p>
-            <p className="mt-0.5 text-[0.95rem] font-semibold text-theme">
-              {tour.currency} {formatStartingPrice(tour.price)}
-            </p>
-          </div>
-        </div>
-
-        <div className="inline-flex min-w-[165px] items-center gap-2.5 rounded-[1.15rem] border border-[rgba(15,23,42,0.08)] bg-white px-3.5 py-2.5 shadow-[0_8px_20px_rgba(15,23,42,0.03)]">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
-            <Clock3 size={15} />
-          </span>
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted">Duration</p>
-            <p className="mt-0.5 text-[0.95rem] font-semibold text-theme">{durationText}</p>
-          </div>
-        </div>
-
-        <div className="inline-flex min-w-[165px] items-center gap-2.5 rounded-[1.15rem] border border-[rgba(15,23,42,0.08)] bg-white px-3.5 py-2.5 shadow-[0_8px_20px_rgba(15,23,42,0.03)]">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
-            <MapPin size={15} />
-          </span>
-          <div>
-            <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-muted">Route</p>
-            <p className="mt-0.5 text-[0.95rem] font-semibold text-theme">{routeText}</p>
-          </div>
-        </div>
+      <div className="grid max-w-3xl grid-cols-2 gap-2.5 sm:grid-cols-3">
+        <InfoCard
+          icon={Wallet}
+          label="Starting From"
+          value={formatCurrencyAmount(tour.price, tour.currency)}
+        />
+        <InfoCard icon={Clock3} label="Duration" value={durationText} />
+        <InfoCard icon={MapPin} label="Route" value={routeText} className="col-span-2 sm:col-span-1" />
       </div>
     </header>
   );

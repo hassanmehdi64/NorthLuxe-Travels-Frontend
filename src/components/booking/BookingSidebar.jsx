@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Check, MoveUpRight } from "lucide-react";
+import { formatCurrencyAmount } from "../../utils/currency";
 
 const BookingSidebar = ({ popularPlans, selectedTourId, setForm }) => (
   <aside className="space-y-4 xl:sticky xl:top-24 xl:self-start">
@@ -59,7 +60,7 @@ const BookingSidebar = ({ popularPlans, selectedTourId, setForm }) => (
 
                 <div className="mt-2 flex items-center justify-between gap-3">
                   <p className="text-sm font-bold text-[#345060]">
-                    {plan.currency} {Number(plan.price || 0).toLocaleString()}
+                    {formatCurrencyAmount(plan.price, plan.currency)}
                   </p>
                   {selectedTourId === plan.id ? (
                     <span className="inline-flex items-center rounded-full bg-[#123245] px-2 py-0.5 text-[8px] font-bold uppercase tracking-[0.12em] text-white">

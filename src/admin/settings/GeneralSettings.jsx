@@ -34,7 +34,6 @@ const GeneralSettings = ({ settings, setSettings }) => (
           onChange={(e) => setSettings({...settings, currency: e.target.value})}
         >
           <option value="PKR">PKR - Rupees</option>
-          <option value="USD">USD - Dollars</option>
         </select>
       </div>
     </div>

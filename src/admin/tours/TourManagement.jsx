@@ -12,7 +12,7 @@ const initialForm = {
   durationLabel: "",
   price: 0,
   discountPercent: 0,
-  currency: "USD",
+  currency: "PKR",
   image: "",
   shortDescription: "",
   description: "",
@@ -264,6 +264,12 @@ const TourManagement = () => {
           <label className="space-y-2">
             <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Price *</span>
             <input className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100" type="number" placeholder="Price" value={form.price} onChange={(e) => setForm((p) => ({ ...p, price: Number(e.target.value) }))} required />
+          </label>
+          <label className="space-y-2">
+            <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Currency</span>
+            <select className="p-3 rounded-xl border border-slate-200 w-full dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100" value={form.currency || "PKR"} onChange={(e) => setForm((p) => ({ ...p, currency: e.target.value }))}>
+              <option value="PKR">PKR - Pakistani Rupees</option>
+            </select>
           </label>
           <label className="space-y-2">
             <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Discount %</span>

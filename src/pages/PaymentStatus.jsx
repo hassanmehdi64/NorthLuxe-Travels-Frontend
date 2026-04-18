@@ -1,6 +1,7 @@
 import { AlertCircle, LoaderCircle, ShieldCheck } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import { usePaymentSession } from "../hooks/useCms";
+import { displayCurrency } from "../utils/currency";
 
 const PaymentStatus = ({ mode = "success" }) => {
   const [searchParams] = useSearchParams();
@@ -9,6 +10,7 @@ const PaymentStatus = ({ mode = "success" }) => {
 
   const { data, isLoading, isError } = usePaymentSession(sessionId, isSuccess);
   const booking = data?.booking;
+  const currency = displayCurrency(booking?.currency);
   const isPaid = Boolean(booking?.paymentVerified) || data?.paymentStatus === "paid";
 
   if (!isSuccess) {
@@ -82,11 +84,11 @@ const PaymentStatus = ({ mode = "success" }) => {
                   </div>
                   <div className="rounded-2xl border border-theme bg-theme-bg px-4 py-3">
                     <p className="text-[10px] font-black uppercase tracking-[0.14em] text-muted">Paid Amount</p>
-                    <p className="mt-1 text-base font-semibold text-theme">{booking.currency} {booking.paidAmount}</p>
+                    <p className="mt-1 text-base font-semibold text-theme">{currency} {booking.paidAmount}</p>
                   </div>
                   <div className="rounded-2xl border border-theme bg-theme-bg px-4 py-3">
                     <p className="text-[10px] font-black uppercase tracking-[0.14em] text-muted">Remaining</p>
-                    <p className="mt-1 text-base font-semibold text-theme">{booking.currency} {booking.remainingAmount}</p>
+                    <p className="mt-1 text-base font-semibold text-theme">{currency} {booking.remainingAmount}</p>
                   </div>
                 </div>
               ) : null}

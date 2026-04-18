@@ -1,13 +1,31 @@
-const BookingTourSummary = ({ selectedTour }) => {
+import { formatCurrencyAmount } from "../../utils/currency";
+
+const BookingTourSummary = ({
+  selectedTour,
+  quoteData,
+  quoteLoading,
+  paymentPlan,
+  paymentCurrency,
+  isArrivalPayment = false,
+}) => {
   if (!selectedTour) return null;
 
+  const totalAmount = Number(quoteData?.totalAmount || selectedTour.price || 0);
+  const advanceAmount = Number(quoteData?.advanceAmount || totalAmount * 0.1 || 0);
+  const payableAmount = isArrivalPayment ? 0 : paymentPlan === "full" ? totalAmount : advanceAmount;
+  const selectedPlanLabel = isArrivalPayment
+    ? "On Arrival"
+    : paymentPlan === "full"
+      ? "Full Payment"
+      : "10% Advance";
+
   return (
-    <div className="rounded-xl border border-booking bg-booking-soft p-3.5">
-      <p className="text-[9px] font-black uppercase tracking-[0.15em] text-[#4c6472]">
+    <div className="rounded-xl border border-booking bg-booking-soft px-4 py-3">
+      <p className="text-center text-[9px] font-black uppercase tracking-[0.15em] text-[#4c6472]">
         Booking Summary
       </p>
-      <div className="mt-3 grid items-start gap-3 sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] md:items-center md:gap-4">
-        <div className="min-w-0">
+      <div className="mx-auto mt-3 grid max-w-4xl items-center gap-3 text-center md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_170px]">
+        <div className="min-w-0 md:border-r md:border-booking md:px-4">
           <p className="text-[9px] font-black uppercase tracking-[0.12em] text-[#6a7f8e]">
             Selected Tour
           </p>
@@ -24,10 +42,16 @@ const BookingTourSummary = ({ selectedTour }) => {
             {selectedTour.durationLabel || `${selectedTour.durationDays} Days`}
           </p>
         </div>
-        <p className="inline-flex items-center justify-self-start rounded-full border border-[#8fdcc2] bg-[#e7faf2] px-3 py-1 text-sm font-bold text-[#123245] sm:col-span-2 md:col-span-1 md:justify-self-end">
-          {selectedTour.currency}{" "}
-          {Number(selectedTour.price || 0).toLocaleString()}
-        </p>
+        <div className="rounded-xl border border-[var(--c-brand)]/35 bg-white px-3 py-2 shadow-sm">
+          <p className="text-[9px] font-black uppercase tracking-[0.13em] text-[var(--c-brand-dark)]">
+            {selectedPlanLabel}
+          </p>
+          <p className={`mt-0.5 text-base font-black text-[#123245] ${!isArrivalPayment && paymentPlan === "advance_10" ? "animate-pulse" : ""}`}>
+            {quoteLoading && !quoteData
+              ? "Calculating..."
+              : formatCurrencyAmount(payableAmount, paymentCurrency || selectedTour.currency)}
+          </p>
+        </div>
       </div>
     </div>
   );

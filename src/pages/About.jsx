@@ -1,8 +1,6 @@
 import PageHero from "../components/common/PageHero";
 import OurStory from "../components/about/OurStory";
 import TeamSection from "../components/about/TeamSection";
-import GallerySection from "../components/about/GallerySection";
-import RelatedSection from "../components/about/RelatedSection";
 import OurAchievements from "../components/achievements/OurAchievements";
 
 const About = () => {
@@ -19,8 +17,6 @@ const About = () => {
       <OurStory />
       <OurAchievements />
       <TeamSection />
-      <RelatedSection />
-      <GallerySection />
     </main>
   );
 };

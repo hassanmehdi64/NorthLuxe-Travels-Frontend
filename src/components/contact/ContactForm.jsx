@@ -12,7 +12,7 @@ const ContactForm = () => {
     try {
       await createContact.mutateAsync(form);
       setForm({ sender: "", email: "", subject: "", message: "" });
-      toast.success("Message sent", "Our concierge team will get back to you soon.");
+      toast.success("Message sent", "A confirmation email has been sent to your inbox.");
     } catch (error) {
       toast.error(
         "Unable to send message",

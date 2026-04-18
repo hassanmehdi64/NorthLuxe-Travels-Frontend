@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient, unwrap } from "../lib/apiClient";
 import fallbackTours from "../components/popular-tours/toursData";
+import { displayCurrency } from "../utils/currency";
 
 const PUBLIC_TOURS_CACHE_KEY = "northluxe-public-tours-cache";
 
@@ -24,7 +25,7 @@ const normalizeFallbackTour = (tour, index) => {
     durationDays,
     durationLabel: tour?.duration || (durationDays ? `${durationDays} Days` : ""),
     price: parsedPrice,
-    currency: parsedPrice ? "PKR" : "USD",
+    currency: "PKR",
     image: tour?.image || "",
     gallery: [],
     shortDescription: "",
@@ -69,7 +70,8 @@ const mergePublicTours = (networkItems = [], cachedItems = []) => {
 
   return networkItems.map((item) => {
     const cachedItem = cachedById.get(String(item?.id || ""));
-    return cachedItem ? { ...item, ...cachedItem } : item;
+    const mergedItem = cachedItem ? { ...item, ...cachedItem } : item;
+    return { ...mergedItem, currency: displayCurrency(mergedItem?.currency) };
   });
 };
 
@@ -113,10 +115,14 @@ export const usePublicTours = () =>
         }
 
         const cachedItems = getCachedPublicTours();
-        return cachedItems.length ? cachedItems : getFallbackPublicTours();
+        return cachedItems.length
+          ? cachedItems.map((item) => ({ ...item, currency: displayCurrency(item?.currency) }))
+          : getFallbackPublicTours();
       } catch {
         const cachedItems = getCachedPublicTours();
-        return cachedItems.length ? cachedItems : getFallbackPublicTours();
+        return cachedItems.length
+          ? cachedItems.map((item) => ({ ...item, currency: displayCurrency(item?.currency) }))
+          : getFallbackPublicTours();
       }
     },
   });
@@ -124,7 +130,11 @@ export const usePublicTours = () =>
 export const usePublicTour = (slug) =>
   useQuery({
     queryKey: keys.tourPublic(slug),
-    queryFn: () => apiClient.get(`/tours/${slug}/public`).then(unwrap).then((d) => d.item),
+    queryFn: () =>
+      apiClient
+        .get(`/tours/${slug}/public`)
+        .then(unwrap)
+        .then((d) => ({ ...d.item, currency: displayCurrency(d.item?.currency) })),
     enabled: Boolean(slug),
   });
 

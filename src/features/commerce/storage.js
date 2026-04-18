@@ -1,3 +1,5 @@
+import { displayCurrency } from "../../utils/currency";
+
 const KEYS = {
   wishlist: "ql_wishlist",
   cart: "ql_cart",
@@ -33,7 +35,7 @@ export const normalizeTourItem = (tour) => ({
   location: tour?.location || "",
   durationDays: Number(tour?.durationDays || 0),
   price: Number(tour?.price || 0),
-  currency: tour?.currency || "PKR",
+  currency: displayCurrency(tour?.currency),
   availableSeats: Number(tour?.availableSeats || 0),
 });
 
