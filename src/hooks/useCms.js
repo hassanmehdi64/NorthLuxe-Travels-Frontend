@@ -93,6 +93,7 @@ const keys = {
   galleryAdmin: ["gallery", "admin"],
   settingsPublic: ["settings", "public"],
   settingsAdmin: ["settings", "admin"],
+  emailStatus: ["settings", "email", "status"],
   contentPublic: (type) => ["content", "public", type],
   contentPublicItem: (type, slug) => ["content", "public", type, slug],
   contentAdmin: (type) => ["content", "admin", type],
@@ -603,6 +604,22 @@ export const useUpdateSettings = () => {
     },
   });
 };
+
+export const useEmailStatus = () =>
+  useQuery({
+    queryKey: keys.emailStatus,
+    queryFn: () => apiClient.get("/settings/email/status").then(unwrap).then((d) => d.item),
+  });
+
+export const useVerifyEmailTransport = () =>
+  useMutation({
+    mutationFn: () => apiClient.post("/settings/email/verify").then(unwrap),
+  });
+
+export const useSendTestEmail = () =>
+  useMutation({
+    mutationFn: (payload) => apiClient.post("/settings/email/test", payload).then(unwrap),
+  });
 
 export const useNotifications = (enabled = true) =>
   useQuery({

@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Save, Globe, Palette, Eye, Shield, CreditCard } from "lucide-react";
+import { Save, Globe, Palette, Eye, Shield, CreditCard, Mail } from "lucide-react";
 import GeneralSettings from "./GeneralSettings";
 import AppearanceSettings from "./AppearanceSettings";
 import SEOSettings from "./SEOSettings";
 import SecuritySettings from "./SecuritySettings";
 import BookingPricingSettings from "./BookingPricingSettings";
+import EmailSettings from "./EmailSettings";
 import { useSettings, useUpdateSettings } from "../../hooks/useCms";
 
 const SiteSettings = () => {
@@ -31,6 +32,7 @@ const SiteSettings = () => {
     { id: "General", icon: <Globe size={18} />, label: "General" },
     { id: "Appearance", icon: <Palette size={18} />, label: "Branding" },
     { id: "Pricing", icon: <CreditCard size={18} />, label: "Payments & Pricing" },
+    { id: "Email", icon: <Mail size={18} />, label: "Email" },
     { id: "SEO", icon: <Eye size={18} />, label: "SEO & Social" },
     { id: "Security", icon: <Shield size={18} />, label: "Security" },
   ];
@@ -89,6 +91,7 @@ const SiteSettings = () => {
           {activeTab === "Pricing" && (
             <BookingPricingSettings settings={settings} setSettings={setSettings} />
           )}
+          {activeTab === "Email" && <EmailSettings />}
           {activeTab === "SEO" && (
             <SEOSettings settings={settings} setSettings={setSettings} />
           )}
