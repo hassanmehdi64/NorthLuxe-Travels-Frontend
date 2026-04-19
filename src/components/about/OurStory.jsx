@@ -23,30 +23,56 @@ const OurStory = () => {
               </div>
 
               <h2 className="mt-3 text-2xl md:text-3xl font-bold text-theme tracking-tight">
-                Built on Trust, Local Insight, and Real Comfort
+                Built on Trust, Local Knowledge, and Comfortable Travel
               </h2>
 
               <div className="mt-4 space-y-4">
                 <p className="text-sm md:text-base text-muted leading-relaxed">
-                  North Luxe started with one goal: make travel in the North premium without losing authenticity. We design practical itineraries, partner with reliable local teams, and focus on smooth execution from arrival to return.
+                  North Luxe Travels was created to make travel in the North simple,
+                  comfortable, and well managed. We focus on planning trips that are
+                  smooth from start to end, so you can enjoy the journey without stress.
                 </p>
+
                 <p className="text-sm md:text-base text-muted leading-relaxed">
-                  Whether you want a relaxed family trip or a high-adventure route, our planning approach keeps your comfort, safety, and time at the center.
+                  We design each trip based on your needs—whether it’s a family tour,
+                  a relaxing getaway, or an adventure. With the help of our trusted
+                  local team, we make sure everything runs properly and you get a
+                  real experience of the place.
+                </p>
+
+                <p className="text-sm md:text-base text-muted leading-relaxed">
+                  From planning to execution, we stay with you at every step. Our goal
+                  is to give you a safe, reliable, and memorable travel experience
+                  that you can enjoy with complete peace of mind.
                 </p>
               </div>
 
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="rounded-xl border border-theme bg-theme-bg px-4 py-3">
-                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">Local Network</p>
-                  <p className="mt-1 text-sm text-theme font-semibold">Verified local partners</p>
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">
+                    Local Network
+                  </p>
+                  <p className="mt-1 text-sm text-theme font-semibold">
+                    Trusted local partners
+                  </p>
                 </div>
+
                 <div className="rounded-xl border border-theme bg-theme-bg px-4 py-3">
-                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">Safety First</p>
-                  <p className="mt-1 text-sm text-theme font-semibold">Reliable support on route</p>
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">
+                    Safety First
+                  </p>
+                  <p className="mt-1 text-sm text-theme font-semibold">
+                    Support throughout the trip
+                  </p>
                 </div>
+
                 <div className="rounded-xl border border-theme bg-theme-bg px-4 py-3">
-                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">Tailored Plans</p>
-                  <p className="mt-1 text-sm text-theme font-semibold">Flexible itineraries by need</p>
+                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">
+                    Tailored Plans
+                  </p>
+                  <p className="mt-1 text-sm text-theme font-semibold">
+                    Trips made your way
+                  </p>
                 </div>
               </div>
             </div>

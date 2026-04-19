@@ -9,15 +9,21 @@ import { usePublicContentItem, usePublicContentList } from "../hooks/useCms";
 
 const MAX_SLIDER_IMAGES = 6;
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80";
+const HERO_SLIDE_DELAY = 2500;
+const HERO_SLIDE_SPEED = 900;
 
 const DetailPill = ({ icon: Icon, label, value }) => (
-  <div className="flex min-w-0 items-center gap-3 rounded-2xl border border-theme bg-white px-4 py-3 shadow-[0_10px_22px_rgba(15,23,42,0.05)]">
-    <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
+  <div className="flex min-w-0 items-center gap-3 rounded-lg border border-theme bg-white px-4 py-3 shadow-[0_10px_22px_rgba(15,23,42,0.05)]">
+    <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
       <Icon size={16} />
     </span>
     <div className="min-w-0">
-      <p className="text-[10px] font-black uppercase tracking-[0.14em] text-muted">{label}</p>
-      <p className="mt-0.5 truncate text-sm font-bold text-theme">{value || "Flexible"}</p>
+      <p className="text-[10px] font-black uppercase tracking-[0.14em] text-muted">
+        {label}
+      </p>
+      <p className="mt-0.5 truncate text-[14px] font-bold leading-5 text-theme">
+        {value || "Flexible"}
+      </p>
     </div>
   </div>
 );
@@ -98,28 +104,42 @@ const ActivityDetails = () => {
           "This activity is planned with local coordination and guest comfort in mind.",
         `The experience is arranged around ${String(activity.location || "selected northern routes").toLowerCase()}, with ${String(activity.duration || "flexible timing").toLowerCase()} and a ${String(activity.level || "comfortable").toLowerCase()} pace so the trip stays practical and enjoyable.`,
       ];
+  const overviewText =
+    activity.description ||
+    activity.shortDescription ||
+    "This activity is planned with local coordination, guest comfort, and practical pacing in mind.";
 
   return (
-    <section className="bg-theme-bg py-8 md:py-10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <header className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-end">
-          <div className="space-y-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[var(--c-brand)]">Activity Details</p>
-            <h1 className="max-w-4xl text-[1.9rem] font-bold leading-[1.05] tracking-tight text-theme md:text-[2.6rem]">
+    <section className="bg-theme-bg py-10 md:py-12 lg:py-14">
+      <div className="mx-auto max-w-7xl space-y-7 px-4 sm:px-6 lg:px-8">
+        <header className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
+          <div className="max-w-4xl space-y-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.28em] text-[var(--c-brand)]">
+              Activity Details
+            </p>
+            <h1 className="text-[30px] font-black leading-[1.08] text-theme sm:text-[38px] lg:text-[46px]">
               {activity.title}
             </h1>
-            <p className="max-w-3xl text-sm leading-7 text-muted md:text-base">
+            <p className="max-w-3xl text-[15px] leading-7 text-muted md:text-[16px] md:leading-8">
               {activity.shortDescription || activity.description}
             </p>
           </div>
-          <div className="grid gap-2.5 sm:grid-cols-3 lg:grid-cols-1">
-            <DetailPill icon={MapPin} label="Location" value={activity.location} />
-            <DetailPill icon={Clock3} label="Duration" value={activity.duration} />
+          <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+            <DetailPill
+              icon={MapPin}
+              label="Location"
+              value={activity.location}
+            />
+            <DetailPill
+              icon={Clock3}
+              label="Duration"
+              value={activity.duration}
+            />
             <DetailPill icon={Mountain} label="Level" value={activity.level} />
           </div>
         </header>
 
-        <div className="mx-auto overflow-hidden rounded-2xl border border-theme bg-theme-surface px-3 py-3 shadow-[0_14px_28px_rgba(15,23,42,0.06)] sm:px-4 sm:py-4">
+        <div className="mx-auto overflow-hidden rounded-lg border border-theme bg-theme-surface px-3 py-4 shadow-[0_14px_28px_rgba(15,23,42,0.06)] sm:px-5 sm:py-5">
           <Swiper
             modules={[Pagination, Autoplay, EffectCoverflow]}
             effect="coverflow"
@@ -129,15 +149,15 @@ const ActivityDetails = () => {
             loopAdditionalSlides={heroGallery.length}
             loopedSlides={heroGallery.length}
             loopPreventsSliding={false}
-            speed={1050}
+            speed={HERO_SLIDE_SPEED}
             autoplay={
               canAutoSlideHero
                 ? {
-                    delay: 1650,
+                    delay: HERO_SLIDE_DELAY,
                     disableOnInteraction: false,
-                    pauseOnMouseEnter: false,
+                    pauseOnMouseEnter: true,
                     stopOnLastSlide: false,
-                    waitForTransition: false,
+                    waitForTransition: true,
                   }
                 : false
             }
@@ -152,30 +172,35 @@ const ActivityDetails = () => {
             pagination={{
               clickable: true,
               renderBullet: (index, className) =>
-                index < heroBulletCount ? `<span class="${className}"></span>` : "",
+                index < heroBulletCount
+                  ? `<span class="${className}"></span>`
+                  : "",
             }}
             coverflowEffect={{
               rotate: 0,
-              stretch: 0,
-              depth: 140,
-              modifier: 1.2,
-              scale: 0.9,
+              stretch: 18,
+              depth: 90,
+              modifier: 1,
+              scale: 0.92,
               slideShadows: false,
             }}
             breakpoints={{
-              0: { slidesPerView: 1.08, spaceBetween: 10 },
-              768: { slidesPerView: 2, spaceBetween: 12 },
-              1200: { slidesPerView: Math.min(3, heroGallery.length), spaceBetween: 14 },
+              0: { slidesPerView: 1.02, spaceBetween: 12 },
+              640: { slidesPerView: 1.35, spaceBetween: 14 },
+              900: { slidesPerView: 2.12, spaceBetween: 16 },
+              1280: {
+                slidesPerView: Math.min(2.65, heroGallery.length),
+                spaceBetween: 18,
+              },
             }}
-            className="!overflow-visible !pb-10"
-          >
+            className="!overflow-visible !px-1 !pb-11">
             {heroRenderSlides.map((img, idx) => (
               <SwiperSlide key={`${img}-${idx}`} className="!h-auto">
-                <div className="overflow-hidden rounded-[1.2rem] border border-[rgba(15,23,42,0.08)] bg-white shadow-[0_10px_20px_rgba(15,23,42,0.06)]">
+                <div className="overflow-hidden rounded-lg border border-[rgba(15,23,42,0.08)] bg-white shadow-[0_12px_24px_rgba(15,23,42,0.07)]">
                   <img
                     src={img}
                     alt={`${activity.title} ${idx + 1}`}
-                    className="h-[175px] w-full object-cover object-center sm:h-[210px] lg:h-[235px]"
+                    className="aspect-[16/10] w-full object-cover object-center sm:aspect-[16/9]"
                   />
                 </div>
               </SwiperSlide>
@@ -183,42 +208,68 @@ const ActivityDetails = () => {
           </Swiper>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
-          <article className="space-y-4">
-            <h2 className="text-lg md:text-xl font-bold text-theme">Overview</h2>
-            <p className="text-sm md:text-base text-muted leading-relaxed">{activity.description}</p>
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+          <article className="space-y-6 rounded-lg border border-theme bg-theme-surface p-5 md:p-6">
+            <div className="space-y-3">
+              <h2 className="text-[22px] font-black leading-7 text-theme">
+                Overview
+              </h2>
+              <p className="max-w-4xl text-[15px] leading-7 text-muted md:text-[16px] md:leading-8">
+                {overviewText}
+              </p>
+            </div>
 
-            <h3 className="text-sm font-black uppercase tracking-[0.16em] text-theme">What is Included</h3>
-            <ul className="space-y-2">
-              {includes.map((item) => (
-                <li key={item} className="inline-flex items-start gap-2 text-sm text-theme">
-                  <Check size={14} className="mt-0.5 text-[var(--c-brand)]" />
-                  {item}
-                </li>
-              ))}
-            </ul>
+            {includes.length ? (
+              <div className="space-y-3 border-t border-theme pt-5">
+                <h3 className="text-[12px] font-black uppercase tracking-[0.16em] text-theme">
+                  What is Included
+                </h3>
+                <ul className="grid gap-2.5 sm:grid-cols-2">
+                  {includes.map((item) => (
+                    <li
+                      key={item}
+                      className="flex items-start gap-2.5 text-[14px] leading-6 text-theme">
+                      <Check
+                        size={16}
+                        className="mt-1 shrink-0 text-[var(--c-brand)]"
+                      />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </article>
 
-          <aside className="h-fit rounded-2xl border border-theme bg-theme-surface p-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-muted">Need a Custom Plan?</p>
-            <p className="mt-2 text-sm text-muted leading-relaxed">
-              Share your travel window, budget, and group details. We will suggest the best activity combination.
+          <aside className="h-fit rounded-lg border border-theme bg-theme-surface p-5 shadow-[0_10px_22px_rgba(15,23,42,0.04)]">
+            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-muted">
+              Need a Custom Plan?
+            </p>
+            <h2 className="mt-2 text-[20px] font-black leading-7 text-theme">
+              Build this around your group
+            </h2>
+            <p className="mt-3 text-[14px] leading-6 text-muted">
+              Share your travel window, budget, and group details. We will
+              suggest the best activity combination.
             </p>
             <Link
               to="/custom-plan-request"
-              className="ql-btn-primary mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold"
-            >
+              className="ql-btn-primary mt-5 inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 text-[14px] font-bold">
               Request Custom Plan
               <MoveUpRight size={14} />
             </Link>
           </aside>
         </div>
 
-        <section className="rounded-2xl border border-theme bg-theme-surface p-4 md:p-6">
-          <h2 className="text-lg md:text-xl font-bold text-theme">Detailed Description</h2>
-          <div className="mt-3 space-y-3">
+        <section className="rounded-lg border border-theme bg-theme-surface p-5 md:p-6">
+          <h2 className="text-[22px] font-black leading-7 text-theme">
+            Detailed Description
+          </h2>
+          <div className="mt-4 max-w-5xl space-y-4">
             {detailParagraphs.map((paragraph, index) => (
-              <p key={`${paragraph.slice(0, 36)}-${index}`} className="text-sm md:text-base text-muted leading-relaxed">
+              <p
+                key={`${paragraph.slice(0, 36)}-${index}`}
+                className="text-[15px] leading-7 text-muted md:text-[16px] md:leading-8">
                 {paragraph}
               </p>
             ))}
@@ -227,16 +278,21 @@ const ActivityDetails = () => {
 
         {related.length ? (
           <section>
-            <h2 className="text-lg md:text-xl font-bold text-theme">Related Activities</h2>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <h2 className="text-[22px] font-black leading-7 text-theme">
+              Related Activities
+            </h2>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((item) => (
                 <Link
                   key={item.id || item.slug}
                   to={`/activities/${item.slug || item.id}`}
-                  className="rounded-xl border border-theme bg-theme-surface p-4 transition hover:border-[var(--c-brand)]/45"
-                >
-                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--c-brand)]">{item.location}</p>
-                  <p className="mt-1 text-sm font-semibold text-theme">{item.title}</p>
+                  className="rounded-lg border border-theme bg-theme-surface p-4 transition hover:border-[var(--c-brand)]/45 hover:shadow-[0_10px_22px_rgba(15,23,42,0.06)]">
+                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--c-brand)]">
+                    {item.location}
+                  </p>
+                  <p className="mt-2 text-[15px] font-bold leading-6 text-theme">
+                    {item.title}
+                  </p>
                 </Link>
               ))}
             </div>
