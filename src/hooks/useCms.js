@@ -598,9 +598,38 @@ export const useUpdateSettings = () => {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (payload) => apiClient.patch("/settings", payload).then(unwrap).then((d) => d.item),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: keys.settingsAdmin });
-      qc.invalidateQueries({ queryKey: keys.settingsPublic });
+    onSuccess: (item, payload) => {
+      const mergeSettings = (current = {}) => ({
+        ...current,
+        ...item,
+        ...payload,
+        navbarTextColor: payload?.navbarTextColor || item?.navbarTextColor || current?.navbarTextColor,
+        navbarMutedTextColor: payload?.navbarMutedTextColor || item?.navbarMutedTextColor || current?.navbarMutedTextColor,
+        navbarActiveTextColor: payload?.navbarActiveTextColor || item?.navbarActiveTextColor || current?.navbarActiveTextColor,
+        navbarColors: {
+          ...(current.navbarColors || {}),
+          ...(item?.navbarColors || {}),
+          ...(payload?.navbarColors || {}),
+        },
+        footerColors: {
+          ...(current.footerColors || {}),
+          ...(item?.footerColors || {}),
+          ...(payload?.footerColors || {}),
+        },
+        heroColors: {
+          ...(current.heroColors || {}),
+          ...(item?.heroColors || {}),
+          ...(payload?.heroColors || {}),
+        },
+        pageHeroImages: {
+          ...(current.pageHeroImages || {}),
+          ...(item?.pageHeroImages || {}),
+          ...(payload?.pageHeroImages || {}),
+        },
+      });
+
+      qc.setQueryData(keys.settingsAdmin, mergeSettings);
+      qc.setQueryData(keys.settingsPublic, mergeSettings);
     },
   });
 };

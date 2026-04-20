@@ -22,9 +22,19 @@ export const defaultHeroColors = {
 };
 
 export const defaultNavbarColors = {
-  main: "rgba(9, 20, 41, 0.88)",
-  scrolled: "rgba(9, 20, 41, 0.94)",
-  mobile: "rgba(9, 20, 41, 0.985)",
+  main: "#1F7630",
+  scrolled: "#1F7630",
+  mobile: "#1F7630",
+  text: "#ffffff",
+  mutedText: "rgba(255, 255, 255, 0.9)",
+  activeText: "#FF8F05",
+};
+
+export const defaultFooterColors = {
+  background: "#1F7630",
+  text: "#ffffff",
+  mutedText: "rgba(255, 255, 255, 0.78)",
+  accentText: "#13DDB4",
 };
 
 export const getPageHeroImage = (settings, page, fallback) =>
@@ -43,4 +53,12 @@ export const getHeroColors = (settings) => ({
 export const getNavbarColors = (settings) => ({
   ...defaultNavbarColors,
   ...(settings?.navbarColors || {}),
+  text: settings?.navbarTextColor || defaultNavbarColors.text,
+  mutedText: settings?.navbarMutedTextColor || defaultNavbarColors.mutedText,
+  activeText: settings?.navbarActiveTextColor || defaultNavbarColors.activeText,
+});
+
+export const getFooterColors = (settings) => ({
+  ...defaultFooterColors,
+  ...(settings?.footerColors || {}),
 });

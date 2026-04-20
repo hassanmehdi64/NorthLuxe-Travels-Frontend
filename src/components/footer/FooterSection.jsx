@@ -4,7 +4,7 @@ const FooterSection = ({ title, links, children, className = "" }) => {
   return (
     <div className={`space-y-3 sm:space-y-4 text-left ${className}`}>
       {title && (
-        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--c-brand)]">
+        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--footer-accent)]">
           {title}
         </h4>
       )}

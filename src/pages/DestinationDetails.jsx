@@ -10,7 +10,7 @@ import { normalizeDestinationKey, resolveDestinationMatch } from "../utils/desti
 
 const MAX_SLIDER_IMAGES = 6;
 const FALLBACK_HERO_IMAGE = "https://gilgitbaltistan.gov.pk/public/images/river-5688258_1920.jpg";
-const HERO_SLIDE_DELAY = 2500;
+const HERO_SLIDE_DELAY = 3000;
 const HERO_SLIDE_SPEED = 900;
 
 const humanizeDestinationName = (value = "destination") =>
@@ -139,7 +139,7 @@ const DestinationDetails = () => {
           </div>
         </header>
 
-        <div className="mx-auto max-w-[1280px] overflow-hidden rounded-[1.45rem] border border-[rgba(15,23,42,0.08)] bg-theme-surface px-3 py-4 shadow-[0_12px_24px_rgba(15,23,42,0.05)] sm:px-5 sm:py-5">
+        <div className="mx-auto max-w-[1180px] overflow-hidden rounded-[1.45rem] border border-[rgba(15,23,42,0.08)] bg-theme-surface px-3 py-4 shadow-[0_12px_24px_rgba(15,23,42,0.05)] sm:px-5 sm:py-5">
           <Swiper
             modules={[Pagination, Autoplay, EffectCoverflow]}
             effect="coverflow"
@@ -187,9 +187,9 @@ const DestinationDetails = () => {
             breakpoints={{
               0: { slidesPerView: 1.02, spaceBetween: 12 },
               640: { slidesPerView: 1.35, spaceBetween: 14 },
-              900: { slidesPerView: 2.12, spaceBetween: 16 },
+              900: { slidesPerView: 2.05, spaceBetween: 16 },
               1280: {
-                slidesPerView: Math.min(2.65, heroGallery.length),
+                slidesPerView: Math.min(2.45, heroGallery.length),
                 spaceBetween: 18,
               },
             }}
@@ -332,5 +332,4 @@ const DestinationDetails = () => {
 };
 
 export default DestinationDetails;
-
 

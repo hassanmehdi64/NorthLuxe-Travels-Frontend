@@ -218,8 +218,8 @@ const TourMain = () => {
         <div className="mt-5 md:mt-6 flex flex-wrap justify-center gap-3 md:gap-4">
           <Link
             to="/custom-plan-request"
-            className="w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-[var(--c-text)] transition"
-            style={{ background: "var(--c-brand)" }}>
+            className="w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-white transition"
+            style={{ background: "var(--c-brand)", color: "#ffffff" }}>
             Custom Request
           </Link>
 

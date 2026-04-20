@@ -9,7 +9,7 @@ import { usePublicContentItem, usePublicContentList } from "../hooks/useCms";
 
 const MAX_SLIDER_IMAGES = 6;
 const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1600&q=80";
-const HERO_SLIDE_DELAY = 2500;
+const HERO_SLIDE_DELAY = 3000;
 const HERO_SLIDE_SPEED = 900;
 
 const DetailPill = ({ icon: Icon, label, value }) => (
@@ -139,7 +139,7 @@ const ActivityDetails = () => {
           </div>
         </header>
 
-        <div className="mx-auto overflow-hidden rounded-lg border border-theme bg-theme-surface px-3 py-4 shadow-[0_14px_28px_rgba(15,23,42,0.06)] sm:px-5 sm:py-5">
+        <div className="mx-auto max-w-[1180px] overflow-hidden rounded-lg border border-theme bg-theme-surface px-3 py-4 shadow-[0_14px_28px_rgba(15,23,42,0.06)] sm:px-5 sm:py-5">
           <Swiper
             modules={[Pagination, Autoplay, EffectCoverflow]}
             effect="coverflow"
@@ -187,9 +187,9 @@ const ActivityDetails = () => {
             breakpoints={{
               0: { slidesPerView: 1.02, spaceBetween: 12 },
               640: { slidesPerView: 1.35, spaceBetween: 14 },
-              900: { slidesPerView: 2.12, spaceBetween: 16 },
+              900: { slidesPerView: 2.05, spaceBetween: 16 },
               1280: {
-                slidesPerView: Math.min(2.65, heroGallery.length),
+                slidesPerView: Math.min(2.45, heroGallery.length),
                 spaceBetween: 18,
               },
             }}

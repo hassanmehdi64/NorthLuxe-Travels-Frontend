@@ -183,12 +183,15 @@ const buildPayloadByType = (type, form) => {
   }
 
   if (type === "service") {
+    const gallery = parseCommaList(form.galleryImages);
     return {
       ...base,
       title: form.title,
       shortDescription: form.shortDescription,
       description: form.description,
-      image: form.image,
+      content: form.content,
+      image: form.image || gallery[0] || "",
+      gallery,
       category: form.category,
       deliverables: parseCommaList(form.deliverables),
     };
@@ -450,7 +453,7 @@ const ContentManagement = ({ fixedType = null }) => {
             <label className="space-y-2 md:col-span-2"><span className="text-[10px] font-black tracking-[0.14em] text-slate-500 uppercase">Description</span><textarea className="w-full rounded-xl border border-slate-200 p-3 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100" rows={3} value={form.description} onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))} /></label>
           ) : null}
 
-          {isDestination || isSeason || isCareer || isStaticPolicy ? (
+          {isDestination || isService || isSeason || isCareer || isStaticPolicy ? (
             <label className="space-y-2 md:col-span-2"><span className="text-[10px] font-black tracking-[0.14em] text-slate-500 uppercase">Main Content</span><textarea className="w-full rounded-xl border border-slate-200 p-3 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-100" rows={5} value={form.content} onChange={(e) => setForm((p) => ({ ...p, content: e.target.value }))} /></label>
           ) : null}
 
@@ -464,6 +467,10 @@ const ContentManagement = ({ fixedType = null }) => {
 
           {isDestination ? (
             <ImageCollectionField label="Gallery Images" value={form.galleryImages} onChange={(value) => setForm((p) => ({ ...p, galleryImages: value }))} placeholder="Add image URLs separated by commas or new lines" helperText="Paste image URLs or upload multiple destination images. The first one can be used as the main slider image." />
+          ) : null}
+
+          {isService ? (
+            <ImageCollectionField label="Service Slider Images" value={form.galleryImages} onChange={(value) => setForm((p) => ({ ...p, galleryImages: value }))} placeholder="Add image URLs separated by commas or new lines" helperText="Paste URLs or upload multiple service images. These appear in the service details slider." />
           ) : null}
 
           {isDestination || isActivity ? (

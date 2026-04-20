@@ -1,8 +1,9 @@
 import FeaturePageHeader from "../../components/features/FeaturePageHeader";
-import { usePublicContentList } from "../../hooks/useCms";
+import { usePublicContentList, useSettings } from "../../hooks/useCms";
 
 const HelpCenter = () => {
   const { data: items = [] } = usePublicContentList("help-center");
+  const { data: settings } = useSettings(true);
   const help = items[0];
   const contentLines = String(help?.content || "")
     .split("\n")
@@ -24,8 +25,9 @@ const HelpCenter = () => {
             contentLines.map((line) => <p key={line}>{line}</p>)
           ) : (
             <>
-              <p>Email: support@northluxetravels.com</p>
-              <p>Business Hours: Monday to Saturday, 9:00 AM to 7:00 PM</p>
+              <p>Email: {settings?.supportEmail || settings?.siteEmail || "support@northluxetravels.com"}</p>
+              <p>Phone: {settings?.sitePhone || "+92 300 1234567"}</p>
+              <p>Business Hours: {settings?.businessHours || "Monday to Saturday, 9:00 AM to 7:00 PM"}</p>
               <p>For urgent booking changes, contact us directly through the Contact page.</p>
             </>
           )}

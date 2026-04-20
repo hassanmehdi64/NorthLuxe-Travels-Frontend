@@ -1,4 +1,4 @@
-import { Mail, MapPin, Phone } from "lucide-react";
+import { Clock3, Mail, MapPin, Phone } from "lucide-react";
 import { useSettings } from "../../hooks/useCms";
 
 const ContactInfo = () => {
@@ -44,9 +44,20 @@ const ContactInfo = () => {
             <Mail className="text-[var(--c-brand)]" size={16} />
           </span>
           <p className="text-theme text-sm md:text-base leading-snug">
-            {settings?.siteEmail || "info@northluxetravels.com"}
+            {settings?.supportEmail || settings?.siteEmail || "info@northluxetravels.com"}
           </p>
         </div>
+
+        {settings?.businessHours ? (
+          <div className="flex items-start gap-3 rounded-xl border border-theme bg-theme-bg p-3.5">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--c-brand)]/10">
+              <Clock3 className="text-[var(--c-brand)]" size={16} />
+            </span>
+            <p className="text-theme text-sm md:text-base leading-snug">
+              {settings.businessHours}
+            </p>
+          </div>
+        ) : null}
       </div>
     </div>
   );

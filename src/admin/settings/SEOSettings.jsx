@@ -40,7 +40,7 @@ const SEOSettings = ({ settings, setSettings }) => {
           <Share2 size={18} className="text-blue-500" /> Social Links
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {["facebook", "instagram", "whatsapp", "twitter"].map((platform) => (
+          {["facebook", "instagram", "whatsapp", "twitter", "linkedin"].map((platform) => (
             <div key={platform} className="relative">
               <input
                 type="text"
