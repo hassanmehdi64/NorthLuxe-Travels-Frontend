@@ -55,7 +55,10 @@ export const getNavbarColors = (settings) => ({
   ...(settings?.navbarColors || {}),
   text: settings?.navbarTextColor || defaultNavbarColors.text,
   mutedText: settings?.navbarMutedTextColor || defaultNavbarColors.mutedText,
-  activeText: settings?.navbarActiveTextColor || defaultNavbarColors.activeText,
+  activeText:
+    settings?.navbarActiveTextColor === "#13DDB4" || settings?.navbarColors?.activeText === "#13DDB4"
+      ? defaultNavbarColors.activeText
+      : settings?.navbarActiveTextColor || settings?.navbarColors?.activeText || defaultNavbarColors.activeText,
 });
 
 export const getFooterColors = (settings) => ({

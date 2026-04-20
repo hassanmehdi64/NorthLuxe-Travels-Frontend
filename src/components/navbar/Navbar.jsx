@@ -233,11 +233,11 @@ const Navbar = () => {
                 className={({ isActive }) =>
                   `flex min-h-10 items-center justify-between rounded-xl px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
                     isActive
-                      ? "bg-[var(--c-brand)] text-white"
+                      ? "bg-white/10 text-[var(--nav-active)]"
                       : "text-[var(--nav-text)] hover:bg-white/8 hover:text-[var(--nav-active)]"
                   }`
                 }
-                style={({ isActive }) => ({ color: isActive ? "#ffffff" : navColors.text })}
+                style={({ isActive }) => ({ color: isActive ? navColors.activeText : navColors.text })}
               >
                 {item.name}
               </NavLink>
