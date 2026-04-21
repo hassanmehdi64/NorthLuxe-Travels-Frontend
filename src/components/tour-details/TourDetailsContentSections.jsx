@@ -19,8 +19,7 @@ export const TourBookingSidebar = ({ tour, ratingValue, reviewCount }) => (
       <Link
         to="/custom-plan-request"
         state={{ sourceTour: { id: tour.id, title: tour.title, location: tour.location, price: tour.price, currency: displayCurrency(tour.currency) } }}
-        className="inline-flex items-center justify-center rounded-xl px-3 py-2.5 text-[12px] font-semibold ql-btn-secondary whitespace-nowrap"
-        style={{ color: "#ffffff" }}
+        className="inline-flex items-center justify-center rounded-xl border border-[var(--c-brand)] bg-[rgba(var(--c-brand-rgb),0.10)] px-3 py-2.5 text-[12px] font-semibold text-[var(--c-brand)] transition-colors hover:bg-[var(--c-brand)] hover:text-white whitespace-nowrap"
       >
         Custom Request
       </Link>

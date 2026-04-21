@@ -394,7 +394,7 @@ const BookingDetails = () => {
         ];
 
     const extraNotes = itinerary.planDays?.length ? itinerary.planDetails || "" : "";
-    const brandColor = "#13DDB4";
+    const brandColor = "#20b77a";
     const win = window.open("", "_blank", "width=960,height=760");
     if (!win) return;
 

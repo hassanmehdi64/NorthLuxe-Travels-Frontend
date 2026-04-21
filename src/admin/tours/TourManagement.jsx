@@ -94,7 +94,7 @@ const TourManagement = () => {
         <head>
           <title>${tour.title} - Tour PDF</title>
           <style>
-            body { font-family: Arial, sans-serif; padding: 32px; color: #0f172a; }
+            body { font-family: Arial, sans-serif; padding: 32px; color: #2B2B2B; }
             h1 { margin-bottom: 8px; }
             .meta { margin: 18px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
             .card { border: 1px solid #e2e8f0; border-radius: 16px; padding: 14px; }
@@ -121,7 +121,7 @@ const TourManagement = () => {
           ${Array.isArray(tour.itinerary) && tour.itinerary.length
             ? `<div class="card" style="margin-top: 16px;"><div class="label">Itinerary</div>${tour.itinerary
                 .map(
-                  (item) => `<div style="margin-top: 14px;"><p style="margin:0 0 6px;font-size:14px;font-weight:700;color:#13DDB4;">Day ${item.day || ""}${item.title ? ` - ${item.title}` : ""}</p><p style="margin:0;line-height:1.7;">${item.description || "No details added."}</p></div>`,
+                  (item) => `<div style="margin-top: 14px;"><p style="margin:0 0 6px;font-size:14px;font-weight:700;color:#20b77a;">Day ${item.day || ""}${item.title ? ` - ${item.title}` : ""}</p><p style="margin:0;line-height:1.7;">${item.description || "No details added."}</p></div>`,
                 )
                 .join("")}</div>`
             : ""}

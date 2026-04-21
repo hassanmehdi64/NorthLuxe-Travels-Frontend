@@ -2,25 +2,29 @@
   /* =====================================================
      CORE PALETTE (The "Source of Truth")
      ===================================================== */
-  --c-brand:   #13DDB4;  /* Brand Green */
-  --c-brand-rgb: 19, 221, 180;
-  --c-bg:      #F7FBFA;  /* Off-white cool */
+  --c-brand:   #20b77a;  /* Brand Green */
+  --c-brand-rgb: 32, 183, 122;
+  --c-brand-dark: #159f6a; /* Brand Hover */
+  --c-navy:    #061B3A;  /* Primary Dark Blue */
+  --c-navy-2:  #0F2F57;  /* Secondary Dark Blue */
+  --c-green:   #2D5A3F;  /* Green Accent */
+  --c-bg:      #F8FAFC;  /* Cool off-white */
   --c-surface: #FFFFFF;  /* Pure white */
-  --c-text:    #0F172A;  /* Slate Dark */
-  --c-muted:   #475569;  /* Darker muted for better light-mode readability */
-  --c-border:  #E6F2EE;  /* Soft Mint Border */
-  --c-booking-border: #9FDCCB; /* Booking form borders */
-  --c-booking-border-soft: #CBECE3;
-  --c-booking-surface: #F2FCF8;
-  --c-hover:   #ECFDF7;  /* Soft Mint Hover */
+  --c-text:    #2B2B2B;  /* Text Dark */
+  --c-muted:   #5A6675;  /* Muted readable text */
+  --c-border:  #E8EDF3;  /* Soft cool border */
+  --c-booking-border: #C9D4E0; /* Booking form borders */
+  --c-booking-border-soft: #DEE6EF;
+  --c-booking-surface: #F5F8FB;
+  --c-hover:   #E8FFF5;  /* Soft mint hover */
 
   /* =====================================================
      DERIVED BUTTON TOKENS
      ===================================================== */
   /* Primary (Solid Brand) */
   --btn-primary-bg:     var(--c-brand);
-  --btn-primary-text:   var(--c-text);
-  --btn-primary-hover:  #10C7A2;
+  --btn-primary-text:   #FFFFFF;
+  --btn-primary-hover:  var(--c-brand-dark);
 
   /* Ghost (Outlined) */
   --btn-ghost-bg:       transparent;
@@ -31,14 +35,14 @@
   /* =====================================================
      OVERLAYS & GRADIENTS
      ===================================================== */
-  --c-text-rgb: 15, 23, 42;
+  --c-text-rgb: 43, 43, 43;
   --overlay-dark:    rgba(var(--c-text-rgb), 0.45);
   --overlay-light:   rgba(247, 251, 250, 0.55);
   --overlay-gradient: linear-gradient(
     110deg,
-    rgba(var(--c-text-rgb), 0.55) 0%,
-    rgba(var(--c-text-rgb), 0.35) 45%,
-    rgba(var(--c-text-rgb), 0.15) 100%
+    rgba(15, 47, 87, 0.62) 0%,
+    rgba(15, 47, 87, 0.4) 45%,
+    rgba(15, 47, 87, 0.16) 100%
   );
   
   --gradient-underline: linear-gradient(90deg, var(--c-brand), rgba(var(--c-brand-rgb), 0.55));
@@ -46,15 +50,15 @@
   /* =====================================================
      BACKWARD COMPATIBILITY & SEMANTIC ALIASES
      ===================================================== */
-  --color-primary:    var(--c-text);
+  --color-primary:    var(--c-navy);
   --color-accent:     var(--c-brand);
   --color-bg:         var(--c-bg);
   --color-surface:    var(--c-surface);
   --color-icon:       var(--c-brand);
-  --color-heading:    var(--c-text);
+  --color-heading:    var(--c-navy);
   --color-subheading: var(--c-muted);
 
-  --primary:          var(--c-text);
+  --primary:          var(--c-navy);
   --secondary:        var(--c-brand);
   --bg-main:          var(--c-bg);
   --card:             var(--c-surface);

@@ -65,15 +65,8 @@ const buildSettingsPayload = (settings, activeTab) => {
     return normalizeImageSettingsPayload(pick(settings, [
       "logoUrl",
       "faviconUrl",
-      "primaryColor",
       "homeHeroImages",
       "pageHeroImages",
-      "heroColors",
-      "navbarColors",
-      "navbarTextColor",
-      "navbarMutedTextColor",
-      "navbarActiveTextColor",
-      "footerColors",
     ]));
   }
 
@@ -92,24 +85,6 @@ const mergeSettingsAfterSave = (previous, savedSettings, payload) => ({
   ...(previous || {}),
   ...(savedSettings || {}),
   ...(payload || {}),
-  navbarTextColor: payload?.navbarTextColor || savedSettings?.navbarTextColor || previous?.navbarTextColor,
-  navbarMutedTextColor: payload?.navbarMutedTextColor || savedSettings?.navbarMutedTextColor || previous?.navbarMutedTextColor,
-  navbarActiveTextColor: payload?.navbarActiveTextColor || savedSettings?.navbarActiveTextColor || previous?.navbarActiveTextColor,
-  navbarColors: {
-    ...(previous?.navbarColors || {}),
-    ...(savedSettings?.navbarColors || {}),
-    ...(payload?.navbarColors || {}),
-  },
-  footerColors: {
-    ...(previous?.footerColors || {}),
-    ...(savedSettings?.footerColors || {}),
-    ...(payload?.footerColors || {}),
-  },
-  heroColors: {
-    ...(previous?.heroColors || {}),
-    ...(savedSettings?.heroColors || {}),
-    ...(payload?.heroColors || {}),
-  },
   pageHeroImages: {
     ...(previous?.pageHeroImages || {}),
     ...(savedSettings?.pageHeroImages || {}),

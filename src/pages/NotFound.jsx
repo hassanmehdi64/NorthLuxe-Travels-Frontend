@@ -8,7 +8,7 @@ const NotFound = () => {
         </p>
         <a
           href="/"
-          className="bg-secondary text-white px-6 py-3 rounded-lg font-semibold hover:bg-secondary-light transition"
+          className="bg-secondary text-white px-6 py-3 rounded-lg font-semibold transition hover:bg-[var(--c-brand-dark)]"
         >
           Back to Home
         </a>

@@ -237,7 +237,7 @@ const BookingPreferencesSection = ({
                 <input
                   type="file"
                   accept="image/*,.pdf"
-                  className="ql-input cursor-pointer file:mr-3 file:rounded-lg file:border-0 file:bg-[rgba(19,221,180,0.12)] file:px-3 file:py-1.5 file:text-[12px] file:font-semibold file:text-heading"
+                  className="ql-input cursor-pointer file:mr-3 file:rounded-lg file:border-0 file:bg-[rgba(198,162,75,0.16)] file:px-3 file:py-1.5 file:text-[12px] file:font-semibold file:text-heading"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (!file) {

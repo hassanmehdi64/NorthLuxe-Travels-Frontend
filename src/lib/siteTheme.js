@@ -12,29 +12,33 @@ export const defaultHomeHeroImages = [
   "https://luxushunza.com/wp-content/uploads/slider/cache/da7922896e4ca1abc15bafab13c8151f/DSC_9668-HDR-1-scaled.jpg",
 ];
 
+export const defaultLogoUrl = "/north-luxe-logo.png";
+export const defaultBrandColor = "#20b77a";
+export const defaultBrandHoverColor = "#159f6a";
+
 export const defaultHeroColors = {
   overlay: "rgba(0, 0, 0, 0.45)",
-  start: "rgba(7, 19, 38, 0.9)",
-  middle: "rgba(7, 19, 38, 0.6)",
-  end: "rgba(7, 19, 38, 0.2)",
+  start: "rgba(15, 47, 87, 0.9)",
+  middle: "rgba(15, 47, 87, 0.6)",
+  end: "rgba(15, 47, 87, 0.2)",
   homeStart: "rgba(5, 8, 12, 0.24)",
   homeEnd: "rgba(5, 8, 12, 0.56)",
 };
 
 export const defaultNavbarColors = {
-  main: "#1F7630",
-  scrolled: "#1F7630",
-  mobile: "#1F7630",
+  main: "#061B3A",
+  scrolled: "#061B3A",
+  mobile: "#061B3A",
   text: "#ffffff",
   mutedText: "rgba(255, 255, 255, 0.9)",
-  activeText: "#FF8F05",
+  activeText: "#20b77a",
 };
 
 export const defaultFooterColors = {
-  background: "#1F7630",
+  background: "#061B3A",
   text: "#ffffff",
   mutedText: "rgba(255, 255, 255, 0.78)",
-  accentText: "#13DDB4",
+  accentText: "#20b77a",
 };
 
 export const getPageHeroImage = (settings, page, fallback) =>
@@ -45,23 +49,12 @@ export const getHomeHeroImages = (settings) => {
   return items.length ? items : defaultHomeHeroImages;
 };
 
-export const getHeroColors = (settings) => ({
-  ...defaultHeroColors,
-  ...(settings?.heroColors || {}),
-});
+export const getHeroColors = () => defaultHeroColors;
 
-export const getNavbarColors = (settings) => ({
-  ...defaultNavbarColors,
-  ...(settings?.navbarColors || {}),
-  text: settings?.navbarTextColor || defaultNavbarColors.text,
-  mutedText: settings?.navbarMutedTextColor || defaultNavbarColors.mutedText,
-  activeText:
-    settings?.navbarActiveTextColor === "#13DDB4" || settings?.navbarColors?.activeText === "#13DDB4"
-      ? defaultNavbarColors.activeText
-      : settings?.navbarActiveTextColor || settings?.navbarColors?.activeText || defaultNavbarColors.activeText,
-});
+export const getLogoUrl = () => defaultLogoUrl;
 
-export const getFooterColors = (settings) => ({
-  ...defaultFooterColors,
-  ...(settings?.footerColors || {}),
-});
+export const getBrandColor = () => defaultBrandColor;
+
+export const getNavbarColors = () => defaultNavbarColors;
+
+export const getFooterColors = () => defaultFooterColors;

@@ -82,7 +82,7 @@ const openTourPlanPrint = (booking) => {
       <head>
         <title>${itinerary.title || "Tour Plan"} - Print</title>
         <style>
-          body { font-family: Arial, sans-serif; padding: 28px; color: #0f172a; }
+          body { font-family: Arial, sans-serif; padding: 28px; color: #2B2B2B; }
           h1 { margin-bottom: 6px; }
           p { line-height: 1.65; }
           .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 18px; }

@@ -94,7 +94,7 @@ const UserList = () => {
           role: formData.role,
           status: formData.status,
           password: formData.password,
-          avatar: `https://ui-avatars.com/api/?name=${formData.name.replace(/\s+/g, "+")}&background=13DDB4&color=0f172a`,
+          avatar: `https://ui-avatars.com/api/?name=${formData.name.replace(/\s+/g, "+")}&background=C6A24B&color=ffffff`,
         });
         toast.success("Member added", "New team account created.");
       }

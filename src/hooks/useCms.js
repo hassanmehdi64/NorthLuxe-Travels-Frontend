@@ -603,24 +603,6 @@ export const useUpdateSettings = () => {
         ...current,
         ...item,
         ...payload,
-        navbarTextColor: payload?.navbarTextColor || item?.navbarTextColor || current?.navbarTextColor,
-        navbarMutedTextColor: payload?.navbarMutedTextColor || item?.navbarMutedTextColor || current?.navbarMutedTextColor,
-        navbarActiveTextColor: payload?.navbarActiveTextColor || item?.navbarActiveTextColor || current?.navbarActiveTextColor,
-        navbarColors: {
-          ...(current.navbarColors || {}),
-          ...(item?.navbarColors || {}),
-          ...(payload?.navbarColors || {}),
-        },
-        footerColors: {
-          ...(current.footerColors || {}),
-          ...(item?.footerColors || {}),
-          ...(payload?.footerColors || {}),
-        },
-        heroColors: {
-          ...(current.heroColors || {}),
-          ...(item?.heroColors || {}),
-          ...(payload?.heroColors || {}),
-        },
         pageHeroImages: {
           ...(current.pageHeroImages || {}),
           ...(item?.pageHeroImages || {}),

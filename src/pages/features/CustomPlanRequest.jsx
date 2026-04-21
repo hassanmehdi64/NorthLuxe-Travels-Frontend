@@ -161,7 +161,7 @@ const BookingStyleDropdown = ({
                       }}
                       className={`w-full rounded-xl px-3 py-2.5 text-left text-sm transition ${
                         active
-                          ? "bg-[#7BE7C4] font-semibold text-[#0F172A]"
+                          ? "bg-[#20b77a] font-semibold text-white"
                           : "bg-[#f8fffc] text-theme hover:bg-[#dcf8ed]"
                       }`}
                     >

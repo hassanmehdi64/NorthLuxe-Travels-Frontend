@@ -4,25 +4,28 @@
 
 :root {
   /* Brand & Actions */
-  --c-brand: #13DDB4;
-  --c-brand-dark: #10c7a2; /* For hover states */
+  --c-brand: #20b77a;
+  --c-brand-dark: #159f6a;
+  --c-navy: #061B3A;
+  --c-navy-2: #0F2F57;
+  --c-green: #2D5A3F;
   
   /* Backgrounds */
-  --c-bg: #F7FBFA;
+  --c-bg: #F8FAFC;
   --c-surface: #FFFFFF;
 
   /* Text */
-  --c-text: #0F172A;
-  --c-muted: #475569;
+  --c-text: #2B2B2B;
+  --c-muted: #5A6675;
 
   /* UI Elements */
-  --c-border: #e2e2e2bb;
-  --c-hover: #ECFDF7;
+  --c-border: #E8EDF3;
+  --c-hover: #E8FFF5;
   
   /* Overlays */
   --overlay-light: rgba(255, 255, 255, 0.7);
-  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 12px 28px rgba(15, 23, 42, 0.06);
+  --shadow-sm: 0 1px 2px 0 rgba(15, 47, 87, 0.05);
+  --shadow-md: 0 12px 28px rgba(15, 47, 87, 0.08);
 }
 
 /* Dark mode token overrides so light-mode text tweaks do not affect dark UI */
@@ -83,7 +86,7 @@
 /* Primary Brand Button */
 .btn-brand {
   background-color: var(--c-brand);
-  color: var(--c-text);
+  color: #ffffff;
   border: 1px solid var(--c-brand);
 }
 

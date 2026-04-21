@@ -73,7 +73,7 @@ const FilterDropdown = ({
                   }}
                   className={`w-full rounded-lg px-3 py-2 text-left text-sm transition ${
                     active
-                      ? "bg-[#7BE7C4] text-[#0F172A] font-semibold"
+                      ? "bg-[#20b77a] text-white font-semibold"
                       : "bg-[#f8fffc] text-theme hover:bg-[#dcf8ed]"
                   }`}
                 >

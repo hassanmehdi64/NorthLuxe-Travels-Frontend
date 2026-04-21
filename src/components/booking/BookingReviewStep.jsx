@@ -150,7 +150,7 @@ const BookingReviewStep = ({
                 Double-check the receiving account and the client payment details before submitting the booking.
               </p>
             </div>
-            <div className="rounded-xl bg-[rgba(19,221,180,0.08)] px-3 py-2 text-left sm:text-right">
+            <div className="rounded-xl bg-[rgba(198,162,75,0.1)] px-3 py-2 text-left sm:text-right">
               <p className="text-[9px] font-bold uppercase tracking-[0.12em] text-textMuted">
                 Account Number
               </p>

@@ -324,7 +324,7 @@ const BookingPricingSettings = ({ settings, setSettings }) => {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2">
-      <div className="rounded-[1.5rem] border border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(19,221,180,0.06))] px-4 py-4 md:px-5 md:py-4 space-y-4">
+      <div className="rounded-[1.5rem] border border-slate-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(198,162,75,0.08))] px-4 py-4 md:px-5 md:py-4 space-y-4">
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-1.5">
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Payment Setup</p>

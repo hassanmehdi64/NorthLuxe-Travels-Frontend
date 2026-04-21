@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronDown, ImageIcon, Palette, Upload, X } from "lucide-react";
+import { ChevronDown, ImageIcon, Upload, X } from "lucide-react";
 
 const setField = (settings, setSettings, key, value) => {
   setSettings({ ...settings, [key]: value });
@@ -185,25 +185,6 @@ const AppearanceSettings = ({ settings, setSettings }) => {
       </Section>
 
       <Section
-        title="Primary Brand Color"
-        icon={Palette}
-        open={openSection === "brand-color"}
-        onToggle={() => toggleSection("brand-color")}
-      >
-        <div className="flex items-center gap-6">
-          <input
-            type="color"
-            className="h-16 w-16 cursor-pointer rounded-2xl border-none bg-transparent"
-            value={settings.primaryColor}
-            onChange={(e) => setField(settings, setSettings, "primaryColor", e.target.value)}
-          />
-          <div className="rounded-2xl bg-slate-50 px-6 py-4 font-mono font-bold text-slate-600">
-            {settings.primaryColor.toUpperCase()}
-          </div>
-        </div>
-      </Section>
-
-      <Section
         title="Hero Images"
         icon={ImageIcon}
         open={openSection === "hero-images"}
@@ -236,121 +217,6 @@ const AppearanceSettings = ({ settings, setSettings }) => {
         </div>
       </Section>
 
-      <Section
-        title="Hero Colors"
-        icon={Palette}
-        open={openSection === "hero-colors"}
-        onToggle={() => toggleSection("hero-colors")}
-      >
-        <div className="grid grid-cols-1 gap-4">
-          {[
-            ["overlay", "Hero Dark Layer"],
-            ["start", "Hero Gradient Start"],
-            ["middle", "Hero Gradient Middle"],
-            ["end", "Hero Gradient End"],
-            ["homeStart", "Home Slider Overlay Start"],
-            ["homeEnd", "Home Slider Overlay End"],
-          ].map(([key, label]) => (
-            <div key={key} className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-slate-400 px-1">{label}</label>
-              <input
-                className="w-full rounded-2xl bg-slate-50 p-4 font-mono text-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-100"
-                value={settings.heroColors?.[key] || ""}
-                onChange={(e) => setGroupField(settings, setSettings, "heroColors", key, e.target.value)}
-                placeholder="rgba(7, 19, 38, 0.9)"
-              />
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      <Section
-        title="Navbar Colors"
-        icon={Palette}
-        open={openSection === "navbar-colors"}
-        onToggle={() => toggleSection("navbar-colors")}
-      >
-        <div className="grid grid-cols-1 gap-4">
-          {[
-            ["main", "Navbar Default"],
-            ["scrolled", "Navbar Scrolled"],
-            ["mobile", "Navbar Mobile Drawer"],
-            ["navbarTextColor", "Navbar Text"],
-            ["navbarMutedTextColor", "Navbar Muted Text"],
-            ["navbarActiveTextColor", "Navbar Active Text"],
-          ].map(([key, label]) => (
-            <div key={key} className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-slate-400 px-1">{label}</label>
-              <div className="flex gap-3">
-                <input
-                  className="w-full rounded-2xl bg-slate-50 p-4 font-mono text-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-100"
-                  value={key.startsWith("navbar") ? settings[key] || "" : settings.navbarColors?.[key] || ""}
-                  onChange={(e) =>
-                    key.startsWith("navbar")
-                      ? setField(settings, setSettings, key, e.target.value)
-                      : setGroupField(settings, setSettings, "navbarColors", key, e.target.value)
-                  }
-                  placeholder={key.startsWith("navbar") ? "#ffffff" : "#1F7630"}
-                />
-                <input
-                  type="color"
-                  className="h-14 w-16 shrink-0 cursor-pointer rounded-2xl border border-slate-100 bg-slate-50 p-1"
-                  value={
-                    /^#[0-9a-f]{6}$/i.test((key.startsWith("navbar") ? settings[key] : settings.navbarColors?.[key]) || "")
-                      ? key.startsWith("navbar") ? settings[key] : settings.navbarColors[key]
-                      : "#ffffff"
-                  }
-                  onChange={(e) =>
-                    key.startsWith("navbar")
-                      ? setField(settings, setSettings, key, e.target.value)
-                      : setGroupField(settings, setSettings, "navbarColors", key, e.target.value)
-                  }
-                  title={`Pick ${label}`}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      <Section
-        title="Footer Colors"
-        icon={Palette}
-        open={openSection === "footer-colors"}
-        onToggle={() => toggleSection("footer-colors")}
-      >
-        <div className="grid grid-cols-1 gap-4">
-          {[
-            ["background", "Footer Background"],
-            ["text", "Footer Text"],
-            ["mutedText", "Footer Muted Text"],
-            ["accentText", "Footer Accent Text"],
-          ].map(([key, label]) => (
-            <div key={key} className="space-y-2">
-              <label className="text-[10px] font-black uppercase text-slate-400 px-1">{label}</label>
-              <div className="flex gap-3">
-                <input
-                  className="w-full rounded-2xl bg-slate-50 p-4 font-mono text-sm text-slate-900 outline-none focus:ring-2 focus:ring-blue-100"
-                  value={settings.footerColors?.[key] || ""}
-                  onChange={(e) => setGroupField(settings, setSettings, "footerColors", key, e.target.value)}
-                  placeholder={key === "background" ? "#1F7630" : "#ffffff"}
-                />
-                <input
-                  type="color"
-                  className="h-14 w-16 shrink-0 cursor-pointer rounded-2xl border border-slate-100 bg-slate-50 p-1"
-                  value={
-                    /^#[0-9a-f]{6}$/i.test(settings.footerColors?.[key] || "")
-                      ? settings.footerColors[key]
-                      : "#ffffff"
-                  }
-                  onChange={(e) => setGroupField(settings, setSettings, "footerColors", key, e.target.value)}
-                  title={`Pick ${label}`}
-                />
-              </div>
-            </div>
-          ))}
-        </div>
-      </Section>
     </div>
   );
 };

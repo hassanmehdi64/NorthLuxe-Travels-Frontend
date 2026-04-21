@@ -4,7 +4,7 @@ import FooterBottom from "./FooterBottom";
 import { footerLinks, socialLinks } from "./footerData";
 import { Mail, Phone, MapPin } from "lucide-react";
 import { useSettings } from "../../hooks/useCms";
-import { getFooterColors } from "../../lib/siteTheme";
+import { getFooterColors, getLogoUrl } from "../../lib/siteTheme";
 
 const normalizePhoneHref = (value) => String(value || "").replace(/[^\d+]/g, "");
 const splitBrandName = (name) => {
@@ -24,6 +24,7 @@ const Footer = () => {
   const phone = settings?.sitePhone || "+92 300 1234567";
   const address = settings?.address || "Skardu, Gilgit-Baltistan";
   const footerColors = getFooterColors(settings);
+  const logoUrl = getLogoUrl();
   const configuredSocialLinks = socialLinks.map((item) => ({
     ...item,
     href: settings?.socialLinks?.[item.icon] || item.href,
@@ -46,16 +47,13 @@ const Footer = () => {
         color: "var(--footer-text)",
       }}
     >
-      <div className="absolute -top-20 -right-12 h-72 w-72 rounded-full bg-[var(--footer-accent)]/10 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-16 h-80 w-80 rounded-full bg-[var(--footer-accent)]/8 blur-3xl pointer-events-none" />
-
       <div className="relative max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-14 xl:px-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 sm:gap-10 lg:gap-12 pb-8 sm:pb-12">
           <div className="lg:col-span-4 space-y-5 sm:space-y-7 py-1 sm:py-2 text-center md:text-left">
             <div>
-              {settings?.logoUrl ? (
-                <div className="mx-auto inline-flex h-16 max-w-[360px] items-center justify-center rounded-2xl border border-white/80 bg-white px-4 py-1 shadow-[0_18px_45px_rgba(255,255,255,0.18)] ring-1 ring-[var(--footer-accent)]/35 md:mx-0">
-                  <img src={settings.logoUrl} alt={siteName} className="h-[5.4rem] max-w-[345px] object-contain" />
+              {logoUrl ? (
+                <div className="mx-auto inline-flex h-24 max-w-[520px] items-center justify-center md:mx-0">
+                  <img src={logoUrl} alt={siteName} className="h-24 max-w-[520px] object-contain drop-shadow-[0_2px_5px_rgba(0,0,0,0.35)]" />
                 </div>
               ) : (
                 <h3 className="inline-flex rounded-[1.5rem] border border-white/20 bg-white/10 px-4 py-3 text-2xl font-black uppercase tracking-tight text-[var(--footer-text)] shadow-[0_16px_38px_rgba(255,255,255,0.12)] md:text-3xl">

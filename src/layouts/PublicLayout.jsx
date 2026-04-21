@@ -4,7 +4,6 @@ import Navbar from "../components/navbar/Navbar";
 import Footer from "../components/footer/Footer";
 import WhatsAppFloatButton from "../components/common/WhatsAppFloatButton";
 import { useSettings } from "../hooks/useCms";
-import { getFooterColors, getNavbarColors } from "../lib/siteTheme";
 
 const PublicLayout = () => {
   const { data: settings } = useSettings(true);
@@ -19,21 +18,6 @@ const PublicLayout = () => {
 
     const siteName = settings.siteName || "North Luxe";
     document.title = siteName;
-
-    if (settings.primaryColor) {
-      document.documentElement.style.setProperty("--c-brand", settings.primaryColor);
-    }
-
-    const navbarColors = getNavbarColors(settings);
-    document.documentElement.style.setProperty("--nav-text", navbarColors.text);
-    document.documentElement.style.setProperty("--nav-muted", navbarColors.mutedText);
-    document.documentElement.style.setProperty("--nav-active", navbarColors.activeText);
-
-    const footerColors = getFooterColors(settings);
-    document.documentElement.style.setProperty("--footer-bg", footerColors.background);
-    document.documentElement.style.setProperty("--footer-text", footerColors.text);
-    document.documentElement.style.setProperty("--footer-muted", footerColors.mutedText);
-    document.documentElement.style.setProperty("--footer-accent", footerColors.accentText);
 
     const faviconUrl = settings.faviconUrl;
     if (!faviconUrl) return;

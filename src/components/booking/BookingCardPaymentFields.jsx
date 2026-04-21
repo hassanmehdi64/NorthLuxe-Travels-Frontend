@@ -11,14 +11,14 @@ import { CreditCard, ShieldCheck } from "lucide-react";
 const elementOptions = {
   style: {
     base: {
-      color: "#0f172a",
+      color: "#2B2B2B",
       fontFamily: '"DM Sans", system-ui, sans-serif',
       fontSize: "14px",
       lineHeight: "20px",
       "::placeholder": {
         color: "#94a3b8",
       },
-      iconColor: "#13ddb4",
+      iconColor: "#20b77a",
     },
     invalid: {
       color: "#dc2626",
@@ -131,7 +131,7 @@ const BookingCardPaymentFields = ({
             Enter the card details below to pay securely.
           </p>
         </div>
-        <div className="rounded-xl bg-[rgba(19,221,180,0.08)] px-3 py-2 text-left sm:text-right">
+        <div className="rounded-xl bg-[rgba(198,162,75,0.1)] px-3 py-2 text-left sm:text-right">
           <p className="text-[9px] font-semibold uppercase tracking-[0.12em] text-textMuted">
             Client Pays Now
           </p>

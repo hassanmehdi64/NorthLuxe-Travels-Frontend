@@ -90,7 +90,7 @@ const BookingDropdown = ({
                   }}
                   className={`w-full cursor-pointer rounded-lg px-3 py-2.5 text-left text-sm transition ${
                     isActive
-                      ? "bg-[#f3f5f7] text-[#0F172A]"
+                      ? "bg-[#F7F1E3] text-[#2B2B2B]"
                       : "bg-white text-theme hover:bg-[#f7f8fa]"
                   }`}
                 >
@@ -100,14 +100,14 @@ const BookingDropdown = ({
                         {item.label}
                       </p>
                       {item.description ? (
-                        <p className={`mt-1 text-xs leading-4 ${isActive ? "text-[#0F172A]/70" : "text-muted"}`}>
+                        <p className={`mt-1 text-xs leading-4 ${isActive ? "text-[#2B2B2B]/70" : "text-muted"}`}>
                           {item.description}
                         </p>
                       ) : null}
                     </div>
                     {item.badge ? (
                       <span className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${
-                        isActive ? "bg-white text-[#0F172A]" : "bg-[#f3f5f7] text-subheading"
+                        isActive ? "bg-white text-[#2B2B2B]" : "bg-[#f3f5f7] text-subheading"
                       }`}>
                         {item.badge}
                       </span>

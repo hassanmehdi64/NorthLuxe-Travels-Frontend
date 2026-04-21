@@ -207,7 +207,7 @@ const TourMain = () => {
 
             <button
               type="submit"
-              className="flex items-center justify-center gap-2 py-3.5 md:py-4 font-semibold text-[var(--c-text)] transition rounded-br-2xl rounded-bl-2xl md:rounded-bl-none md:rounded-tr-2xl md:rounded-br-2xl"
+              className="flex items-center justify-center gap-2 py-3.5 md:py-4 font-semibold text-white transition rounded-br-2xl rounded-bl-2xl md:rounded-bl-none md:rounded-tr-2xl md:rounded-br-2xl"
               style={{ background: "var(--c-brand)" }}>
               <Search size={18} />
               Search

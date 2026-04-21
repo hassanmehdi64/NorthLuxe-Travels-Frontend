@@ -185,7 +185,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen, theme }) => {
           }`}
         >
           <span className="text-xl font-black tracking-tighter italic">
-            NORTH<span className={isDark ? "text-accent" : "text-[var(--c-brand)]"}>LUXE</span>
+            <span className={isDark ? "text-white" : "text-[var(--c-navy)]"}>NORTH</span><span className="text-[var(--c-brand)]">LUXE</span>
           </span>
           <button
             onClick={() => setSidebarOpen(false)}
@@ -219,7 +219,7 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen, theme }) => {
                 <span className="truncate">{item.label}</span>
               </span>
               {badgeCounts[item.id] > 0 ? (
-                <span className="inline-flex min-w-5 h-5 px-1.5 items-center justify-center rounded-full text-[10px] leading-5 font-black bg-[var(--c-brand)] text-slate-900 shadow-[0_0_0_4px_rgba(19,221,180,0.16)] animate-pulse">
+                <span className="inline-flex min-w-5 h-5 px-1.5 items-center justify-center rounded-full text-[10px] leading-5 font-black bg-[var(--c-brand)] text-white shadow-[0_0_0_4px_rgba(198,162,75,0.18)] animate-pulse">
                   {badgeCounts[item.id] > 99 ? "99+" : badgeCounts[item.id]}
                 </span>
               ) : null}

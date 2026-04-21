@@ -11,7 +11,7 @@ const iconByType = {
 
 const toastStyleByType = {
   success: {
-    iconWrap: "bg-[rgba(19,221,180,0.16)] text-[var(--c-brand-dark)] ring-[rgba(19,221,180,0.28)]",
+    iconWrap: "bg-[rgba(45,90,63,0.12)] text-[var(--c-green)] ring-[rgba(45,90,63,0.22)]",
     bar: "bg-[var(--c-brand)]",
   },
   error: {
@@ -62,7 +62,7 @@ export const ToastProvider = ({ children }) => {
               className="group relative overflow-hidden rounded-2xl border border-white/80 bg-white/95 px-4 py-3.5 text-theme shadow-[0_18px_45px_rgba(15,23,42,0.18)] backdrop-blur-xl animate-in fade-in slide-in-from-top-2 sm:slide-in-from-right-5 duration-300"
             >
               <div className={`absolute inset-x-0 bottom-0 h-1 origin-left animate-[toast-progress_3.5s_linear_forwards] ${style.bar}`} />
-              <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(135deg,rgba(19,221,180,0.08),rgba(255,255,255,0)_55%)]" />
+              <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(135deg,rgba(198,162,75,0.08),rgba(255,255,255,0)_55%)]" />
               <div className="relative flex items-start gap-3">
                 <span className={`mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1 ${style.iconWrap}`}>
                   <Icon size={18} strokeWidth={2.4} />
