@@ -67,16 +67,6 @@ const setCachedPublicTours = (items) => {
   }
 };
 
-const mergePublicTours = (networkItems = [], cachedItems = []) => {
-  const cachedById = new Map(cachedItems.map((item) => [String(item?.id || ""), item]));
-
-  return networkItems.map((item) => {
-    const cachedItem = cachedById.get(String(item?.id || ""));
-    const mergedItem = cachedItem ? { ...item, ...cachedItem } : item;
-    return { ...mergedItem, currency: displayCurrency(mergedItem?.currency) };
-  });
-};
-
 const keys = {
   toursPublic: ["tours", "public"],
   toursAdmin: ["tours", "admin"],
@@ -111,10 +101,12 @@ export const usePublicTours = () =>
       try {
         const items = await apiClient.get("/tours/public").then(unwrap).then((d) => d.items || []);
         if (Array.isArray(items) && items.length) {
-          const cachedItems = getCachedPublicTours();
-          const mergedItems = mergePublicTours(items, cachedItems);
-          setCachedPublicTours(mergedItems);
-          return mergedItems;
+          const normalizedItems = items.map((item) => ({
+            ...item,
+            currency: displayCurrency(item?.currency),
+          }));
+          setCachedPublicTours(normalizedItems);
+          return normalizedItems;
         }
 
         const cachedItems = getCachedPublicTours();

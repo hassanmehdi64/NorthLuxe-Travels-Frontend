@@ -14,7 +14,7 @@ const splitBrandName = (name) => {
 const BrandMark = ({ settings, navColors, compact = false, onClick }) => {
   const siteName = settings?.siteName || "North Luxe Travels";
   const brand = splitBrandName(siteName);
-  const logoUrl = getLogoUrl();
+  const logoUrl = getLogoUrl(settings);
 
   return (
     <Link

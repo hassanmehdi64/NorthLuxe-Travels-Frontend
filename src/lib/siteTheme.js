@@ -49,12 +49,21 @@ export const getHomeHeroImages = (settings) => {
   return items.length ? items : defaultHomeHeroImages;
 };
 
-export const getHeroColors = () => defaultHeroColors;
+export const getHeroColors = (settings) => ({
+  ...defaultHeroColors,
+  ...(settings?.heroColors || {}),
+});
 
-export const getLogoUrl = () => defaultLogoUrl;
+export const getLogoUrl = (settings) => settings?.logoUrl || defaultLogoUrl;
 
-export const getBrandColor = () => defaultBrandColor;
+export const getBrandColor = (settings) => settings?.primaryColor || defaultBrandColor;
 
-export const getNavbarColors = () => defaultNavbarColors;
+export const getNavbarColors = (settings) => ({
+  ...defaultNavbarColors,
+  ...(settings?.navbarColors || {}),
+});
 
-export const getFooterColors = () => defaultFooterColors;
+export const getFooterColors = (settings) => ({
+  ...defaultFooterColors,
+  ...(settings?.footerColors || {}),
+});

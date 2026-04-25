@@ -24,7 +24,7 @@ const Footer = () => {
   const phone = settings?.sitePhone || "+92 300 1234567";
   const address = settings?.address || "Skardu, Gilgit-Baltistan";
   const footerColors = getFooterColors(settings);
-  const logoUrl = getLogoUrl();
+  const logoUrl = getLogoUrl(settings);
   const configuredSocialLinks = socialLinks.map((item) => ({
     ...item,
     href: settings?.socialLinks?.[item.icon] || item.href,
