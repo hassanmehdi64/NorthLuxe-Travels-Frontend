@@ -122,7 +122,7 @@ const DetailRow = ({ label, value, accent = false, multiline = false }) => (
 );
 
 const SectionCard = ({ icon: Icon, title, children }) => (
-  <section className="rounded-[1rem] border border-slate-200 bg-white p-3.5 shadow-[0_8px_20px_rgba(15,23,42,0.035)]">
+  <section className="admin-soft-panel rounded-[1rem] p-3.5">
     <div className="flex items-center gap-2 border-b border-slate-100 pb-2.5">
       <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[var(--c-brand)]/10 text-[var(--c-brand)]">
         <Icon size={14} />
@@ -276,13 +276,13 @@ const BookingDetails = () => {
     setOpenPlanDay(0);
   }, [booking, linkedTour]);
 
-  const updateStatus = (newStatus) => {
-    updateBooking.mutate({ id, status: newStatus });
+  const updateStatus = async (newStatus) => {
+    await updateBooking.mutateAsync({ id, status: newStatus });
   };
 
-  const verifyAdvancePayment = () => {
+  const verifyAdvancePayment = async () => {
     const suggestedAdvance = booking.advanceAmount || Math.round(Number(booking.amount || 0) * 0.1);
-    confirmBookingPayment.mutate({
+    await confirmBookingPayment.mutateAsync({
       bookingId: id,
       paidAmount: suggestedAdvance,
       paymentMethod: booking.paymentMethod || "bank_transfer",
@@ -290,7 +290,7 @@ const BookingDetails = () => {
     });
   };
 
-  if (!booking) return <div className="p-6 text-slate-500">Loading booking...</div>;
+  if (!booking) return <div className="admin-soft-muted p-6">Loading booking...</div>;
 
   const isCustomBooking = booking.bookingType === "custom" || booking.isCustomTour;
   const request = getCustomRequestDetails(booking);
@@ -760,6 +760,7 @@ const BookingDetails = () => {
     win.focus();
     setTimeout(() => win.print(), 350);
   };
+
   return (
     <div className="mx-auto max-w-6xl space-y-1.5">
       <div className="rounded-[1.1rem] border border-slate-200 bg-white p-3.5 shadow-[0_10px_24px_rgba(15,23,42,0.04)] md:p-4">
@@ -892,7 +893,7 @@ const BookingDetails = () => {
       ) : null}
 
       {isItineraryFormOpen ? (
-        <section className="rounded-[1.4rem] border border-slate-200 bg-white p-4 shadow-[0_14px_30px_rgba(15,23,42,0.04)]">
+        <section className="admin-soft-form rounded-[1.4rem] p-4">
           <div className="border-b border-slate-100 pb-4">
             <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">Edit Itinerary</p>
             <h2 className="mt-1.5 text-lg font-bold tracking-tight text-slate-950">Tour Plan Builder</h2>
@@ -901,33 +902,33 @@ const BookingDetails = () => {
           <form onSubmit={handleSaveItinerary} className="mt-4 grid gap-3 md:grid-cols-2">
             <label className="space-y-2">
               <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Itinerary Title</span>
-              <input className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.title} onChange={(e) => setItineraryForm((prev) => ({ ...prev, title: e.target.value }))} />
+              <input className="w-full rounded-lg px-3 py-2 text-sm text-slate-900 outline-none" value={itineraryForm.title} onChange={(e) => setItineraryForm((prev) => ({ ...prev, title: e.target.value }))} />
             </label>
             <label className="space-y-2">
               <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Route</span>
-              <input className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.route} onChange={(e) => setItineraryForm((prev) => ({ ...prev, route: e.target.value }))} />
+              <input className="w-full rounded-lg px-3 py-2 text-sm text-slate-900 outline-none" value={itineraryForm.route} onChange={(e) => setItineraryForm((prev) => ({ ...prev, route: e.target.value }))} />
             </label>
             <label className="space-y-2">
               <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Duration</span>
-              <input className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.durationLabel} onChange={(e) => setItineraryForm((prev) => ({ ...prev, durationLabel: e.target.value }))} />
+              <input className="w-full rounded-lg px-3 py-2 text-sm text-slate-900 outline-none" value={itineraryForm.durationLabel} onChange={(e) => setItineraryForm((prev) => ({ ...prev, durationLabel: e.target.value }))} />
             </label>
             <div className="grid grid-cols-[110px_minmax(0,1fr)] gap-3">
               <label className="space-y-2">
                 <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Currency</span>
-                <input className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.currency} onChange={(e) => setItineraryForm((prev) => ({ ...prev, currency: e.target.value }))} />
+                <input className="w-full rounded-lg px-3 py-2 text-sm text-slate-900 outline-none" value={itineraryForm.currency} onChange={(e) => setItineraryForm((prev) => ({ ...prev, currency: e.target.value }))} />
               </label>
               <label className="space-y-2">
                 <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Final Budget</span>
-                <input type="number" min="0" className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.finalBudget} onChange={(e) => setItineraryForm((prev) => ({ ...prev, finalBudget: Number(e.target.value || 0) }))} />
+                <input type="number" min="0" className="w-full rounded-lg px-3 py-2 text-sm text-slate-900 outline-none" value={itineraryForm.finalBudget} onChange={(e) => setItineraryForm((prev) => ({ ...prev, finalBudget: Number(e.target.value || 0) }))} />
               </label>
             </div>
             <label className="space-y-2">
               <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Hotel Plan</span>
-              <input className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.hotelPlan} onChange={(e) => setItineraryForm((prev) => ({ ...prev, hotelPlan: e.target.value }))} />
+              <input className="w-full rounded-lg px-3 py-2 text-sm text-slate-900 outline-none" value={itineraryForm.hotelPlan} onChange={(e) => setItineraryForm((prev) => ({ ...prev, hotelPlan: e.target.value }))} />
             </label>
             <label className="space-y-2">
               <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Vehicle Plan</span>
-              <input className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.vehiclePlan} onChange={(e) => setItineraryForm((prev) => ({ ...prev, vehiclePlan: e.target.value }))} />
+              <input className="w-full rounded-lg px-3 py-2 text-sm text-slate-900 outline-none" value={itineraryForm.vehiclePlan} onChange={(e) => setItineraryForm((prev) => ({ ...prev, vehiclePlan: e.target.value }))} />
             </label>
             <label className="space-y-2 md:col-span-2">
               <div className="flex items-center justify-between gap-3">
@@ -941,7 +942,7 @@ const BookingDetails = () => {
                     }));
                     setOpenPlanDay(itineraryForm.planDays.length);
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-sky-200 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-sky-700 transition hover:bg-sky-50"
+                  className="admin-soft-button-ghost inline-flex items-center gap-1.5 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--c-brand)]"
                 >
                   <PlusSquare size={13} />
                   Add Day
@@ -964,7 +965,7 @@ const BookingDetails = () => {
                     {openPlanDay === index ? (
                       <div className="space-y-2 border-t border-slate-200 px-3 py-3">
                         <input
-                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 outline-none focus:border-sky-300"
+                          className="w-full rounded-lg bg-white px-3 py-2 text-sm font-medium text-slate-900 outline-none"
                           value={item.title}
                           onChange={(e) =>
                             setItineraryForm((prev) => ({
@@ -978,7 +979,7 @@ const BookingDetails = () => {
                         />
                         <textarea
                           rows={4}
-                          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm font-medium text-slate-900 outline-none focus:border-sky-300"
+                          className="w-full rounded-lg bg-white px-3 py-2 text-sm font-medium text-slate-900 outline-none"
                           value={item.plan}
                           onChange={(e) =>
                             setItineraryForm((prev) => ({
@@ -1005,7 +1006,7 @@ const BookingDetails = () => {
                                   return prev;
                                 });
                               }}
-                              className="inline-flex items-center gap-1.5 rounded-lg border border-rose-200 px-3 py-2 text-sm font-semibold text-rose-600 transition hover:bg-rose-50 hover:text-rose-700"
+                              className="admin-soft-button-ghost inline-flex items-center gap-1.5 text-rose-600"
                             >
                               <Trash2 size={12} />
                               Remove Day
@@ -1020,19 +1021,19 @@ const BookingDetails = () => {
             </label>
             <label className="space-y-2 md:col-span-2">
               <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Extra Notes</span>
-              <textarea rows={4} className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.planDetails} onChange={(e) => setItineraryForm((prev) => ({ ...prev, planDetails: e.target.value }))} placeholder="Extra notes" />
+              <textarea rows={4} className="w-full rounded-lg px-3 py-2 text-sm text-slate-900 outline-none" value={itineraryForm.planDetails} onChange={(e) => setItineraryForm((prev) => ({ ...prev, planDetails: e.target.value }))} placeholder="Extra notes" />
             </label>
             <label className="space-y-2 md:col-span-2 max-w-[220px]">
               <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">Plan Status</span>
-              <select className="w-full rounded-lg border border-slate-200 px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-sky-300" value={itineraryForm.status} onChange={(e) => setItineraryForm((prev) => ({ ...prev, status: e.target.value }))}>
+              <select className="w-full rounded-lg px-3 py-2 text-sm text-slate-900 outline-none" value={itineraryForm.status} onChange={(e) => setItineraryForm((prev) => ({ ...prev, status: e.target.value }))}>
                 <option value="draft">Draft</option>
                 <option value="final">Final</option>
               </select>
             </label>
-            <div className="md:col-span-2 flex flex-wrap gap-3 pt-2">
-              <button type="submit" className="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-700"><FileText size={15} />Save Itinerary</button>
-              <button type="button" onClick={handlePrintTourPlan} className="inline-flex items-center gap-2 rounded-lg border border-emerald-200 px-4 py-2.5 text-sm font-semibold text-emerald-700 transition hover:bg-emerald-50"><Printer size={15} />Print Final Itinerary</button>
-              <button type="button" onClick={() => setIsItineraryFormOpen(false)} className="inline-flex items-center gap-2 rounded-lg border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Close</button>
+            <div className="md:col-span-2 flex flex-wrap gap-2 pt-2">
+              <button type="submit" className="admin-soft-button inline-flex items-center gap-2"><FileText size={14} />Save Itinerary</button>
+              <button type="button" onClick={handlePrintTourPlan} className="admin-soft-button-ghost inline-flex items-center gap-2 text-[var(--c-brand)]"><Printer size={14} />Print Final Itinerary</button>
+              <button type="button" onClick={() => setIsItineraryFormOpen(false)} className="admin-soft-button-ghost inline-flex items-center gap-2">Close</button>
             </div>
           </form>
         </section>
@@ -1056,35 +1057,82 @@ const BookingDetails = () => {
         </SectionCard>
       ) : null}
 
-      <div className="rounded-[1rem] border border-slate-200 bg-white p-3 shadow-[0_8px_18px_rgba(15,23,42,0.03)]">
+      <div className="admin-soft-panel rounded-[1rem] p-3">
         <div className="flex flex-col gap-2.5 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap gap-2">
-            <button onClick={handleOpenItineraryEditor} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-sky-200 bg-sky-50/70 px-3.5 py-2 text-[13px] font-medium text-sky-700 transition hover:bg-sky-100/80">
-              <PencilLine size={14} />
+            <button onClick={handleOpenItineraryEditor} className="admin-soft-button-ghost inline-flex min-h-9 items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-[var(--c-brand)]">
+              <PencilLine size={13} />
               Edit Itinerary
             </button>
             {!isCustomBooking ? (
               <>
                 {booking.status === "pending" ? (
-                  <button onClick={() => updateStatus("confirmed")} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg bg-[var(--c-brand)] px-3.5 py-2 text-[13px] font-medium text-white transition hover:opacity-95"><BadgeCheck size={14} />Confirm Booking</button>
+                  <button
+                    onClick={() =>
+                      toast.confirm(
+                        "Confirm Booking?",
+                        `This will mark ${booking.customer}'s booking as confirmed.`,
+                        () => updateStatus("confirmed"),
+                        {
+                          confirmLabel: "Confirm",
+                        },
+                      )
+                    }
+                    className="admin-soft-button inline-flex min-h-9 items-center justify-center gap-2 px-3 py-2 text-xs font-medium"
+                  >
+                    <BadgeCheck size={13} />
+                    Confirm Booking
+                  </button>
                 ) : null}
                 {booking.status !== "cancelled" ? (
-                  <button onClick={() => updateStatus("cancelled")} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-rose-200 bg-rose-50/70 px-3.5 py-2 text-[13px] font-medium text-rose-600 transition hover:bg-rose-100/80"><XCircle size={14} />Cancel Booking</button>
+                  <button
+                    onClick={() =>
+                      toast.confirm(
+                        "Cancel Booking?",
+                        `This will change ${booking.customer}'s booking status to cancelled.`,
+                        () => updateStatus("cancelled"),
+                        {
+                          confirmLabel: "Cancel",
+                          tone: "danger",
+                        },
+                      )
+                    }
+                    className="admin-soft-button-ghost inline-flex min-h-9 items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-rose-600"
+                  >
+                    <XCircle size={13} />
+                    Cancel Booking
+                  </button>
                 ) : null}
                 {!booking.paymentVerified && booking.paymentMethod !== "pay_on_arrival" ? (
-                  <button onClick={verifyAdvancePayment} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50/70 px-3.5 py-2 text-[13px] font-medium text-emerald-700 transition hover:bg-emerald-100/80"><Wallet size={14} />Verify Advance Payment</button>
+                  <button
+                    onClick={() =>
+                      toast.confirm(
+                        "Verify Advance Payment?",
+                        `This will verify the advance payment for ${booking.customer}'s booking.`,
+                        verifyAdvancePayment,
+                        {
+                          confirmLabel: "Verify",
+                        },
+                      )
+                    }
+                    className="admin-soft-button-ghost inline-flex min-h-9 items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-[var(--c-brand)]"
+                  >
+                    <Wallet size={13} />
+                    Verify Advance Payment
+                  </button>
                 ) : null}
               </>
             ) : null}
           </div>
           <div className="flex flex-wrap gap-2 lg:justify-end">
             {hasSavedItinerary ? (
-              <button onClick={handlePrintTourPlan} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50/60 px-3.5 py-2 text-[13px] font-medium text-emerald-700 transition hover:bg-emerald-100/80"><Printer size={14} />Print Tour Plan</button>
+              <button onClick={handlePrintTourPlan} className="admin-soft-button-ghost inline-flex min-h-9 items-center justify-center gap-2 px-3 py-2 text-xs font-medium text-[var(--c-brand)]"><Printer size={13} />Print Tour Plan</button>
             ) : null}
-            <Link to="/admin/bookings" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-2 text-[13px] font-medium text-slate-700 transition hover:bg-slate-100"><ArrowLeft size={14} />Back to List</Link>
+            <Link to="/admin/bookings" className="admin-soft-button-ghost inline-flex min-h-9 items-center justify-center gap-2 px-3 py-2 text-xs font-medium"><ArrowLeft size={13} />Back to List</Link>
           </div>
         </div>
       </div>
+
     </div>
   );
 };

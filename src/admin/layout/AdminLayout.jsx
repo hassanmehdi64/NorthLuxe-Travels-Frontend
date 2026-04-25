@@ -24,8 +24,8 @@ const AdminLayout = () => {
 
   return (
     <div
-      className={`admin-shell flex min-h-screen font-sans antialiased transition-colors duration-300 ${
-        isDark ? "dark bg-slate-900 text-slate-200" : "bg-[#eef3f5] text-slate-900"
+      className={`admin-shell admin-shell-soft flex min-h-screen font-sans antialiased transition-colors duration-300 ${
+        isDark ? "dark text-slate-200" : "text-slate-900"
       }`}
     >
       {/* Sidebar Component */}
@@ -36,7 +36,7 @@ const AdminLayout = () => {
       />
 
       {/* Main Content Area */}
-      <div className={`flex-1 flex flex-col min-w-0 overflow-hidden ${isDark ? "bg-slate-800/60" : "bg-[#eef3f5]"}`}>
+      <div className="admin-main-stage flex-1 flex min-w-0 flex-col overflow-hidden px-3 pb-3 pt-3 lg:px-4 lg:pb-4 lg:pt-4">
         {/* Topbar Component */}
         <Topbar
           onMenuClick={() => setSidebarOpen(true)}
@@ -45,8 +45,8 @@ const AdminLayout = () => {
         />
 
         {/* Dynamic Content Outlet */}
-        <main className="flex-1 overflow-y-auto p-4 lg:p-8 xl:p-10">
-          <div className="max-w-[1500px] mx-auto">
+        <main className="relative z-[1] flex-1 overflow-y-auto px-2 pb-5 pt-5 lg:px-6 lg:pb-8 lg:pt-6 xl:px-8">
+          <div className="mx-auto max-w-[1520px]">
             <Outlet />
           </div>
         </main>

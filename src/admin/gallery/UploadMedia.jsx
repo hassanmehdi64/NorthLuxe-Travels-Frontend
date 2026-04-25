@@ -32,24 +32,24 @@ const UploadMedia = ({ isOpen, onClose, onUpload }) => {
       />
 
       {/* Modal Card */}
-      <div className="relative bg-white w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-black text-slate-900">Upload Media</h2>
+      <div className="admin-soft-dialog relative w-full max-w-md overflow-hidden p-5 animate-in fade-in zoom-in duration-200 sm:p-6">
+        <div className="mb-5 flex items-center justify-between">
+          <h2 className="admin-soft-heading text-xl font-black">Upload</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-full transition-colors"
+            className="admin-soft-icon-button !h-8 !w-8"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Dropzone */}
           <div
-            className={`relative border-2 border-dashed rounded-3xl p-8 flex flex-col items-center justify-center transition-all ${url ? "border-secondary bg-secondary/5" : "border-slate-200 hover:border-slate-300 bg-slate-50"}`}
+            className={`relative flex flex-col items-center justify-center rounded-[1.25rem] border border-dashed p-5 transition-all ${url ? "border-[var(--c-brand)] bg-[var(--c-brand)]/6" : "border-slate-200 bg-slate-50 hover:border-[var(--c-brand)]/35"}`}
           >
             {url ? (
-              <div className="relative w-full aspect-video rounded-2xl overflow-hidden">
+              <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[1rem]">
                 <img
                   src={url}
                   alt="Preview"
@@ -60,43 +60,43 @@ const UploadMedia = ({ isOpen, onClose, onUpload }) => {
                   onClick={() => {
                     setUrl("");
                   }}
-                  className="absolute top-2 right-2 p-1.5 bg-rose-500 text-white rounded-full shadow-lg"
+                  className="admin-soft-icon-button absolute right-2 top-2 !h-7 !w-7 !bg-rose-500 !text-white"
                 >
                   <X size={14} />
                 </button>
               </div>
             ) : (
               <>
-                <div className="p-4 bg-white rounded-2xl shadow-sm text-slate-400 mb-4">
-                  <Upload size={32} />
+                <div className="mb-3 rounded-2xl bg-white p-3 text-[var(--c-brand)] shadow-sm">
+                  <Upload size={22} />
                 </div>
-                <p className="text-sm font-bold text-slate-600">Paste image URL below</p>
-                <p className="text-xs text-slate-400 mt-1">Store CDN/public image URLs</p>
+                <p className="text-sm font-bold text-slate-700">Paste image URL below</p>
+                <p className="mt-1 text-xs text-slate-400">Store CDN/public image URLs</p>
                 <input
                   type="url"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   placeholder="https://..."
-                  className="mt-4 w-full p-3 rounded-xl border border-slate-200"
+                  className="mt-4 w-full rounded-xl p-2.5 text-sm"
                 />
               </>
             )}
           </div>
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 block px-1">
-              Media Title
+            <label className="admin-soft-label mb-3 block px-1">
+              Title
             </label>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Hunza Valley"
-              className="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-xs outline-none focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-xl p-2.5 text-xs font-bold"
             />
           </div>
 
           {/* Category Selector */}
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-3 block px-1">
+            <label className="admin-soft-label mb-3 block px-1">
               Select Category
             </label>
             <div className="grid grid-cols-3 gap-2">
@@ -105,7 +105,7 @@ const UploadMedia = ({ isOpen, onClose, onUpload }) => {
                   key={cat}
                   type="button"
                   onClick={() => setCategory(cat)}
-                  className={`py-3 rounded-2xl text-xs font-bold transition-all border ${category === cat ? "bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-200" : "bg-white text-slate-500 border-slate-100 hover:border-slate-200"}`}
+                  className={`rounded-xl border py-2 text-[10px] font-bold uppercase tracking-[0.14em] transition-all ${category === cat ? "border-[var(--c-brand)] bg-[var(--c-brand)] text-white shadow-[0_10px_20px_rgba(32,183,122,0.18)]" : "bg-white text-slate-500 border-slate-100 hover:border-[var(--c-brand)]/25"}`}
                 >
                   {cat}
                 </button>
@@ -114,18 +114,18 @@ const UploadMedia = ({ isOpen, onClose, onUpload }) => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-2">
+          <div className="flex gap-2 pt-1">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-4 rounded-2xl font-bold text-slate-500 hover:bg-slate-50 transition-all"
+              className="admin-soft-button-ghost flex-1 px-4 py-2 text-xs"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!url}
-              className="flex-1 py-4 rounded-2xl font-bold bg-secondary text-white shadow-xl shadow-secondary/20 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:hover:scale-100 transition-all"
+              className="admin-soft-button flex-1 px-4 py-2 text-xs disabled:opacity-50 disabled:hover:translate-y-0"
             >
               Start Upload
             </button>

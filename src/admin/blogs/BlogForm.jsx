@@ -63,25 +63,25 @@ const BlogForm = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-20">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-3xl border border-slate-100 sticky top-4 z-30 shadow-sm dark:bg-slate-900 dark:border-slate-700">
+    <div className="mx-auto max-w-5xl space-y-6 pb-20">
+      <div className="admin-soft-panel sticky top-4 z-30 flex flex-col items-start justify-between gap-4 p-4 sm:flex-row sm:items-center">
         <Link
           to="/admin/blogs"
-            className="flex items-center gap-2 text-slate-500 font-bold hover:text-slate-900 transition-colors px-2 dark:text-slate-300 dark:hover:text-slate-100"
+          className="admin-soft-button-ghost px-4 py-2"
         >
           <ArrowLeft size={18} /> Back
         </Link>
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
           <button
             onClick={() => setPreviewMode(!previewMode)}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-slate-100 text-slate-600 rounded-2xl font-bold text-sm dark:bg-slate-800 dark:text-slate-200"
+            className="admin-soft-button-ghost flex-1 sm:flex-none"
           >
             {previewMode ? <FileText size={18} /> : <Eye size={18} />}
             {previewMode ? "Edit Mode" : "Preview"}
           </button>
           <button
             onClick={(e) => handleSubmit(e, "published")}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-secondary text-white rounded-2xl font-bold text-sm"
+            className="admin-soft-button flex-1 sm:flex-none"
           >
             <Send size={18} /> {id ? "Update Post" : "Publish Post"}
           </button>
@@ -89,33 +89,33 @@ const BlogForm = () => {
       </div>
 
       {!previewMode ? (
-        <form className="grid grid-cols-1 lg:grid-cols-3 gap-8" onSubmit={(e) => handleSubmit(e, "draft")}>
+        <form className="grid grid-cols-1 gap-6 lg:grid-cols-3 lg:gap-8" onSubmit={(e) => handleSubmit(e, "draft")}>
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-6 dark:bg-slate-900 dark:border-slate-700">
+            <div className="admin-soft-form space-y-6 p-5 sm:p-8">
               <label className="space-y-2 block">
-                <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400 px-1">Blog Title *</span>
+                <span className="admin-soft-label px-1">Blog Title *</span>
                 <input
                   type="text"
                   placeholder="Enter catchy blog title..."
-                  className="w-full text-2xl md:text-3xl font-black placeholder:text-slate-300 outline-none border-none focus:ring-0 p-0 dark:bg-transparent dark:text-slate-100"
+                  className="admin-unstyled-input w-full p-0 text-2xl font-black outline-none ring-0 placeholder:text-slate-300 md:text-3xl"
                   value={formData.title}
                   onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                 />
               </label>
               <label className="space-y-2 block">
-                <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400 px-1">Excerpt</span>
+                <span className="admin-soft-label px-1">Excerpt</span>
                 <textarea
                   placeholder="Write a short excerpt..."
-                  className="w-full min-h-[120px] text-base text-slate-600 outline-none border-none focus:ring-0 p-0 resize-none dark:bg-transparent dark:text-slate-200"
+                  className="admin-unstyled-textarea min-h-[120px] w-full resize-none p-0 text-base text-slate-600 outline-none ring-0 dark:text-slate-200"
                   value={formData.excerpt}
                   onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
                 />
               </label>
               <label className="space-y-2 block">
-                <span className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400 px-1">Main Content *</span>
+                <span className="admin-soft-label px-1">Main Content *</span>
                 <textarea
                   placeholder="Start writing your story here..."
-                  className="w-full min-h-[280px] text-lg text-slate-600 leading-relaxed outline-none border-none focus:ring-0 p-0 resize-none dark:bg-transparent dark:text-slate-200"
+                  className="admin-unstyled-textarea min-h-[280px] w-full resize-none p-0 text-base leading-relaxed text-slate-600 outline-none ring-0 md:text-lg dark:text-slate-200"
                   value={formData.content}
                   onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 />
@@ -124,13 +124,13 @@ const BlogForm = () => {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-6 dark:bg-slate-900 dark:border-slate-700">
+            <div className="admin-soft-form space-y-6 p-5 sm:p-6">
               <div>
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 block px-1">
+                <label className="admin-soft-label mb-3 block px-1">
                   Category
                 </label>
                 <select
-                  className="w-full p-3 bg-slate-50 border-none rounded-2xl font-bold text-slate-700 outline-none dark:bg-slate-800 dark:text-slate-100"
+                  className="w-full p-3 font-bold text-slate-700 dark:text-slate-100"
                   value={formData.category}
                   onChange={(e) => setFormData({ ...formData, category: e.target.value })}
                 >
@@ -142,24 +142,24 @@ const BlogForm = () => {
                 </select>
               </div>
               <div>
-                <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-3 block px-1">
+                <label className="admin-soft-label mb-3 block px-1">
                   Featured Image URL
                 </label>
                 <input
                   type="url"
-                  className="w-full p-3 bg-slate-50 border-none rounded-2xl font-bold text-sm outline-none dark:bg-slate-800 dark:text-slate-100"
+                  className="w-full p-3 text-sm font-bold dark:text-slate-100"
                   value={formData.image}
                   onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                 />
               </div>
-              <button className="w-full py-3 rounded-2xl bg-slate-900 text-white font-bold text-sm">
+              <button className="admin-soft-button w-full">
                 Save Draft
               </button>
             </div>
           </div>
         </form>
       ) : (
-        <div className="bg-white p-12 rounded-[3rem] border border-slate-100 shadow-sm min-h-screen dark:bg-slate-900 dark:border-slate-700">
+        <div className="admin-soft-panel min-h-screen p-6 sm:p-10 lg:p-12">
           <span className="text-secondary font-black uppercase tracking-widest text-xs">
             {formData.category || "Category"}
           </span>

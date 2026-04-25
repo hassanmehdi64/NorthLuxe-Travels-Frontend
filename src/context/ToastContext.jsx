@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useMemo, useState } from "react";
-import { CheckCircle2, CircleAlert, Info, X } from "lucide-react";
+import { CheckCircle2, CircleAlert, Info, Sparkles, X } from "lucide-react";
 
 const ToastContext = createContext(null);
 
@@ -7,6 +7,7 @@ const iconByType = {
   success: CheckCircle2,
   error: CircleAlert,
   info: Info,
+  confirm: Sparkles,
 };
 
 const toastStyleByType = {
@@ -22,6 +23,10 @@ const toastStyleByType = {
     iconWrap: "bg-sky-50 text-sky-600 ring-sky-100",
     bar: "bg-sky-500",
   },
+  confirm: {
+    iconWrap: "bg-[rgba(32,183,122,0.12)] text-[var(--c-brand)] ring-[rgba(32,183,122,0.16)]",
+    bar: "bg-[var(--c-brand)]",
+  },
 };
 
 export const ToastProvider = ({ children }) => {
@@ -32,10 +37,12 @@ export const ToastProvider = ({ children }) => {
   }, []);
 
   const pushToast = useCallback(
-    ({ type = "info", title, message, duration = 3500 }) => {
+    ({ type = "info", title, message, duration = 3500, ...rest }) => {
       const id = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-      setToasts((prev) => [...prev, { id, type, title, message }]);
-      window.setTimeout(() => removeToast(id), duration);
+      setToasts((prev) => [...prev, { id, type, title, message, ...rest }]);
+      if (duration > 0) {
+        window.setTimeout(() => removeToast(id), duration);
+      }
     },
     [removeToast],
   );
@@ -45,6 +52,17 @@ export const ToastProvider = ({ children }) => {
       success: (title, message) => pushToast({ type: "success", title, message }),
       error: (title, message) => pushToast({ type: "error", title, message }),
       info: (title, message) => pushToast({ type: "info", title, message }),
+      confirm: (title, message, onConfirm, options = {}) =>
+        pushToast({
+          type: "confirm",
+          title,
+          message,
+          onConfirm,
+          confirmLabel: options.confirmLabel || "Confirm",
+          cancelLabel: options.cancelLabel || "Dismiss",
+          tone: options.tone || "default",
+          duration: options.duration ?? 9000,
+        }),
     }),
     [pushToast],
   );
@@ -59,9 +77,13 @@ export const ToastProvider = ({ children }) => {
           return (
             <div
               key={toast.id}
-              className="group relative overflow-hidden rounded-2xl border border-white/80 bg-white/95 px-4 py-3.5 text-theme shadow-[0_18px_45px_rgba(15,23,42,0.18)] backdrop-blur-xl animate-in fade-in slide-in-from-top-2 sm:slide-in-from-right-5 duration-300"
+              className="group relative overflow-hidden rounded-2xl border border-white/80 bg-white/95 px-4 py-3 text-theme shadow-[0_18px_45px_rgba(15,23,42,0.18)] backdrop-blur-xl animate-in fade-in slide-in-from-top-2 sm:slide-in-from-right-5 duration-300"
             >
-              <div className={`absolute inset-x-0 bottom-0 h-1 origin-left animate-[toast-progress_3.5s_linear_forwards] ${style.bar}`} />
+              {toast.type !== "confirm" ? (
+                <div className={`absolute inset-x-0 bottom-0 h-1 origin-left animate-[toast-progress_3.5s_linear_forwards] ${style.bar}`} />
+              ) : (
+                <div className={`absolute inset-x-0 bottom-0 h-1 ${style.bar} opacity-70`} />
+              )}
               <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(135deg,rgba(198,162,75,0.08),rgba(255,255,255,0)_55%)]" />
               <div className="relative flex items-start gap-3">
                 <span className={`mt-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ring-1 ${style.iconWrap}`}>
@@ -82,6 +104,31 @@ export const ToastProvider = ({ children }) => {
                   <X size={16} />
                 </button>
               </div>
+              {toast.type === "confirm" ? (
+                <div className="relative mt-3 flex items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => removeToast(toast.id)}
+                    className="inline-flex items-center justify-center rounded-xl border border-white/70 bg-white/75 px-3 py-1.5 text-[11px] font-bold text-slate-600 transition hover:bg-white"
+                  >
+                    {toast.cancelLabel || "Dismiss"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      removeToast(toast.id);
+                      toast.onConfirm?.();
+                    }}
+                    className={`inline-flex items-center justify-center rounded-xl px-3 py-1.5 text-[11px] font-bold text-white transition hover:-translate-y-0.5 ${
+                      toast.tone === "danger"
+                        ? "bg-rose-500 shadow-[0_10px_24px_rgba(244,63,94,0.22)]"
+                        : "bg-[linear-gradient(135deg,var(--c-brand),var(--c-navy))] shadow-[0_10px_24px_rgba(32,183,122,0.2)]"
+                    }`}
+                  >
+                    {toast.confirmLabel || "Confirm"}
+                  </button>
+                </div>
+              ) : null}
             </div>
           );
         })}

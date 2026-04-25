@@ -128,13 +128,20 @@ const UserList = () => {
       toast.info("Action blocked", "You cannot delete your own account.");
       return;
     }
-    if (window.confirm("Remove this team member?")) {
-      deleteUserMutation.mutate(id, {
-        onSuccess: () => toast.success("Member removed", "User has been deleted."),
-        onError: (error) =>
-          toast.error("Delete failed", getApiErrorMessage(error, "Please try again.")),
-      });
-    }
+    toast.confirm(
+      "Remove Member?",
+      "This will permanently remove this team account.",
+      () =>
+        deleteUserMutation.mutate(id, {
+          onSuccess: () => toast.success("Deleted", "User has been deleted."),
+          onError: (error) =>
+            toast.error("Delete failed", getApiErrorMessage(error, "Please try again.")),
+        }),
+      {
+        confirmLabel: "Remove",
+        tone: "danger",
+      },
+    );
   };
 
   const filteredUsers = users.filter(
@@ -147,11 +154,11 @@ const UserList = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className=" text-xl xl:3xl font-black text-slate-900 tracking-tighter uppercase">
+          <h1 className="admin-soft-heading text-xl xl:3xl font-black tracking-tighter uppercase">
         
             Team Management
           </h1>
-          <p className="text-sm text-slate-500 font-medium">
+          <p className="admin-soft-muted text-sm font-medium">
             Manage permissions and team access.
           </p>
         </div>
@@ -163,30 +170,27 @@ const UserList = () => {
             }
             openCreateForm();
           }}
-          className="flex items-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-lg hover:bg-slate-800 transition-all w-full sm:w-auto"
+          className="admin-soft-button w-full sm:w-auto"
         >
           <UserPlus size={18} /> {isFormOpen && !editingUser ? "Close Form" : "Invite Member"}
         </button>
       </div>
 
       <div className="relative">
-        <Search
-          className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-          size={18}
-        />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--admin-muted)]" size={18} />
         <input
           type="text"
           placeholder="Search team..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 bg-white border border-slate-100 rounded-2xl outline-none focus:ring-4 focus:ring-slate-50 transition-all font-medium text-sm"
+          className="w-full py-3 pl-12 pr-4 text-sm font-medium"
         />
       </div>
 
       {isFormOpen ? (
-        <div className="bg-white w-full rounded-[2rem] border border-slate-100 p-6 sm:p-8 shadow-sm">
+        <div className="admin-soft-form w-full p-6 sm:p-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-black text-slate-900">
+            <h2 className="admin-soft-heading text-xl font-black">
               {editingUser ? "Edit Member" : "Invite Member"}
             </h2>
             <button
@@ -195,7 +199,7 @@ const UserList = () => {
                 setIsFormOpen(false);
                 setEditingUser(null);
               }}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl hover:bg-slate-100"
+              className="admin-soft-icon-button"
             >
               <X size={18} />
             </button>
@@ -208,7 +212,7 @@ const UserList = () => {
               </label>
               <input
                 required
-                className="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-900"
+                className="w-full p-4 font-bold"
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
@@ -222,7 +226,7 @@ const UserList = () => {
               <input
                 required
                 type="email"
-                className="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-900"
+                className="w-full p-4 font-bold"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
@@ -234,7 +238,7 @@ const UserList = () => {
                 Role
               </label>
               <select
-                className="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-700"
+                className="w-full p-4 font-bold"
                 value={formData.role}
                 onChange={(e) =>
                   setFormData({ ...formData, role: e.target.value })
@@ -249,7 +253,7 @@ const UserList = () => {
                 Status
               </label>
               <select
-                className="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-700"
+                className="w-full p-4 font-bold"
                 value={formData.status}
                 onChange={(e) =>
                   setFormData({ ...formData, status: e.target.value })
@@ -265,7 +269,7 @@ const UserList = () => {
               </label>
               <input
                 type="password"
-                className="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-900"
+                className="w-full p-4 font-bold"
                 value={formData.password}
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
@@ -279,7 +283,7 @@ const UserList = () => {
               </label>
               <input
                 type="password"
-                className="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-900"
+                className="w-full p-4 font-bold"
                 value={formData.confirmPassword}
                 onChange={(e) =>
                   setFormData({ ...formData, confirmPassword: e.target.value })
@@ -293,7 +297,7 @@ const UserList = () => {
               </p>
             ) : null}
             <div className="md:col-span-2 flex gap-3">
-              <button className="px-6 py-3 bg-slate-900 text-white rounded-2xl font-bold text-sm">
+              <button className="admin-soft-button px-6 py-3">
                 {editingUser ? "Save Changes" : "Create Team Account"}
               </button>
               <button
@@ -302,7 +306,7 @@ const UserList = () => {
                   setIsFormOpen(false);
                   setEditingUser(null);
                 }}
-                className="px-6 py-3 bg-slate-100 text-slate-700 rounded-2xl font-bold text-sm"
+                className="admin-soft-button-ghost px-6 py-3"
               >
                 Cancel
               </button>

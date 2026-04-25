@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Plus,
   Trash2,
@@ -29,6 +29,8 @@ const GalleryList = () => {
   const [form, setForm] = useState(initialForm);
   const [isReadingFile, setIsReadingFile] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
+  const [openMenuId, setOpenMenuId] = useState("");
+  const menuRef = useRef(null);
   const { data: galleryItems = [] } = useGallery();
   const createGallery = useCreateGalleryItem();
   const updateGallery = useUpdateGalleryItem();
@@ -55,10 +57,10 @@ const GalleryList = () => {
     try {
       if (editingId) {
         await updateGallery.mutateAsync({ id: editingId, ...payload });
-        toast.success("Media updated", "Gallery item updated successfully.");
+        toast.success("Updated", "Gallery item updated successfully.");
       } else {
         await createGallery.mutateAsync(payload);
-        toast.success("Media created", "Gallery item added successfully.");
+        toast.success("Created", "Gallery item added successfully.");
       }
       resetForm();
     } catch (error) {
@@ -79,7 +81,7 @@ const GalleryList = () => {
 
   const deleteImage = (id) => {
     deleteGallery.mutate(id, {
-      onSuccess: () => toast.success("Media deleted", "Gallery item removed."),
+      onSuccess: () => toast.success("Deleted", "Gallery item removed."),
       onError: (error) =>
         toast.error("Delete failed", getApiErrorMessage(error, "Could not delete gallery item.")),
     });
@@ -118,15 +120,26 @@ const GalleryList = () => {
     reader.readAsDataURL(file);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpenMenuId("");
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
+    <div className="space-y-8 animate-in fade-in duration-700">
       {/* --- HEADER --- */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h1 className=" text-xl xl:3xl font-black text-slate-900 tracking-tighter uppercase">
+          <h1 className="admin-soft-heading text-xl font-black tracking-tighter uppercase xl:text-3xl">
             Gallery Management
           </h1>
-          <p className="text-sm font-bold text-slate-400">
+          <p className="admin-soft-muted text-sm font-bold">
             Manage high-quality visuals for your landing page.
           </p>
         </div>
@@ -141,34 +154,34 @@ const GalleryList = () => {
             setForm(initialForm);
             setIsFormOpen(true);
           }}
-          className="group flex items-center gap-3 bg-slate-900 text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-all shadow-xl shadow-slate-200"
+          className="admin-soft-button group inline-flex items-center gap-2 px-4 py-2 text-xs"
         >
-          <Plus size={18} /> {isFormOpen ? "Close Form" : "Add New Media"}
+          <Plus size={16} /> {isFormOpen ? "Close Form" : "Add New"}
         </button>
       </div>
 
       {isFormOpen ? (
         <form
           onSubmit={addNewImage}
-          className="bg-white rounded-[2.5rem] border border-slate-100 p-6 grid md:grid-cols-3 gap-4"
+          className="admin-soft-form grid gap-3 p-4 md:grid-cols-3 md:p-5"
         >
           <label className="space-y-2">
-            <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">
-              Media Title
+            <span className="admin-soft-label">
+              Title
             </span>
             <input
-              className="p-3 rounded-xl border border-slate-200 w-full"
+              className="w-full rounded-xl p-2.5 text-sm"
               placeholder="Skardu Valley"
               value={form.title}
               onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))}
             />
           </label>
           <label className="space-y-2">
-            <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">
+            <span className="admin-soft-label">
               Category
             </span>
             <select
-              className="p-3 rounded-xl border border-slate-200 w-full"
+              className="w-full rounded-xl p-2.5 text-sm"
               value={form.category}
               onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
             >
@@ -178,22 +191,22 @@ const GalleryList = () => {
             </select>
           </label>
           <label className="space-y-2">
-            <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">
+            <span className="admin-soft-label">
               Alt Text
             </span>
             <input
-              className="p-3 rounded-xl border border-slate-200 w-full"
+              className="w-full rounded-xl p-2.5 text-sm"
               placeholder="Alt description for accessibility"
               value={form.alt}
               onChange={(e) => setForm((prev) => ({ ...prev, alt: e.target.value }))}
             />
           </label>
           <label className="md:col-span-3 space-y-2">
-            <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">
+            <span className="admin-soft-label">
               Image URL *
             </span>
             <input
-              className="p-3 rounded-xl border border-slate-200 w-full"
+              className="w-full rounded-xl p-2.5 text-sm"
               type="url"
               placeholder="https://..."
               value={form.url}
@@ -201,7 +214,7 @@ const GalleryList = () => {
               required
             />
           </label>
-          <div className="md:col-span-3 flex items-center gap-3">
+          <div className="md:col-span-3 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
             <input
               ref={fileInputRef}
               type="file"
@@ -212,25 +225,25 @@ const GalleryList = () => {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl font-semibold text-sm hover:bg-slate-50"
+              className="admin-soft-button-ghost px-3 py-2 text-[11px]"
             >
               Upload From Device
             </button>
-            <p className="text-xs text-slate-500">
+            <p className="admin-soft-muted text-xs">
               {isReadingFile ? "Reading file..." : "Allowed: image files up to 2MB."}
             </p>
           </div>
-          <div className="md:col-span-3 flex gap-3">
+          <div className="md:col-span-3 flex flex-wrap gap-2 pt-1">
             <button
               type="submit"
-              className="px-5 py-3 bg-slate-900 text-white rounded-2xl font-bold text-sm"
+              className="admin-soft-button px-4 py-2 text-xs"
             >
-              {editingId ? "Update Media" : "Create Media"}
+              {editingId ? "Update" : "Create"}
             </button>
             <button
               type="button"
               onClick={resetForm}
-              className="px-5 py-3 bg-slate-100 text-slate-700 rounded-2xl font-bold text-sm"
+              className="admin-soft-button-ghost px-4 py-2 text-xs"
             >
               Cancel
             </button>
@@ -244,10 +257,10 @@ const GalleryList = () => {
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}
-            className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+            className={`rounded-full border px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.22em] transition-all ${
               activeCategory === cat
-                ? "bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-200"
-                : "bg-white text-slate-400 border-slate-100 hover:border-slate-300"
+                ? "border-[var(--c-brand)] bg-[var(--c-brand)] text-white shadow-[0_10px_20px_rgba(32,183,122,0.18)]"
+                : "bg-white/70 text-slate-500 border-white/35 hover:border-[rgba(32,183,122,0.24)]"
             }`}
           >
             {cat}
@@ -256,7 +269,7 @@ const GalleryList = () => {
       </div>
 
       {/* --- GALLERY GRID --- */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {galleryItems
           .filter(
             (item) =>
@@ -265,50 +278,70 @@ const GalleryList = () => {
           .map((item) => (
             <div
               key={item.id}
-              className="group relative bg-white rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
+              className={`group admin-soft-panel relative overflow-visible rounded-[1.2rem] border border-white/55 bg-white/80 p-0 shadow-[0_14px_28px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_34px_rgba(15,23,42,0.1)] ${
+                openMenuId === item.id ? "z-50" : "z-10"
+              }`}
             >
-              {/* Image Overlay Actions */}
-              <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex items-center justify-center gap-3 backdrop-blur-[2px]">
-                <button
-                  onClick={() => startEdit(item)}
-                  className="p-3 bg-white/20 hover:bg-white text-white hover:text-slate-900 rounded-2xl backdrop-blur-md transition-all"
-                >
-                  <Edit3 size={20} />
-                </button>
-                <button
-                  onClick={() => deleteImage(item.id)}
-                  className="p-3 bg-rose-500/20 hover:bg-rose-500 text-white rounded-2xl backdrop-blur-md transition-all"
-                >
-                  <Trash2 size={20} />
-                </button>
+              <div className="overflow-hidden rounded-t-[1.2rem]">
+                {/* Badge */}
+                <div className="absolute left-3 top-3 z-20">
+                  <span className="rounded-full border border-white/25 bg-white/92 px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.22em] text-[var(--c-navy)] shadow-sm backdrop-blur-md">
+                    {item.category}
+                  </span>
+                </div>
+
+                <img
+                  src={item.url}
+                  alt={item.title}
+                  className="aspect-[1.18/1] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                />
               </div>
 
-              {/* Badge */}
-              <div className="absolute top-5 left-5 z-20">
-                <span className="px-3 py-1 bg-white/90 backdrop-blur-md border border-white/20 rounded-lg text-[9px] font-black uppercase tracking-tighter text-slate-900">
-                  {item.category}
-                </span>
-              </div>
-
-              <img
-                src={item.url}
-                alt={item.title}
-                className="aspect-square w-full object-cover transform group-hover:scale-110 transition-transform duration-700"
-              />
-
-              <div className="p-6 bg-white relative z-20">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-black text-slate-900 text-sm uppercase tracking-tight">
+              <div className="relative z-20 border-t border-slate-100/80 bg-white/96 px-3 py-2.5 backdrop-blur-xl">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate text-[11px] font-black uppercase leading-tight tracking-tight text-slate-900">
                       {item.title}
                     </h3>
-                    <p className="text-[10px] font-bold text-slate-400">
-                      Added on {new Date(item.createdAt).toLocaleDateString()}
+                    <p className="mt-1 text-[10px] font-semibold text-slate-400">
+                      {new Date(item.createdAt).toLocaleDateString()}
                     </p>
                   </div>
-                  <button className="text-slate-300 hover:text-slate-900 transition-colors">
-                    <MoreVertical size={18} />
-                  </button>
+                  <div className="relative shrink-0" ref={openMenuId === item.id ? menuRef : null}>
+                    <button
+                      onClick={() =>
+                        setOpenMenuId((current) => (current === item.id ? "" : item.id))
+                      }
+                      className="admin-soft-icon-button !h-7 !w-7 !rounded-full !border-slate-200 !bg-white"
+                    >
+                      <MoreVertical size={14} />
+                    </button>
+
+                    {openMenuId === item.id ? (
+                      <div className="absolute right-0 top-9 z-40 w-36 overflow-hidden rounded-xl border border-slate-200 bg-white p-1.5 shadow-[0_18px_35px_rgba(15,23,42,0.12)]">
+                        <button
+                          onClick={() => {
+                            startEdit(item);
+                            setOpenMenuId("");
+                          }}
+                          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[11px] font-bold text-slate-600 transition-colors hover:bg-slate-50"
+                        >
+                          <Edit3 size={14} />
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => {
+                            deleteImage(item.id);
+                            setOpenMenuId("");
+                          }}
+                          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[11px] font-bold text-rose-600 transition-colors hover:bg-rose-50"
+                        >
+                          <Trash2 size={14} />
+                          Delete
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             </div>

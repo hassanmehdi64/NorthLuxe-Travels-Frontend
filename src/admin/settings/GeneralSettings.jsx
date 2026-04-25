@@ -6,11 +6,11 @@ const setField = (settings, setSettings, key, value) => {
 
 const TextField = ({ label, value, onChange, type = "text", placeholder = "" }) => (
   <div className="space-y-2">
-    <label className="px-1 text-[10px] font-black uppercase text-slate-400">{label}</label>
+    <label className="admin-soft-label px-1">{label}</label>
     <input
       type={type}
       placeholder={placeholder}
-      className="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold text-slate-900 outline-none transition focus:border-blue-200 focus:bg-white focus:ring-4 focus:ring-blue-50"
+      className="w-full p-4 text-sm font-bold"
       value={value || ""}
       onChange={(e) => onChange(e.target.value)}
     />
@@ -19,11 +19,11 @@ const TextField = ({ label, value, onChange, type = "text", placeholder = "" }) 
 
 const TextAreaField = ({ label, value, onChange, placeholder = "", rows = 3 }) => (
   <div className="space-y-2">
-    <label className="px-1 text-[10px] font-black uppercase text-slate-400">{label}</label>
+    <label className="admin-soft-label px-1">{label}</label>
     <textarea
       rows={rows}
       placeholder={placeholder}
-      className="w-full resize-none rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold leading-6 text-slate-900 outline-none transition focus:border-blue-200 focus:bg-white focus:ring-4 focus:ring-blue-50"
+      className="w-full resize-none p-4 text-sm font-bold leading-6"
       value={value || ""}
       onChange={(e) => onChange(e.target.value)}
     />
@@ -31,12 +31,12 @@ const TextAreaField = ({ label, value, onChange, placeholder = "", rows = 3 }) =
 );
 
 const Section = ({ icon: Icon, title, children }) => (
-  <section className="space-y-5 rounded-[2rem] border border-slate-100 bg-white p-5 shadow-sm">
+  <section className="admin-soft-panel space-y-5 p-5">
     <div className="flex items-center gap-3">
-      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+      <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(155,108,255,0.16),rgba(87,199,255,0.16))] text-[var(--admin-accent)]">
         <Icon size={18} />
       </div>
-      <h3 className="text-sm font-black uppercase tracking-tight text-slate-900">{title}</h3>
+      <h3 className="admin-soft-heading text-sm font-black uppercase tracking-tight">{title}</h3>
     </div>
     {children}
   </section>
@@ -46,11 +46,11 @@ const ToggleOption = ({ checked, title, description, onChange }) => (
   <button
     type="button"
     onClick={() => onChange(!checked)}
-    className="flex w-full items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-slate-50 p-4 text-left transition hover:border-blue-100 hover:bg-white"
+    className="flex w-full items-center justify-between gap-4 rounded-2xl border border-white/35 bg-white/45 p-4 text-left transition hover:border-[rgba(155,108,255,0.22)] hover:bg-white/70"
   >
     <div>
-      <p className="text-sm font-black text-slate-900">{title}</p>
-      <p className="mt-1 text-xs font-semibold leading-5 text-slate-500">{description}</p>
+      <p className="admin-soft-heading text-sm font-black">{title}</p>
+      <p className="admin-soft-muted mt-1 text-xs font-semibold leading-5">{description}</p>
     </div>
     <span className={`flex h-8 w-14 shrink-0 rounded-full p-1 transition ${checked ? "bg-rose-500" : "bg-slate-200"}`}>
       <span className={`h-6 w-6 rounded-full bg-white shadow transition ${checked ? "translate-x-6" : "translate-x-0"}`} />
@@ -62,7 +62,7 @@ const QuickAction = ({ icon: Icon, label, onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    className="inline-flex items-center gap-2 rounded-2xl border border-slate-100 bg-white px-4 py-3 text-xs font-black text-slate-700 shadow-sm transition hover:border-blue-100 hover:text-blue-600"
+    className="admin-soft-button-ghost text-xs"
   >
     <Icon size={15} />
     {label}
@@ -90,9 +90,9 @@ const GeneralSettings = ({ settings, setSettings }) => {
             placeholder="Premium tours across Gilgit-Baltistan."
           />
           <div className="space-y-2">
-            <label className="px-1 text-[10px] font-black uppercase text-slate-400">Currency</label>
+            <label className="admin-soft-label px-1">Currency</label>
             <select
-              className="w-full rounded-2xl border border-slate-100 bg-slate-50 p-4 text-sm font-bold text-slate-900 outline-none transition focus:border-blue-200 focus:bg-white focus:ring-4 focus:ring-blue-50"
+              className="w-full p-4 text-sm font-bold"
               value={settings.currency || "PKR"}
               onChange={(e) => setField(settings, setSettings, "currency", e.target.value)}
             >
@@ -141,7 +141,7 @@ const GeneralSettings = ({ settings, setSettings }) => {
           />
         </div>
 
-        <div className="flex flex-wrap gap-3 border-t border-slate-100 pt-5">
+        <div className="flex flex-wrap gap-3 border-t border-white/30 pt-5">
           <QuickAction
             icon={Mail}
             label="Use business email for support"

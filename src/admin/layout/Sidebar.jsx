@@ -173,69 +173,72 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen, theme }) => {
   return (
     <aside
       className={`
-        fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-300 ease-in-out md:static md:inset-0 md:shrink-0
-        ${isDark ? "bg-slate-950 border-r border-slate-800 text-white" : "bg-white border-r border-slate-200 text-slate-900"}
+        admin-soft-sidebar fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-300 ease-in-out md:static md:inset-0 md:shrink-0
+        ${isDark ? "text-white" : "text-slate-900"}
         ${mobileVisibility}
-      `}
-    >
+      `}>
       <div className="flex flex-col h-full">
-        <div
-          className={`h-20 flex items-center justify-between px-8 border-b ${
-            isDark ? "border-slate-800" : "border-slate-200"
-          }`}
-        >
-          <span className="text-xl font-black tracking-tighter italic">
-            <span className={isDark ? "text-white" : "text-[var(--c-navy)]"}>NORTH</span><span className="text-[var(--c-brand)]">LUXE</span>
-          </span>
+        <div className="flex h-22 items-center justify-between border-b border-white/30 px-7">
+          <div>
+            <p className="text-sm md:text-xl font-black uppercase tracking-[0.28em] text-[var(--admin-accent)]">
+              North Luxe
+            </p>
+          </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className={`md:hidden p-2 ${isDark ? "text-white/80" : "text-slate-500"}`}
-          >
+            className="admin-soft-icon-button md:hidden">
             <X size={20} />
           </button>
         </div>
 
-        <nav className="flex-1 px-3 py-6 overflow-y-auto">
+        <div className="px-5 pt-5">
+          <div className="rounded-[1.6rem] border border-white/35 bg-white/55 px-4 py-4 shadow-[0_16px_34px_rgba(148,163,184,0.12)] backdrop-blur-xl">
+            <p className="text-sm font-black text-[var(--admin-text)]">
+              {user?.name || "North Luxe Team"}
+            </p>
+            <p className="mt-1 text-xs font-semibold text-[var(--admin-muted)]">
+              {role || "Editor Access"}
+            </p>
+          </div>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto px-4 py-5">
           {visibleNavItems.map((item) => (
             <NavLink
               key={item.id}
               to={item.path}
               end={item.path === "/admin"}
-              className={({ isActive }) => `
-                flex items-center justify-between gap-3 px-4 py-2.5 rounded-lg font-bold text-sm transition-all duration-200 mb-1
-                ${
-                  isActive
-                    ? isDark
-                      ? "bg-white/12 text-white border border-white/20"
-                      : "bg-[var(--c-brand)]/16 text-slate-900 border border-[var(--c-brand)]/35"
-                    : isDark
-                      ? "text-white/85 border border-transparent hover:text-white"
-                      : "text-slate-700 border border-transparent hover:text-slate-900"
-                }
-              `}
-            >
-              <span className="inline-flex items-center gap-3 min-w-0">
-                <item.icon size={20} />
-                <span className="truncate">{item.label}</span>
-              </span>
-              {badgeCounts[item.id] > 0 ? (
-                <span className="inline-flex min-w-5 h-5 px-1.5 items-center justify-center rounded-full text-[10px] leading-5 font-black bg-[var(--c-brand)] text-white shadow-[0_0_0_4px_rgba(198,162,75,0.18)] animate-pulse">
-                  {badgeCounts[item.id] > 99 ? "99+" : badgeCounts[item.id]}
-                </span>
-              ) : null}
+              className="mb-1.5">
+              {({ isActive }) => (
+                <div
+                  className="admin-soft-nav-link flex items-center justify-between gap-3 px-4 py-3 text-sm font-bold"
+                  data-active={isActive ? "true" : "false"}>
+                  <span className="inline-flex min-w-0 items-center gap-3">
+                    <span
+                      className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl ${
+                        isActive
+                          ? "bg-[linear-gradient(135deg,var(--admin-accent),var(--admin-accent-2))] text-white shadow-[0_14px_30px_rgba(155,108,255,0.24)]"
+                          : "bg-white/70 text-[var(--admin-muted)]"
+                      }`}>
+                      <item.icon size={18} />
+                    </span>
+                    <span className="truncate">{item.label}</span>
+                  </span>
+                  {badgeCounts[item.id] > 0 ? (
+                    <span className="inline-flex min-w-6 items-center justify-center rounded-full bg-[var(--admin-accent)] px-2 py-1 text-[10px] font-black leading-none text-white shadow-[0_10px_22px_rgba(155,108,255,0.26)]">
+                      {badgeCounts[item.id] > 99 ? "99+" : badgeCounts[item.id]}
+                    </span>
+                  ) : null}
+                </div>
+              )}
             </NavLink>
           ))}
         </nav>
 
-        <div className={`p-4 border-t ${isDark ? "border-slate-800" : "border-slate-200"}`}>
+        <div className="border-t border-white/30 p-4">
           <button
             onClick={logout}
-            className={`flex items-center gap-3 w-full px-4 py-3 font-bold text-sm rounded-xl transition-colors ${
-              isDark
-                ? "text-white hover:bg-white/10"
-                : "text-rose-600 hover:bg-rose-50"
-            }`}
-          >
+            className="admin-soft-button-ghost w-full justify-start text-rose-500">
             <LogOut size={20} />
             Sign Out
           </button>

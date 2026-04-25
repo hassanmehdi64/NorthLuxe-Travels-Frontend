@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ChevronDown, Edit2, Plus, Printer, Trash2, X, Map as MapIcon, ListTodo, Upload } from "lucide-react";
+import { ChevronDown, Edit2, Plus, Printer, Trash2, X, ListTodo, Upload } from "lucide-react";
 import { useAdminTours, useCreateTour, useDeleteTour, useSettings, useUpdateTour, useUpdateBooking } from "../../hooks/useCms";
 import { useToast } from "../../context/ToastContext";
 import { getApiErrorMessage } from "../../lib/apiError";
@@ -52,17 +52,17 @@ const readFileAsDataUrl = (file) =>
     reader.readAsDataURL(file);
   });
 
-const labelClassName = "text-[11px] font-black uppercase tracking-[0.16em] text-slate-700 dark:text-slate-200";
-const inputClassName = "w-full rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm font-medium text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-300 focus:ring-4 focus:ring-sky-100/70 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100 dark:focus:border-sky-400 dark:focus:ring-sky-500/10";
+const labelClassName = "admin-soft-label";
+const inputClassName = "w-full rounded-xl px-3.5 py-3 text-sm font-medium";
 const textareaClassName = `${inputClassName} resize-y`;
-const sectionClassName = "h-full rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_10px_30px_rgba(15,23,42,0.05)] dark:border-slate-700 dark:bg-slate-900";
-const primaryButtonClassName = "inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-bold text-white transition hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100";
-const secondaryButtonClassName = "inline-flex items-center justify-center gap-1.5 rounded-xl bg-slate-100 px-4 py-2.5 text-xs font-bold text-slate-700 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-100 dark:hover:bg-slate-700";
-const subtleButtonClassName = "inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-700 transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800";
-const sectionToggleButtonClassName = "flex w-full items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left transition hover:bg-slate-100 dark:border-slate-700 dark:bg-slate-800/70 dark:hover:bg-slate-800";
+const sectionClassName = "admin-soft-panel h-full p-5";
+const primaryButtonClassName = "admin-soft-button inline-flex items-center justify-center gap-1.5";
+const secondaryButtonClassName = "admin-soft-button-ghost inline-flex items-center justify-center gap-1.5";
+const subtleButtonClassName = "admin-soft-button-ghost inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-[10px] uppercase tracking-[0.12em]";
+const sectionToggleButtonClassName = "flex w-full items-center justify-between gap-3 rounded-2xl border border-white/35 bg-white/45 px-4 py-3 text-left transition hover:bg-white/70";
 const segmentedButtonBaseClassName = "rounded-xl px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] transition";
 const inlineIconButtonClassName = "inline-flex h-5 w-5 items-center justify-center rounded-full text-slate-400 transition hover:text-rose-600 dark:text-slate-300 dark:hover:text-rose-200";
-const compactInputClassName = "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-medium text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-sky-300 focus:ring-2 focus:ring-sky-100 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-100";
+const compactInputClassName = "w-full rounded-lg px-3 py-2 text-xs font-medium";
 
 const isRecentlyAdded = (value) => {
   if (!value) return false;
@@ -88,7 +88,6 @@ const TourManagement = () => {
   const [form, setForm] = useState(initialForm);
   const [sourceBookingId, setSourceBookingId] = useState("");
   const [sourceBookingCode, setSourceBookingCode] = useState("");
-  const [tourAction, setTourAction] = useState({ type: "", tour: null });
   const [isItineraryOpen, setIsItineraryOpen] = useState(false);
   const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false);
   const [isReviewsOpen, setIsReviewsOpen] = useState(false);
@@ -310,7 +309,6 @@ const TourManagement = () => {
       setSourceBookingId("");
       setSourceBookingCode("");
       setIsItineraryOpen(false);
-      closeTourAction();
     } catch (error) {
       toast.error("Save failed", getApiErrorMessage(error, "Could not save tour."));
     }
@@ -325,7 +323,6 @@ const TourManagement = () => {
     }
   };
 
-  const closeTourAction = () => setTourAction({ type: "", tour: null });
   const selectedVehicleKeys = normalizeKeyList(form.vehicleTypeKeys);
   const selectedVehicleSummary = selectedVehicleKeys.length
     ? selectedVehicleKeys
@@ -337,10 +334,10 @@ const TourManagement = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl xl:3xl font-black text-slate-900 tracking-tighter uppercase dark:text-slate-100">
+          <h1 className="admin-soft-heading text-xl xl:3xl font-black tracking-tighter uppercase">
             Tour Management
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-300">Manage all package details shown on website.</p>
+          <p className="admin-soft-muted text-sm">Manage all package details shown on website.</p>
         </div>
         <button
           type="button"
@@ -364,22 +361,22 @@ const TourManagement = () => {
       </div>
 
       {sourceBookingId ? (
-        <div className="rounded-2xl border border-sky-200 bg-sky-50 px-5 py-4 text-sm text-sky-900">
+        <div className="admin-soft-panel px-5 py-4 text-sm text-[var(--admin-text)]">
           Creating an itinerary for custom request <strong>{sourceBookingCode || sourceBookingId}</strong>. After save, it will link back to the request automatically.
         </div>
       ) : null}
 
       {isFormOpen ? (
-        <form onSubmit={onSubmit} className="space-y-5 rounded-[2rem] border border-slate-200 bg-slate-50 p-4 shadow-[0_20px_50px_rgba(15,23,42,0.08)] dark:border-slate-700 dark:bg-slate-950 sm:p-5 lg:p-6">
-          <div className="flex flex-col gap-3 rounded-[1.5rem] border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-900 lg:flex-row lg:items-center lg:justify-between">
+        <form onSubmit={onSubmit} className="admin-soft-form space-y-5 p-4 sm:p-5 lg:p-6">
+          <div className="rounded-[1.5rem] border border-white/35 bg-white/45 p-4 lg:flex lg:items-center lg:justify-between">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[var(--c-brand)]">
                 {editing ? "Editing Tour" : sourceBookingId ? "Custom Request Tour" : "New Tour"}
               </p>
-              <h2 className="mt-1 text-lg font-black tracking-tight text-slate-900 dark:text-slate-100">
+              <h2 className="admin-soft-heading mt-1 text-lg font-black tracking-tight">
                 {editing ? form.title || "Update tour package" : "Create tour package"}
               </h2>
-              <p className="mt-1 text-sm text-slate-500 dark:text-slate-300">
+              <p className="admin-soft-muted mt-1 text-sm">
                 Keep the essentials tight, then add itinerary and vehicle options below.
               </p>
             </div>
@@ -902,11 +899,11 @@ const TourManagement = () => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-3 rounded-[1.5rem] border border-slate-200 bg-white/80 p-4 dark:border-slate-700 dark:bg-slate-900/70 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-slate-500 dark:text-slate-300">
+          <div className="rounded-[1.5rem] border border-white/35 bg-white/45 p-4 sm:flex sm:items-center sm:justify-between">
+            <p className="admin-soft-muted text-sm">
               Save as draft to review later, or publish when the package is ready for the website.
             </p>
-            <div className="flex gap-3">
+            <div className="mt-3 flex flex-col gap-3 sm:mt-0 sm:flex-row">
               <button type="submit" className={primaryButtonClassName}>
                 {editing ? "Update Tour" : sourceBookingId ? "Create Itinerary" : "Create Tour"}
               </button>
@@ -920,7 +917,7 @@ const TourManagement = () => {
         </form>
       ) : null}
 
-      <div className="bg-white rounded-3xl border border-slate-100 overflow-hidden dark:bg-slate-900 dark:border-slate-700">
+      <div className="admin-soft-table overflow-hidden">
         <table className="w-full text-left">
           <thead className="bg-slate-50">
             <tr>
@@ -963,8 +960,8 @@ const TourManagement = () => {
                     <div className="flex justify-end gap-2">
                       <button
                         type="button"
-                        onClick={() => setTourAction({ type: "print", tour })}
-                        className="p-2 text-slate-600"
+                        onClick={() => printTourPdf(tour)}
+                        className="admin-soft-icon-button"
                       >
                         <Printer size={16} />
                       </button>
@@ -996,11 +993,25 @@ const TourManagement = () => {
                             reviewItems: normalizeReviewItems(tour.reviewItems),
                           });
                         }}
-                        className="p-2 text-blue-600"
+                        className="admin-soft-icon-button"
                       >
                         <Edit2 size={16} />
                       </button>
-                      <button type="button" onClick={() => setTourAction({ type: "delete", tour })} className="p-2 text-rose-600">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          toast.confirm(
+                            "Delete Tour?",
+                            `This will remove ${tour.title} from the tour list.`,
+                            () => handleDelete(tour.id),
+                            {
+                              confirmLabel: "Delete",
+                              tone: "danger",
+                            },
+                          )
+                        }
+                        className="admin-soft-icon-button"
+                      >
                         <Trash2 size={16} />
                       </button>
                     </div>
@@ -1012,56 +1023,6 @@ const TourManagement = () => {
         </table>
       </div>
 
-      {tourAction.tour ? (
-        <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/55 backdrop-blur-sm" onClick={closeTourAction} />
-          <div className="relative w-full max-w-md rounded-[2rem] border border-slate-200 bg-white p-6 shadow-2xl dark:border-slate-700 dark:bg-slate-900">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">Tour Action</p>
-                <h3 className="mt-2 text-xl font-black text-slate-900 dark:text-slate-100">
-                  {tourAction.type === "delete" ? "Delete Tour" : "Print Tour Plan"}
-                </h3>
-                <p className="mt-2 text-sm text-slate-500 dark:text-slate-300">
-                  {tourAction.type === "delete"
-                    ? `This will remove ${tourAction.tour.title} from the tour list.`
-                    : `Open a print-ready version of ${tourAction.tour.title}.`}
-                </p>
-              </div>
-              <button type="button" onClick={closeTourAction} className="rounded-xl p-2 text-slate-500 transition hover:bg-slate-100 dark:hover:bg-slate-800">
-                <X size={16} />
-              </button>
-            </div>
-            <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800">
-              <div className="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-slate-100">
-                <MapIcon size={16} className="text-[var(--c-brand)]" />
-                {tourAction.tour.title}
-              </div>
-              <p className="mt-2 text-sm text-slate-500 dark:text-slate-300">{tourAction.tour.location || "No location added"}</p>
-            </div>
-            <div className="mt-5 flex justify-end gap-3">
-              <button type="button" onClick={closeTourAction} className="rounded-2xl border border-slate-200 px-5 py-3 text-sm font-bold text-slate-600 transition hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={async () => {
-                  if (tourAction.type === "print") {
-                    printTourPdf(tourAction.tour);
-                    closeTourAction();
-                    return;
-                  }
-                  await handleDelete(tourAction.tour.id);
-                  closeTourAction();
-                }}
-                className={`rounded-2xl px-5 py-3 text-sm font-bold text-white ${tourAction.type === "delete" ? "bg-rose-600 hover:bg-rose-700" : "bg-slate-900 hover:bg-slate-800"}`}
-              >
-                {tourAction.type === "delete" ? "Delete Now" : "Open Print View"}
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 };

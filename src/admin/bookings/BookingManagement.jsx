@@ -9,10 +9,10 @@ import {
   Printer,
   FileText,
   Trash2,
-  AlertCircle,
 } from "lucide-react";
 import { useBookings, useDeleteBooking } from "../../hooks/useCms";
 import { useNotifications, useUpdateNotification } from "../../hooks/useCms";
+import { useToast } from "../../context/ToastContext";
 
 const parseCustomRequest = (value = "") =>
   String(value || "")
@@ -30,7 +30,7 @@ const prettifyValue = (value, fallback = "-") => {
   if (value === undefined || value === null || value === "") return fallback;
   return String(value).replace(/_/g, " ");
 };
-const actionButtonClass = "inline-flex h-9 w-9 items-center justify-center rounded-xl border border-transparent transition-all";
+const actionButtonClass = "admin-soft-icon-button inline-flex h-8 w-8 items-center justify-center rounded-lg border transition-all";
 
 
 const isRecentlyReceived = (value) => {
@@ -110,6 +110,7 @@ const openTourPlanPrint = (booking) => {
 };
 
 const BookingManagement = () => {
+  const toast = useToast();
   const { data: bookings = [] } = useBookings();
   const deleteBooking = useDeleteBooking();
   const { data: notifications = [] } = useNotifications();
@@ -117,8 +118,6 @@ const BookingManagement = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("standard");
-  const [bookingToDelete, setBookingToDelete] = useState(null);
-
   const customTab = activeTab === "custom";
 
   const statusStyles = {
@@ -193,58 +192,62 @@ const BookingManagement = () => {
     [filteredBookings],
   );
 
-
-  const handleDeleteBooking = async () => {
-    if (!bookingToDelete?.id) return;
-    try {
-      await deleteBooking.mutateAsync(bookingToDelete.id);
-      setBookingToDelete(null);
-    } catch {
-      // keep modal open on failure
-    }
+  const handleDeleteBooking = (booking) => {
+    toast.confirm(
+      "Delete Booking?",
+      `This will permanently remove the booking for ${booking.customer}.`,
+      async () => {
+        await deleteBooking.mutateAsync(booking.id);
+        toast.success("Deleted", "Booking removed successfully.");
+      },
+      {
+        confirmLabel: "Delete",
+        tone: "danger",
+      },
+    );
   };
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-xl xl:3xl font-black tracking-tighter uppercase text-slate-900 dark:text-slate-100">
+          <h1 className="admin-soft-heading text-xl xl:3xl font-black tracking-tighter uppercase">
             Booking Management
           </h1>
-          <p className="text-sm font-bold text-slate-500 dark:text-slate-300">
+          <p className="admin-soft-muted text-sm font-bold">
             Monitor, confirm, and manage customer reservations.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
           <div className="relative group">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-blue-600"
-              size={18}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--admin-muted)] transition-colors group-focus-within:text-[var(--c-brand)]"
+              size={16}
             />
             <input
               type="text"
               placeholder={customTab ? "Search by name, destinations, itinerary..." : "Search by name, booking code, email, tour..."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-2xl border border-slate-100 bg-white py-3 pl-12 pr-6 text-sm font-medium transition-all focus:border-blue-200 focus:outline-none focus:ring-4 focus:ring-blue-50 md:w-72 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-slate-600 dark:focus:ring-slate-700"
+              className="w-full py-2.5 pl-10 pr-4 text-xs font-medium md:w-72"
             />
           </div>
-          <button className="flex items-center gap-2 rounded-2xl border border-slate-100 bg-white px-5 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800">
-            <Filter size={18} />
+          <button className="admin-soft-button-ghost flex items-center gap-2 whitespace-nowrap">
+            <Filter size={15} />
             Filter
           </button>
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={() => setActiveTab("standard")}
-          className={`cursor-pointer rounded-2xl border px-5 py-3 text-sm font-black transition-all ${
+          className={`cursor-pointer rounded-xl border px-3.5 py-2 text-xs font-black transition-all ${
             !customTab
-              ? "border-slate-900 bg-slate-900 text-white shadow-sm dark:border-white dark:bg-white dark:text-slate-900"
-              : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+              ? "border-[var(--c-brand)] bg-[var(--c-brand)] text-white shadow-sm"
+              : "border-white/40 bg-white/55 text-[var(--admin-muted)] hover:border-[rgba(32,183,122,0.26)] hover:bg-white/80"
           }`}
         >
           Standard Tour Booking
@@ -252,29 +255,29 @@ const BookingManagement = () => {
         <button
           type="button"
           onClick={() => setActiveTab("custom")}
-          className={`cursor-pointer rounded-2xl border px-5 py-3 text-sm font-black transition-all ${
+          className={`cursor-pointer rounded-xl border px-3.5 py-2 text-xs font-black transition-all ${
             customTab
-              ? "border-slate-900 bg-slate-900 text-white shadow-sm dark:border-white dark:bg-white dark:text-slate-900"
-              : "border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
+              ? "border-[var(--c-brand)] bg-[var(--c-brand)] text-white shadow-sm"
+              : "border-white/40 bg-white/55 text-[var(--admin-muted)] hover:border-[rgba(32,183,122,0.26)] hover:bg-white/80"
           }`}
         >
           Custom Booking Request
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
+      <div className="admin-soft-table overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full border-collapse text-left">
             <thead>
-              <tr className="bg-slate-50/50 dark:bg-slate-800/70">
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-300">Customer Details</th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-300">{customTab ? "Request Details" : "Trip Info"}</th>
-                <th className="px-8 py-5 text-center text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-300">{customTab ? "Plan Summary" : "Payment"}</th>
-                <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-300">Status</th>
-                <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-300">Actions</th>
+              <tr>
+                <th className="px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-300">Customer Details</th>
+                <th className="px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-300">{customTab ? "Request Details" : "Trip Info"}</th>
+                <th className="px-5 py-3 text-center text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-300">{customTab ? "Plan Summary" : "Payment"}</th>
+                <th className="px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-300">Status</th>
+                <th className="px-5 py-3 text-right text-[10px] font-black uppercase tracking-widest text-slate-400 dark:text-slate-300">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+            <tbody className="divide-y divide-white/25 dark:divide-slate-800">
               {filteredBookings.length ? filteredBookings.map((booking) => {
                 const isCustomBooking = booking.bookingType === "custom" || booking.isCustomTour;
                 const request = getCustomRequestDetails(booking);
@@ -286,22 +289,22 @@ const BookingManagement = () => {
                 const isLatest = isRecentlyReceived(booking?.createdAt || booking?.date);
                 return (
                   <tr key={booking.id} className={`group align-top transition-colors hover:bg-slate-50/30 dark:hover:bg-slate-800/50 ${isLatest ? "bg-[var(--c-brand)]/5" : ""}`}>
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 font-black uppercase text-slate-500 dark:bg-slate-800 dark:text-slate-300">
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-2.5">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[var(--c-brand)]/10 text-[11px] font-black uppercase text-[var(--c-brand)]">
                           {booking.customer?.charAt(0) || "C"}
                         </div>
                         <div>
                           <div className="mb-1 flex items-center gap-2">
                             <p className="text-sm font-black leading-none text-slate-900 dark:text-slate-100">{booking.customer}</p>
-                            {isLatest ? <span className="rounded-full bg-[var(--c-brand)]/14 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide text-[var(--c-brand)]">New</span> : null}
+                            {isLatest ? <span className="admin-soft-badge admin-soft-badge-primary">New</span> : null}
                           </div>
                           <p className="text-[11px] font-bold text-slate-400 dark:text-slate-400">{booking.email}</p>
                           <p className="mt-1 text-[10px] font-bold uppercase tracking-wide text-slate-400">{booking.phone || "No phone added"}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-6">
+                    <td className="px-5 py-4">
                       {isCustomBooking ? (
                         <div className="space-y-2">
                           <div className="flex items-center gap-1.5 text-sm font-bold text-slate-700 dark:text-slate-100">
@@ -325,7 +328,7 @@ const BookingManagement = () => {
                         </div>
                       )}
                     </td>
-                    <td className="px-8 py-6 text-center">
+                    <td className="px-5 py-4 text-center">
                       {isCustomBooking ? (
                         <div className="inline-flex flex-col items-center gap-1.5">
                           <span className="text-sm font-black text-slate-900 dark:text-slate-100">{getSavedItinerary(booking)?.title || getSavedItinerary(booking)?.finalBudget ? `${getSavedItinerary(booking).currency || "PKR"} ${getSavedItinerary(booking).finalBudget || 0}` : request.budget}</span>
@@ -346,12 +349,12 @@ const BookingManagement = () => {
                         </div>
                       )}
                     </td>
-                    <td className="px-8 py-6">
-                      <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-wider ${statusStyles[booking.status]}`}>
+                    <td className="px-5 py-4">
+                      <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${statusStyles[booking.status]}`}>
                         {booking.status}
                       </span>
                     </td>
-                    <td className="px-8 py-6">
+                    <td className="px-5 py-4">
                       <div className="flex justify-end gap-2">
                         <Link
                           to={`/admin/bookings/${booking.id}`}
@@ -372,7 +375,7 @@ const BookingManagement = () => {
                         ) : null}
                         <button
                           type="button"
-                          onClick={() => setBookingToDelete(booking)}
+                          onClick={() => handleDeleteBooking(booking)}
                           className={`${actionButtonClass} text-rose-500 hover:border-rose-100 hover:bg-rose-50 dark:hover:bg-rose-900/20`}
                           title="Delete booking"
                         >
@@ -384,7 +387,7 @@ const BookingManagement = () => {
                 );
               }) : (
                 <tr>
-                  <td colSpan={5} className="px-8 py-16 text-center">
+                  <td colSpan={5} className="px-5 py-12 text-center">
                     <div className="mx-auto max-w-md space-y-2">
                       <p className="text-sm font-black text-slate-700 dark:text-slate-100">
                         {customTab ? "No custom booking requests found." : "No standard tour bookings found."}
@@ -405,7 +408,7 @@ const BookingManagement = () => {
         </div>
       </div>
 
-      <section className="space-y-4 rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+      <section className="admin-soft-panel space-y-4 p-5">
           <div>
             <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">{customTab ? "Custom Tour Plans" : "Standard Tour Plans"}</p>
             <h2 className="mt-2 text-xl font-black tracking-tight text-slate-900 dark:text-slate-100">{customTab ? "Saved Itineraries for Custom Requests" : "Saved Itineraries for Standard Bookings"}</h2>
@@ -413,43 +416,43 @@ const BookingManagement = () => {
           </div>
 
           {createdPlans.length ? (
-            <div className="overflow-hidden rounded-[1.75rem] border border-slate-100 dark:border-slate-800">
+            <div className="admin-soft-table overflow-hidden rounded-[1.25rem] border border-white/30 dark:border-slate-800">
               <table className="w-full border-collapse text-left">
-                <thead className="bg-slate-50/80 dark:bg-slate-800/70">
+                <thead>
                   <tr>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Customer</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Created Itinerary</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Requested Destinations</th>
-                    <th className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
-                    <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">Actions</th>
+                    <th className="px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Customer</th>
+                    <th className="px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Created Itinerary</th>
+                    <th className="px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Requested Destinations</th>
+                    <th className="px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-400">Status</th>
+                    <th className="px-5 py-3 text-right text-[10px] font-black uppercase tracking-widest text-slate-400">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-50 dark:divide-slate-800">
+                <tbody className="divide-y divide-white/25 dark:divide-slate-800">
                   {createdPlans.map((booking) => {
                     const request = getCustomRequestDetails(booking);
                     return (
                       <tr key={`plan-${booking.id}`} className="hover:bg-slate-50/40 dark:hover:bg-slate-800/40">
-                        <td className="px-6 py-4">
+                        <td className="px-5 py-3.5">
                           <p className="text-sm font-black text-slate-900 dark:text-slate-100">{booking.customer}</p>
                           <p className="mt-1 text-[11px] font-semibold text-slate-400">{booking.bookingCode}</p>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-5 py-3.5">
                           <p className="text-sm font-black text-slate-900 dark:text-slate-100">{getSavedItinerary(booking)?.title || "Created Tour Plan"}</p>
                           <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-slate-400">{`${prettifyValue(getSavedItinerary(booking)?.status, "Draft")} ? ${getSavedItinerary(booking)?.currency || "PKR"} ${getSavedItinerary(booking)?.finalBudget || 0}`}</p>
                         </td>
-                        <td className="px-6 py-4 text-sm font-semibold text-slate-600 dark:text-slate-300">{customTab ? request.preferredDestinations : booking.tour || "Selected Tour"}</td>
-                        <td className="px-6 py-4">
-                          <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-wider ${statusStyles[booking.status]}`}>{booking.status}</span>
+                        <td className="px-5 py-3.5 text-sm font-semibold text-slate-600 dark:text-slate-300">{customTab ? request.preferredDestinations : booking.tour || "Selected Tour"}</td>
+                        <td className="px-5 py-3.5">
+                          <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${statusStyles[booking.status]}`}>{booking.status}</span>
                         </td>
-                        <td className="px-6 py-4">
+                        <td className="px-5 py-3.5">
                           <div className="flex justify-end gap-2">
-                            <Link to={`/admin/bookings/${booking.id}`} className="rounded-xl p-2.5 text-slate-500 transition hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-slate-800">
+                            <Link to={`/admin/bookings/${booking.id}`} className="admin-soft-icon-button">
                               <Eye size={18} />
                             </Link>
                             <button
                               type="button"
                               onClick={() => openTourPlanPrint(booking)}
-                              className="rounded-xl p-2.5 text-emerald-600 transition hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                              className="admin-soft-icon-button"
                             >
                               <Printer size={18} />
                             </button>
@@ -468,27 +471,6 @@ const BookingManagement = () => {
             </div>
           )}
       </section>
-
-      {bookingToDelete ? (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setBookingToDelete(null)} />
-          <div className="relative w-full max-w-md rounded-[2.2rem] bg-white p-8 shadow-2xl dark:border dark:border-slate-700 dark:bg-slate-900">
-            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-rose-50 text-rose-600 shadow-inner">
-              <AlertCircle size={30} />
-            </div>
-            <h2 className="mb-2 text-2xl font-black uppercase tracking-tight text-slate-900 dark:text-slate-100">Delete Booking?</h2>
-            <p className="mb-8 text-sm font-bold leading-relaxed text-slate-500 dark:text-slate-300">
-              This will permanently remove the booking for <span className="text-slate-900 dark:text-slate-100">{bookingToDelete.customer}</span>.
-            </p>
-            <div className="flex items-center justify-end gap-3">
-              <button type="button" onClick={() => setBookingToDelete(null)} className="rounded-2xl border border-slate-200 px-6 py-3 text-sm font-black text-slate-500 transition-all hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800">Cancel</button>
-              <button type="button" onClick={handleDeleteBooking} className="rounded-2xl bg-rose-500 px-6 py-3 text-sm font-black text-white transition-all hover:bg-rose-600">
-                Delete Booking
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
 
     </div>
   );

@@ -3,7 +3,7 @@ import { Quote, ShieldCheck } from "lucide-react";
 const leadershipTeam = [
   {
     name: "Hassan Mehdi",
-    role: "Chairman & Director",
+    role: "Founder & Managing Director",
     avatar: "./HM.png",
     message:
       "We craft journeys that inspire and comfort. Every trip reflects our dedication to trust, detail, and unforgettable experiences.",
@@ -11,8 +11,8 @@ const leadershipTeam = [
   },
   {
     name: "Hassan Abbas",
-    role: "CEO & Tour Operator",
-    avatar: "./HA.png",
+    role: "Chief Executive & Travel Operations Lead",
+    avatar: "./HA.jpeg",
     message:
       "Our tours are executed with precision and passion. Every itinerary is designed to ensure seamless, memorable experiences.",
     focusAreas: ["Tour Operations", "Route Planning", "On-ground Execution"],
@@ -34,7 +34,8 @@ const TeamSection = () => {
             Meet Our Team
           </h2>
           <p className="mt-3 max-w-2xl text-sm md:text-base text-muted leading-relaxed">
-            The people behind each itinerary, committed to dependable planning and personalized support.
+            The people behind each itinerary, committed to dependable planning
+            and personalized support.
           </p>
         </div>
 
@@ -42,8 +43,7 @@ const TeamSection = () => {
           {leadershipTeam.map((leader) => (
             <article
               key={leader.name}
-              className="group rounded-2xl border border-theme bg-theme-surface p-5 sm:p-6 shadow-[0_8px_16px_rgba(15,23,42,0.06)] hover:shadow-[0_14px_26px_rgba(15,23,42,0.12)] transition-all duration-300"
-            >
+              className="group rounded-2xl border border-theme bg-theme-surface p-5 sm:p-6 shadow-[0_8px_16px_rgba(15,23,42,0.06)] hover:shadow-[0_14px_26px_rgba(15,23,42,0.12)] transition-all duration-300">
               <div className="flex items-center justify-between gap-4">
                 <div className="inline-flex items-center gap-2">
                   <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-theme-bg text-[var(--c-brand)] border border-theme">
@@ -54,10 +54,10 @@ const TeamSection = () => {
                   </p>
                 </div>
 
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-theme bg-theme-bg px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-theme">
-                  <ShieldCheck size={12} className="text-[var(--c-brand)]" />
+                <ShieldCheck size={20} className="text-[var(--c-brand)]" />
+                {/* <span className="inline-flex items-center gap-1.5 rounded-full border border-theme bg-theme-bg px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-theme">
                   Verified
-                </span>
+                </span> */}
               </div>
 
               <p className="mt-4 text-sm md:text-base text-muted leading-relaxed">
@@ -68,8 +68,7 @@ const TeamSection = () => {
                 {leader.focusAreas.map((area) => (
                   <span
                     key={area}
-                    className="inline-flex items-center rounded-full border border-theme bg-theme-bg px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-muted"
-                  >
+                    className="inline-flex items-center rounded-full border border-theme bg-theme-bg px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] text-muted">
                     {area}
                   </span>
                 ))}
@@ -82,7 +81,9 @@ const TeamSection = () => {
                   className="h-12 w-12 rounded-xl object-cover border border-theme bg-theme-bg"
                 />
                 <div>
-                  <h3 className="text-base md:text-lg font-bold tracking-tight text-theme">{leader.name}</h3>
+                  <h3 className="text-base md:text-lg font-bold tracking-tight text-theme">
+                    {leader.name}
+                  </h3>
                   <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--c-brand)]">
                     {leader.role}
                   </p>
