@@ -35,7 +35,10 @@ const cardReveal = {
   },
 };
 
-export const ReviewsSection = ({ ratingValue, reviewCount, reviews }) => (
+export const ReviewsSection = ({ ratingValue, reviewCount, reviews }) => {
+  if (!reviews.length) return null;
+
+  return (
   <MotionSection
     variants={sectionReveal}
     initial="hidden"
@@ -150,7 +153,8 @@ export const ReviewsSection = ({ ratingValue, reviewCount, reviews }) => (
       </MotionDiv>
     </div>
   </MotionSection>
-);
+  );
+};
 
 export const RelatedToursSection = ({ tours }) => {
   if (!tours.length) return null;

@@ -27,7 +27,7 @@ export const TourBookingSidebar = ({ tour, ratingValue, reviewCount }) => (
   </aside>
 );
 
-export const PackageDetailsSection = ({ placeName, placesLabel, planLabel, includedServices, placesCovered, packageOverview, vehicleDetails }) => (
+export const PackageDetailsSection = ({ placeName, placesLabel, planLabel, includedServices, placesCovered, packageOverview, vehicleDetails, commonFacts }) => (
   <section className="rounded-2xl border-[0.5px] border-[rgba(15,23,42,0.08)] bg-theme-surface p-4 md:p-5 shadow-[0_8px_24px_rgba(15,23,42,0.02)]">
     <div className="pb-3">
       <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">Package Overview</p>
@@ -81,6 +81,29 @@ export const PackageDetailsSection = ({ placeName, placesLabel, planLabel, inclu
               <p className="mt-1 text-[14px] md:text-[15px] font-semibold leading-6 text-theme">{item.value}</p>
             </div>
           ))}
+          {commonFacts?.transportNote ? (
+            <div className="rounded-xl border border-[rgba(var(--c-brand-rgb),0.18)] bg-[rgba(var(--c-brand-rgb),0.06)] px-3.5 py-3">
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-muted">Transport Note</p>
+              <p className="mt-1.5 text-[14px] md:text-[15px] leading-6 text-theme">{commonFacts.transportNote}</p>
+            </div>
+          ) : null}
+          {commonFacts?.vehicleStartingPrices?.length ? (
+            <div className="overflow-hidden rounded-xl border border-[rgba(15,23,42,0.07)] bg-theme-surface">
+              <div className="border-b border-[rgba(15,23,42,0.06)] bg-[rgba(var(--c-brand-rgb),0.06)] px-3.5 py-3">
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-muted">Available Vehicles & Starting Prices</p>
+              </div>
+              <ul className="divide-y divide-[rgba(15,23,42,0.06)]">
+                {commonFacts.vehicleStartingPrices.map((item) => (
+                  <li key={item.label} className="flex items-center justify-between gap-3 px-3.5 py-3">
+                    <span className="text-[14px] md:text-[15px] leading-6 text-theme">{item.label}</span>
+                    <span className="shrink-0 rounded-full bg-[rgba(var(--c-brand-rgb),0.12)] px-2.5 py-1 text-[12px] font-bold text-[var(--c-brand)]">
+                      PKR {item.dailyRate.toLocaleString()}/day
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
       </div>
     </div>

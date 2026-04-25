@@ -13,6 +13,7 @@ const ensurePricingShape = (settings) => {
     mealsDailyRate: bookingPricing.mealsDailyRate ?? 0,
     insuranceRate: bookingPricing.insuranceRate ?? 0,
     airportTransferRate: bookingPricing.airportTransferRate ?? 0,
+    transportNote: bookingPricing.transportNote ?? "",
     hotelCategories: Array.isArray(bookingPricing.hotelCategories)
       ? bookingPricing.hotelCategories
       : [],
@@ -836,11 +837,24 @@ const BookingPricingSettings = ({ settings, setSettings }) => {
           <div className="flex items-center justify-between gap-3">
             <div>
               <h3 className="text-lg font-black uppercase tracking-tight text-slate-900">Vehicle Types</h3>
-              <p className="mt-1 text-xs font-medium text-slate-500">Manage vehicle options in a labeled table.</p>
+              <p className="mt-1 text-xs font-medium text-slate-500">Manage vehicle options, rates, and the common note shown on all tour detail pages.</p>
             </div>
             <button type="button" onClick={() => addOption("vehicleTypes", "vehicle")} className="cursor-pointer rounded-xl bg-slate-100 px-4 py-2 text-xs font-bold inline-flex items-center gap-2 text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-200 hover:text-slate-900">
               <Plus size={14} /> Add Vehicle
             </button>
+          </div>
+
+          <div className="rounded-[1.5rem] border border-slate-200 bg-white p-5">
+            <label className="space-y-2">
+              <span className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Common Transport Note</span>
+              <textarea
+                rows={4}
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-medium text-slate-900 outline-none focus:ring-2 focus:ring-blue-100"
+                value={pricing.transportNote}
+                onChange={(e) => updatePricing({ transportNote: e.target.value })}
+                placeholder="This note appears in Quick Package Facts on every tour details page."
+              />
+            </label>
           </div>
 
           <div className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white">

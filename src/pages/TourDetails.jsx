@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-import { usePublicTour, usePublicTours } from "../hooks/useCms";
+import { usePublicTour, usePublicTours, useSettings } from "../hooks/useCms";
 import {
   TourDescriptionAccordion,
   TourDetailsHeader,
@@ -23,12 +23,13 @@ import {
 import {
   buildDetailedDescription,
   buildDisplayItinerary,
+  buildCommonTourFacts,
   buildIncludedServices,
   buildPackageOverview,
   buildPlacesCovered,
+  buildTourReviews,
   buildVehicleDetails,
   fallbackFaq,
-  fallbackReviews,
   getTourHeroImages,
   getTourPlaceName,
   getTourPlacesLabel,
@@ -39,6 +40,7 @@ const TourDetails = () => {
   const { slug } = useParams();
   const { data: directTour } = usePublicTour(slug);
   const { data: tours = [] } = usePublicTours();
+  const { data: settings = {} } = useSettings(true);
   const [openFaq, setOpenFaq] = useState(0);
   const [isDescriptionOpen, setIsDescriptionOpen] = useState(true);
   const [openItineraryDay, setOpenItineraryDay] = useState(0);
@@ -77,8 +79,11 @@ const TourDetails = () => {
   const highlights = tour.tags?.length
     ? tour.tags
     : ["Scenic routes", "Comfort stays", "Local support", "Flexible pacing"];
-  const ratingValue = Number(tour.rating || 4.8);
-  const reviewCount = Number(tour.reviews || 24);
+  const reviews = buildTourReviews(tour);
+  const ratingValue = reviews.length
+    ? Number((reviews.reduce((sum, item) => sum + Number(item.rating || 0), 0) / reviews.length).toFixed(1))
+    : Number(tour.rating || 4.8);
+  const reviewCount = reviews.length || Number(tour.reviews || 0);
 
   const packageOverview = buildPackageOverview(tour);
   const includedServices = buildIncludedServices(tour);
@@ -87,6 +92,7 @@ const TourDetails = () => {
   const placeName = getTourPlaceName(tour);
   const placesLabel = getTourPlacesLabel(tour, displayItinerary);
   const planLabel = getTourPlanLabel(tour);
+  const commonFacts = buildCommonTourFacts(settings);
 
   const detailedDescription = buildDetailedDescription(tour);
 
@@ -157,6 +163,7 @@ const TourDetails = () => {
           placesCovered={placesCovered}
           packageOverview={packageOverview}
           vehicleDetails={vehicleDetails}
+          commonFacts={commonFacts}
         />
 
         <ItinerarySection
@@ -170,7 +177,7 @@ const TourDetails = () => {
         <ReviewsSection
           ratingValue={ratingValue}
           reviewCount={reviewCount}
-          reviews={fallbackReviews}
+          reviews={reviews}
         />
 
         <RelatedToursSection tours={relatedTours} />

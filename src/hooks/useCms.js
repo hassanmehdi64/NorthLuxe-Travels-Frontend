@@ -16,6 +16,7 @@ const normalizeFallbackTour = (tour, index) => {
   const parsedPrice = Number(String(tour?.price || "").replace(/[^\d.]/g, "")) || 0;
   const durationDaysMatch = String(tour?.duration || "").match(/\d+/);
   const durationDays = Number(durationDaysMatch?.[0] || 0);
+  const seatCount = Number(tour?.availableSeats ?? tour?.capacity ?? 0);
 
   return {
     id: String(tour?.id || index + 1),
@@ -30,12 +31,13 @@ const normalizeFallbackTour = (tour, index) => {
     gallery: [],
     shortDescription: "",
     description: "",
-    capacity: 20,
-    availableSeats: 20,
+    capacity: seatCount,
+    availableSeats: seatCount,
     featured: true,
     status: "published",
     rating: 4.8,
     reviews: 0,
+    reviewItems: [],
     tags: [],
     itinerary: [],
     availableOptions: { hotelCategories: [], vehicleTypes: [] },

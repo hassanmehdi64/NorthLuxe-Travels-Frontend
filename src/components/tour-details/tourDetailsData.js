@@ -5,11 +5,7 @@ export const fallbackFaq = [
   { q: "What is the cancellation policy?", a: "Cancellation terms depend on booking date and vendor windows. Final policy is shared in confirmation." },
 ];
 
-export const fallbackReviews = [
-  { id: 1, name: "Ayesha Khan", rating: 5, date: "Jan 2026", tag: "Family Trip", comment: "Very smooth coordination, reliable stays, and great route planning." },
-  { id: 2, name: "Omar Ahmed", rating: 4, date: "Dec 2025", tag: "Friends Group", comment: "Clean itinerary and good support. Overall experience was excellent." },
-  { id: 3, name: "Nida Fatima", rating: 5, date: "Nov 2025", tag: "Couple Tour", comment: "Loved the balance of comfort and exploration. Team stayed responsive." },
-];
+export const fallbackReviews = [];
 
 export const normalizePlaceName = (location = "") =>
   String(location)
@@ -19,7 +15,7 @@ export const normalizePlaceName = (location = "") =>
 
 export const getTourPlaceName = (tour) => normalizePlaceName(tour?.location);
 
-export const getTourPlanCount = (tour) => Number(tour?.capacity || tour?.availableSeats || 0);
+export const getTourPlanCount = (tour) => Number(tour?.availableSeats ?? tour?.capacity ?? 0);
 
 export const getTourPlanLabel = (tour) => {
   const persons = getTourPlanCount(tour);
@@ -61,6 +57,44 @@ const inferItineraryPlaces = (tour, dayIndex) => {
   return ["Scenic transfer", "Departure route"];
 };
 
+const STOP_WORD_PATTERNS = [
+  /^(pick from|pickup from|pick up from|travel to|continue to|drive to|visit|stop at|stopover at|arrival at|arrive at|depart for|departure for|head to|move to)\s+/i,
+  /^(for|with|and)\s+/i,
+];
+
+const cleanAttractionLabel = (value = "") => {
+  let cleaned = String(value || "")
+    .replace(/[.]+$/g, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  STOP_WORD_PATTERNS.forEach((pattern) => {
+    cleaned = cleaned.replace(pattern, "").trim();
+  });
+
+  cleaned = cleaned
+    .replace(/\bfor check-?in\b/gi, "")
+    .replace(/\bfor sunset\b/gi, "")
+    .replace(/\bfor sightseeing\b/gi, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  if (!cleaned) return "";
+  if (cleaned.length < 3) return "";
+  if (/^(arrival|departure|travel|pickup|pick|continue|drive|visit|stop)$/i.test(cleaned)) return "";
+
+  return cleaned.charAt(0).toUpperCase() + cleaned.slice(1);
+};
+
+const extractAttractionPlaces = (description = "", fallback = []) => {
+  const parsed = String(description || "")
+    .split(/,| and /i)
+    .map((entry) => cleanAttractionLabel(entry))
+    .filter(Boolean);
+
+  return parsed.length ? Array.from(new Set(parsed)).slice(0, 4) : fallback;
+};
+
 export const buildDisplayItinerary = (tour) => {
   const duration = Math.max(Number(tour?.durationDays || 0), 1);
   const source = Array.isArray(tour?.itinerary) ? tour.itinerary.filter(Boolean) : [];
@@ -68,7 +102,7 @@ export const buildDisplayItinerary = (tour) => {
   if (source.length) {
     return source.slice(0, duration).map((item, index) => {
       const description = String(item?.description || "").trim();
-      const places = description ? description.split(/,| and /i).map((entry) => entry.trim()).filter(Boolean).slice(0, 4) : inferItineraryPlaces(tour, index);
+      const places = extractAttractionPlaces(description, inferItineraryPlaces(tour, index));
       return {
         day: item?.day || index + 1,
         title: item?.title || `Day ${index + 1} Route`,
@@ -96,14 +130,45 @@ export const buildDisplayItinerary = (tour) => {
 };
 
 export const buildIncludedServices = (tour) => {
-  const services = [
-    "Private transport across the route",
-    "Hotel stays for the full tour duration",
-    "Driver allowance, tolls, and fuel",
-    "On-trip coordination and support",
-  ];
-  if (tour?.availableOptions?.vehicleTypes?.length) services.push(`Vehicle options: ${tour.availableOptions.vehicleTypes.join(", ")}`);
-  if (tour?.availableOptions?.hotelCategories?.length) services.push(`Hotel categories: ${tour.availableOptions.hotelCategories.join(", ")}`);
+  const services = [];
+  const durationDays = Number(tour?.durationDays || 0);
+  const placeName = normalizePlaceName(tour?.location);
+  const hotelCategories = Array.isArray(tour?.availableOptions?.hotelCategories)
+    ? tour.availableOptions.hotelCategories.filter(Boolean)
+    : [];
+  const vehicleTypes = Array.isArray(tour?.availableOptions?.vehicleTypes)
+    ? tour.availableOptions.vehicleTypes.filter(Boolean)
+    : [];
+  const displayItinerary = buildDisplayItinerary(tour);
+  const itineraryTitles = displayItinerary
+    .map((item) => String(item?.title || "").trim())
+    .filter(Boolean)
+    .slice(0, 2);
+
+  if (durationDays > 0) {
+    services.push(`${durationDays}-day route planning and on-trip coordination`);
+  }
+
+  if (vehicleTypes.length) {
+    services.push(`Transport options for this tour: ${vehicleTypes.join(", ")}`);
+  } else {
+    services.push("Transport arranged according to route and group size");
+  }
+
+  if (hotelCategories.length) {
+    services.push(`Stay categories available: ${hotelCategories.join(", ")}`);
+  } else {
+    services.push("Accommodation can be arranged on request");
+  }
+
+  services.push(`Driver allowance, fuel, and toll management for ${placeName}`);
+
+  if (itineraryTitles.length) {
+    services.push(`Structured sightseeing flow including ${itineraryTitles.join(" and ")}`);
+  } else {
+    services.push(`Sightseeing coordination across ${placeName}`);
+  }
+
   return services;
 };
 
@@ -116,7 +181,7 @@ export const buildVehicleDetails = (tour) => {
     return configuredVehicles;
   }
 
-  const seats = Number(tour?.capacity || tour?.availableSeats || 0);
+  const seats = Number(tour?.availableSeats ?? tour?.capacity ?? 0);
   if (seats >= 12) return ["Coaster / Saloon", "SUV support vehicle"];
   if (seats >= 6) return ["SUV / Prado", "Hiace / Grand Cabin"];
   if (seats >= 2) return ["Sedan / Corolla", "SUV upgrade on request"];
@@ -125,7 +190,12 @@ export const buildVehicleDetails = (tour) => {
 
 export const buildPlacesCovered = (tour, itinerary) => {
   const places = new Set();
-  itinerary.forEach((item) => item.placesCovered.forEach((place) => places.add(place)));
+  itinerary.forEach((item) =>
+    item.placesCovered
+      .map((place) => cleanAttractionLabel(place))
+      .filter(Boolean)
+      .forEach((place) => places.add(place)),
+  );
   if (tour?.location) places.add(normalizePlaceName(tour.location));
   if (Array.isArray(tour?.tags)) tour.tags.filter(Boolean).slice(0, 3).forEach((tag) => places.add(tag));
   return Array.from(places).slice(0, 8);
@@ -190,3 +260,38 @@ export const buildPackageOverview = (tour) => [
 export const buildDetailedDescription = (tour) =>
   tour.description ||
   `${tour.title} takes you through ${tour.location || "Northern Pakistan"} with a structured day-by-day plan focused on scenic exploration, practical travel timing, and reliable support. The route is arranged to reduce fatigue, keep comfort consistent, and give meaningful stops for landscapes, culture, and local experiences. This package works well for travelers who want a clean balance of sightseeing, convenience, and predictable logistics throughout ${tour.durationLabel || `${tour.durationDays || 0} days`}.`;
+
+const DEFAULT_TRANSPORT_NOTE =
+  "Prices are for transport only. Hotels, meals, boating, entry tickets, jeep charges, and personal expenses are not included.";
+
+export const buildCommonTourFacts = (settings) => {
+  const bookingPricing = settings?.bookingPricing || {};
+  const transportNote = String(bookingPricing.transportNote || "").trim() || DEFAULT_TRANSPORT_NOTE;
+  const vehicleStartingPrices = Array.isArray(bookingPricing.vehicleTypes)
+    ? bookingPricing.vehicleTypes
+        .filter((item) => item?.active !== false && String(item?.label || item?.key || "").trim())
+        .map((item) => ({
+          label: String(item.label || item.key).trim(),
+          dailyRate: Number(item.dailyRate || 0),
+        }))
+    : [];
+
+  return {
+    transportNote,
+    vehicleStartingPrices,
+  };
+};
+
+export const buildTourReviews = (tour) =>
+  Array.isArray(tour?.reviewItems)
+    ? tour.reviewItems
+        .map((item, index) => ({
+          id: `${tour?.id || tour?.slug || "tour"}-review-${index + 1}`,
+          name: item?.name || "Guest",
+          rating: Math.max(1, Math.min(5, Number(item?.rating || 5))),
+          date: item?.date || "",
+          tag: item?.tag || "Guest Review",
+          comment: item?.comment || "",
+        }))
+        .filter((item) => item.name || item.comment)
+    : [];
