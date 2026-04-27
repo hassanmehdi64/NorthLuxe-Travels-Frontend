@@ -29,7 +29,7 @@ const WhatsAppFloatButton = () => {
           rel="noreferrer"
           aria-label="Message us on Messenger"
           title="Message Us"
-          className="inline-flex items-center justify-center h-10 w-10 rounded-full shadow-xl bg-[#0084ff] text-white hover:scale-105 transition-transform"
+          className="ql-btn-icon h-10 w-10 rounded-full border-[#0084ff] bg-[#0084ff] text-white shadow-xl [--btn-icon-hover-bg:#0866ff] [--btn-icon-hover-border:#0866ff] [--btn-icon-hover-text:#ffffff]"
         >
           <FaFacebookMessenger className="h-4 w-4" aria-hidden="true" />
         </a>
@@ -41,7 +41,7 @@ const WhatsAppFloatButton = () => {
         rel="noreferrer"
         aria-label="Chat on WhatsApp"
         title="WhatsApp"
-        className="inline-flex items-center justify-center h-10 w-10 rounded-full shadow-xl bg-[#0da746] text-white hover:scale-105 transition-transform"
+        className="ql-btn-icon h-10 w-10 rounded-full border-[#0da746] bg-[#0da746] text-white shadow-xl [--btn-icon-hover-bg:#0a8f3b] [--btn-icon-hover-border:#0a8f3b] [--btn-icon-hover-text:#ffffff]"
       >
         <FaWhatsapp className="h-4 w-4" aria-hidden="true" />
       </a>

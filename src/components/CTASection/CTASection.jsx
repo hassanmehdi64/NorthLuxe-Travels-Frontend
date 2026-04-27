@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, CalendarCheck2, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, CalendarCheck2, Headphones, ShieldCheck, Sparkles } from "lucide-react";
 
 const CTASection = () => {
   return (
@@ -9,7 +9,6 @@ const CTASection = () => {
           <div className="grid lg:grid-cols-[1.2fr_1fr]">
             <div className="p-6 md:p-8 lg:p-10">
               <div className="inline-flex items-center gap-2 rounded-full border border-theme bg-theme-bg px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-theme">
-                <Sparkles size={11} className="text-[var(--c-brand)]" />
                 Travel Concierge
               </div>
 
@@ -24,16 +23,16 @@ const CTASection = () => {
               <div className="mt-6 flex flex-col sm:flex-row gap-3 sm:items-center">
                 <Link
                   to="/custom-booking"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold ql-btn-primary"
+                  className="ql-btn-primary gap-2 px-6 py-3 text-sm font-semibold"
                 >
                   Start Planning
                   <ArrowRight size={16} />
                 </Link>
-                <Link
+                
+                  Explore <Link
                   to="/tours"
-                  className="inline-flex items-center justify-center rounded-xl px-6 py-3 text-sm font-semibold ql-btn-secondary"
-                >
-                  Explore Tours
+                  className="ql-btn-secondary px-6 py-3 text-sm font-semibold"
+                >Tours
                 </Link>
               </div>
             </div>
@@ -46,7 +45,7 @@ const CTASection = () => {
               <div className="space-y-3">
                 <Point icon={ShieldCheck} label="Verified travel partners" />
                 <Point icon={CalendarCheck2} label="Flexible date planning" />
-                <Point icon={Sparkles} label="Fast premium support" />
+                <Point icon={Headphones} label="Fast premium support" />
               </div>
 
               <div className="mt-6 rounded-xl border border-theme bg-theme-surface p-4">

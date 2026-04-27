@@ -31,6 +31,16 @@
   --btn-ghost-text:     var(--c-text);
   --btn-ghost-border:   var(--c-border);
   --btn-ghost-hover-bg: var(--c-hover);
+  --btn-ghost-hover-text: var(--c-brand);
+  --btn-ghost-hover-border: var(--c-brand);
+
+  /* Icon (Small / Utility) */
+  --btn-icon-bg: var(--c-surface);
+  --btn-icon-text: var(--c-text);
+  --btn-icon-border: var(--c-border);
+  --btn-icon-hover-bg: rgba(var(--c-brand-rgb), 0.12);
+  --btn-icon-hover-text: var(--c-brand);
+  --btn-icon-hover-border: rgba(var(--c-brand-rgb), 0.38);
 
   /* =====================================================
      OVERLAYS & GRADIENTS

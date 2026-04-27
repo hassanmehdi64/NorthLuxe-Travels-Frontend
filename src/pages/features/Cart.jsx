@@ -62,7 +62,7 @@ const CartPage = () => {
                   <button
                     type="button"
                     onClick={() => handleRemove(item.id, item.title)}
-                    className="self-start rounded-xl border border-theme px-3 py-2 text-xs font-black uppercase tracking-[0.16em] text-theme hover:bg-theme-bg"
+                    className="ql-btn-secondary self-start px-3 py-2 text-xs font-black uppercase tracking-[0.16em]"
                   >
                     Remove
                   </button>
@@ -89,14 +89,14 @@ const CartPage = () => {
               </div>
               <Link
                 to="/book"
-                className="mt-5 inline-flex w-full items-center justify-center rounded-xl bg-[var(--c-brand)] px-4 py-3 text-xs font-black uppercase tracking-[0.18em] text-theme"
+                className="ql-btn-primary mt-5 w-full px-4 py-3 text-xs font-black uppercase tracking-[0.18em]"
               >
                 Proceed to Booking
               </Link>
               <button
                 type="button"
                 onClick={handleClear}
-                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-theme px-4 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-theme hover:bg-theme-bg"
+                className="ql-btn-secondary mt-3 w-full px-4 py-2.5 text-xs font-black uppercase tracking-[0.16em]"
               >
                 <Trash2 size={14} />
                 Clear Cart

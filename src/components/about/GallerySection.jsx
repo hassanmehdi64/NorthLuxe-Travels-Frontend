@@ -47,7 +47,7 @@ const GallerySection = () => {
               )}
               <Link
                 to="/gallery"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-theme bg-theme-surface px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] text-theme hover:text-[var(--c-brand)] hover:border-[var(--c-brand)]/45 hover:bg-white transition-all duration-300 active:scale-[0.98]"
+                className="ql-btn-secondary gap-2 px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] active:scale-[0.98]"
               >
                 View All Gallery
                 <MoveUpRight size={15} />
@@ -100,7 +100,9 @@ const GallerySection = () => {
           className="fixed inset-0 z-[100] flex items-center justify-center bg-theme-text/96 backdrop-blur-lg p-6"
           onClick={() => setSelectedImg(null)}
         >
-          <button className="absolute top-8 right-8 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/5 text-white/75 hover:text-[var(--c-brand)] transition-colors">
+          <button
+            className="ql-btn-icon absolute top-8 right-8 [--btn-icon-bg:rgba(255,255,255,0.06)] [--btn-icon-border:rgba(255,255,255,0.2)] [--btn-icon-text:rgba(255,255,255,0.82)] [--btn-icon-hover-bg:rgba(32,183,122,0.2)] [--btn-icon-hover-border:rgba(32,183,122,0.45)] [--btn-icon-hover-text:#ffffff]"
+          >
             <X size={20} />
           </button>
           <div className="relative max-w-5xl w-full flex flex-col items-center" onClick={(e) => e.stopPropagation()}>

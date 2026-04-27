@@ -72,7 +72,7 @@ const BlogDetails = () => {
           </p>
           <Link
             to="/blog"
-            className="inline-flex items-center gap-2 rounded-xl border border-theme bg-white px-5 py-3 text-sm font-semibold text-theme transition hover:border-[var(--c-brand)]/35 hover:text-[var(--c-brand)]"
+            className="ql-btn-secondary gap-2 px-5 py-3 text-sm font-semibold"
           >
             <ArrowLeft size={16} />
             Back to Blogs
@@ -87,7 +87,7 @@ const BlogDetails = () => {
       <section className="mx-auto max-w-6xl px-4 pt-8 sm:px-6 md:pt-10 lg:px-8">
         <Link
           to="/blog"
-          className="inline-flex items-center gap-2 rounded-full border border-theme bg-white px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em] text-theme transition hover:border-[var(--c-brand)]/35 hover:text-[var(--c-brand)]"
+          className="ql-btn-secondary gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-[0.14em]"
         >
           <ArrowLeft size={14} />
           Back to Blog

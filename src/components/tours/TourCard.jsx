@@ -1,9 +1,15 @@
 import { Link } from "react-router-dom";
 import { Heart, MapPin, ShoppingBag, Star, Users } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
+
 import { useToast } from "../../context/ToastContext";
-import { addToCart, isInCart, isInWishlist, toggleWishlist } from "../../features/commerce/storage";
+import {
+  addToCart,
+  isInCart,
+  isInWishlist,
+  toggleWishlist,
+} from "../../features/commerce/storage";
 import {
   buildDisplayItinerary,
   getTourPlaceName,
@@ -13,9 +19,13 @@ import {
 import { formatCurrencyAmount } from "../../utils/currency";
 
 const MotionArticle = motion.article;
+
+const DEFAULT_TOUR_IMAGE =
+  "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80";
+
 const cardReveal = {
   hidden: { opacity: 0, y: 26, scale: 0.985 },
-  visible: (delay) => ({
+  visible: (delay = 0) => ({
     opacity: 1,
     y: 0,
     scale: 1,
@@ -29,8 +39,10 @@ const cardReveal = {
 
 const parsePrice = (value) => {
   if (typeof value === "number" && Number.isFinite(value)) return value;
+
   const cleaned = String(value || "").replace(/[^\d.-]+/g, "");
   const parsed = Number(cleaned);
+
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
@@ -38,53 +50,108 @@ const getDiscountPercent = (tour) => {
   const directPercent = parsePrice(
     tour?.discountPercent ?? tour?.discount ?? tour?.salePercent ?? 0,
   );
-  if (directPercent > 0) return Math.round(directPercent);
+
+  if (directPercent > 0) {
+    return Math.round(directPercent);
+  }
 
   const originalPrice = parsePrice(tour?.originalPrice);
   const currentPrice = parsePrice(tour?.price);
+
   if (originalPrice > currentPrice && currentPrice > 0) {
     const percentOff = Math.round(
       ((originalPrice - currentPrice) / originalPrice) * 100,
     );
-    if (percentOff > 0) return percentOff;
+
+    return percentOff > 0 ? percentOff : 0;
   }
 
   return 0;
 };
 
-const TourCard = ({ tour, index = 0 }) => {
+const TourCard = ({ tour = {}, index = 0 }) => {
   const toast = useToast();
-  const seatsLeft = Number(tour?.availableSeats || 0);
-  const isAvailable = seatsLeft > 0;
-  const ratingText = tour?.rating ? Number(tour.rating).toFixed(1) : "New";
-  const slugOrId = tour?.slug || tour?.id;
   const [wishlistVersion, setWishlistVersion] = useState(0);
-  const savedInWishlist = wishlistVersion >= 0 && isInWishlist(tour?.id);
-  const placeName = getTourPlaceName(tour);
-  const displayTitle = tour?.title || "Scenic Escape";
-  const seatLabel = getTourPlanLabel(tour);
-  const totalDays = Number(tour?.durationDays || 0);
-  const placesLabel = getTourPlacesLabel(tour, buildDisplayItinerary(tour));
+
+  const {
+    id,
+    slug,
+    title,
+    image,
+    currency,
+    rating,
+    price,
+    availableSeats,
+    durationDays,
+    durationLabel,
+  } = tour;
+
+  const tourId = id || slug;
+  const slugOrId = slug || id;
+
+  const displayTitle = title || "Scenic Escape";
+  const imageSrc = image || DEFAULT_TOUR_IMAGE;
+
+  const itinerary = useMemo(() => buildDisplayItinerary(tour), [tour]);
+
+  const placeName = getTourPlaceName(tour) || "Pakistan";
+  const placesLabel = getTourPlacesLabel(tour, itinerary) || "Multiple places";
+  const seatLabel = getTourPlanLabel(tour) || "Flexible plan";
+
+  const totalDays = Number(durationDays || 0);
+  const displayDuration =
+    durationLabel || (totalDays > 0 ? `${totalDays} Days` : "Flexible");
+
+  const seatCount = Number(availableSeats);
+  const hasSeatInfo = Number.isFinite(seatCount);
+  const isAvailable = !hasSeatInfo || seatCount > 0;
+
+  const ratingNumber = Number(rating);
+  const ratingText = Number.isFinite(ratingNumber)
+    ? ratingNumber.toFixed(1)
+    : "New";
+
   const cardDelay = Math.min(index * 0.08, 0.36);
   const discountPercent = getDiscountPercent(tour);
-  const currentPrice = parsePrice(tour?.price);
+  const currentPrice = parsePrice(price);
   const showDiscountPriceBadge = discountPercent > 0 && currentPrice > 0;
 
+  const savedInWishlist = tourId ? isInWishlist(tourId) : false;
+
   const handleWishlist = () => {
+    if (!tourId) {
+      toast.info("Tour unavailable", "This tour cannot be saved right now.");
+      return;
+    }
+
     const added = toggleWishlist(tour);
     setWishlistVersion((value) => value + 1);
-    if (added)
-      toast.success("Added to wishlist", `${tour?.title} is saved for later.`);
-    else toast.info("Removed from wishlist", `${tour?.title} was removed.`);
+
+    if (added) {
+      toast.success("Added to wishlist", `${displayTitle} is saved for later.`);
+    } else {
+      toast.info("Removed from wishlist", `${displayTitle} was removed.`);
+    }
   };
 
   const handleCart = () => {
-    if (isInCart(tour?.id)) {
-      toast.info("Already in cart", `${tour?.title} is already added.`);
+    if (!tourId) {
+      toast.info("Tour unavailable", "This tour cannot be added right now.");
       return;
     }
+
+    if (!isAvailable) {
+      toast.info("Tour is full", `${displayTitle} has no seats available.`);
+      return;
+    }
+
+    if (isInCart(tourId)) {
+      toast.info("Already in cart", `${displayTitle} is already added.`);
+      return;
+    }
+
     addToCart(tour);
-    toast.success("Added to cart", `${tour?.title} is ready for checkout.`);
+    toast.success("Added to cart", `${displayTitle} is ready for checkout.`);
   };
 
   return (
@@ -93,22 +160,20 @@ const TourCard = ({ tour, index = 0 }) => {
       custom={cardDelay}
       initial="hidden"
       whileInView="visible"
-      whileHover={{
-        y: -5,
-        transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] },
-      }}
       viewport={{ once: true, amount: 0.2 }}
-      className="group h-full flex flex-col rounded-2xl bg-theme-surface border border-theme shadow-[0_10px_20px_rgba(15,23,42,0.08)] hover:border-[var(--c-brand)] transition-[border-color,box-shadow] duration-500 hover:shadow-[0_18px_34px_rgba(15,23,42,0.14)] overflow-hidden will-change-transform">
-      <div className="relative h-44 sm:h-48 overflow-hidden">
+      className="group flex h-full flex-col overflow-hidden rounded-2xl border border-theme bg-theme-surface shadow-[0_10px_20px_rgba(15,23,42,0.08)] transition-[border-color,box-shadow] duration-500 will-change-transform hover:border-[var(--c-brand)] hover:shadow-[0_18px_34px_rgba(15,23,42,0.14)]">
+      <div className="relative h-44 overflow-hidden sm:h-48">
         <motion.img
-          src={tour?.image}
-          alt={tour?.title || "Tour image"}
-          className="w-full h-full object-cover"
+          src={imageSrc}
+          alt={displayTitle}
+          loading="lazy"
+          decoding="async"
+          className="h-full w-full object-cover"
           whileHover={{ scale: 1.045 }}
           transition={{ duration: 1.15, ease: [0.16, 1, 0.3, 1] }}
         />
 
-        {showDiscountPriceBadge ? (
+        {showDiscountPriceBadge && (
           <motion.div
             initial={{ opacity: 0, scale: 0.82, y: -10, rotate: -8 }}
             whileInView={{ opacity: 1, scale: 1, y: 0, rotate: -6 }}
@@ -120,91 +185,74 @@ const TourCard = ({ tour, index = 0 }) => {
             }}
             viewport={{ once: true, amount: 0.6 }}
             className="absolute right-3 top-3 z-[2]">
-            <motion.div
-              animate={{
-                boxShadow: [
-                  "0 10px 22px rgba(249,115,22,0.28)",
-                  "0 14px 30px rgba(244,63,94,0.42)",
-                  "0 10px 22px rgba(249,115,22,0.28)",
-                ],
-                opacity: [1, 0.72, 1],
-              }}
-              transition={{
-                duration: 1.2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="rounded-full border border-white/80 bg-gradient-to-r from-rose-500 via-orange-500 to-amber-400 px-3 py-1.5 text-white">
-              <div className="text-[9px] font-black uppercase tracking-[0.16em] leading-none">
+            <div className="rounded-full border border-white/80 bg-gradient-to-r from-rose-500 via-orange-500 to-amber-400 px-3 py-1.5 text-white shadow-[0_12px_26px_rgba(249,115,22,0.35)]">
+              <div className="text-[9px] font-black uppercase leading-none tracking-[0.16em]">
                 {discountPercent}% OFF
               </div>
+
               <div className="mt-1 text-[11px] font-black leading-none">
-                {formatCurrencyAmount(currentPrice, tour?.currency)}
+                {formatCurrencyAmount(currentPrice, currency)}
               </div>
-            </motion.div>
+            </div>
           </motion.div>
-        ) : null}
+        )}
 
         <div className="absolute bottom-3 left-3 flex gap-1.5">
-          <div className="bg-theme-text/80 backdrop-blur-md text-white px-2 py-1 rounded-lg flex items-center gap-1 text-[10px] font-bold">
+          <div className="flex items-center gap-1 rounded-lg bg-theme-text/80 px-2 py-1 text-[10px] font-bold text-white backdrop-blur-md">
             <Star
               size={10}
               className="fill-[var(--c-brand)] stroke-[var(--c-brand)]"
             />
             {ratingText}
           </div>
+
           {!isAvailable && (
-            <div className="bg-red-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-lg text-[10px] font-bold uppercase">
+            <div className="rounded-lg bg-red-500/90 px-2 py-1 text-[10px] font-bold uppercase text-white backdrop-blur-sm">
               Full
             </div>
           )}
         </div>
       </div>
 
-      <div className="p-4 sm:p-5 flex flex-col flex-1">
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
         <div className="mb-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[10px] font-bold uppercase tracking-[0.15em] text-muted">
-          <span className="flex items-center gap-1 text-[var(--c-brand)] truncate max-w-[140px]">
-            <MapPin size={11} className="opacity-70" />
-            {placeName}
+          <span className="flex max-w-[140px] items-center gap-1 truncate text-[var(--c-brand)]">
+            <MapPin size={11} className="shrink-0 opacity-70" />
+            <span className="truncate">{placeName}</span>
           </span>
-          <span className="opacity-20">|</span>
-          <span>{tour?.durationLabel || `${totalDays} Days`}</span>
-          <span className="opacity-20">|</span>
-          <span className="truncate">{placesLabel}</span>
+
+          <span className="min-w-0 truncate">{placesLabel}</span>
         </div>
 
-        <h3 className="text-sm sm:text-base font-bold text-theme leading-tight mb-4 line-clamp-2 min-h-[42px] group-hover:text-[var(--c-brand)] transition-colors duration-300">
+        <h3 className="mb-4 min-h-[42px] text-sm font-bold leading-tight text-theme line-clamp-2 transition-colors duration-300 group-hover:text-[var(--c-brand)] sm:text-base">
           {displayTitle}
         </h3>
 
-        <div className="mb-5 flex items-center justify-between gap-5 text-[11px] font-medium text-muted">
-          <div className="flex items-center gap-1">
-            <Users size={12} className="opacity-50" />
-            <span>{seatLabel}</span>
+        <div className="mb-5 flex items-center justify-between gap-3 text-[11px] font-medium text-muted">
+          <div className="flex min-w-0 items-center gap-1">
+            <Users size={12} className="shrink-0 opacity-50" />
+            <span className="truncate">{seatLabel}</span>
           </div>
-          <div className="flex items-center gap-1.5 text-right">
-            <MapPin size={12} className="opacity-50" />
-            <span>{placesLabel}</span>
-          </div>
-          <div className="h-1 w-12 bg-theme-bg rounded-full overflow-hidden">
-            <div
-              className={`h-full rounded-full transition-all duration-1000 ${isAvailable ? "bg-[var(--c-brand)]" : "bg-muted/30"}`}
-              style={{ width: isAvailable ? "60%" : "100%" }}
-            />
+
+          <div className="flex min-w-0 items-center gap-1.5 text-right">
+            <MapPin size={12} className="shrink-0 opacity-50" />
+            <span className="truncate">{placesLabel}</span>
           </div>
         </div>
+        <div className="h-1 w-12 shrink-0 overflow-hidden rounded-full bg-theme-bg"></div>
 
         <div className="mt-auto flex items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onClick={handleWishlist}
-            className={`inline-flex items-center justify-center rounded-xl border px-2.5 sm:px-3 py-2.5 transition ${
-              savedInWishlist
-                ? "border-[var(--c-brand)] bg-[var(--c-brand)]/15 text-[var(--c-brand)]"
-                : "border-theme text-theme hover:bg-theme-bg"
-            }`}
-            aria-label="Add to wishlist"
-            title="Add to wishlist">
+            className="ql-btn-icon w-auto px-2.5 sm:px-3"
+            data-active={savedInWishlist ? "true" : undefined}
+            aria-label={
+              savedInWishlist ? "Remove from wishlist" : "Add to wishlist"
+            }
+            title={
+              savedInWishlist ? "Remove from wishlist" : "Add to wishlist"
+            }>
             <Heart
               size={14}
               className={savedInWishlist ? "fill-current" : ""}
@@ -214,15 +262,16 @@ const TourCard = ({ tour, index = 0 }) => {
           <button
             type="button"
             onClick={handleCart}
-            className="inline-flex items-center justify-center rounded-xl border border-theme text-theme hover:bg-theme-bg px-2.5 sm:px-3 py-2.5 transition"
+            disabled={!isAvailable}
+            className="ql-btn-icon w-auto px-2.5 sm:px-3"
             aria-label="Add to cart"
-            title="Add to cart">
+            title={isAvailable ? "Add to cart" : "Tour is full"}>
             <ShoppingBag size={14} />
           </button>
 
           <Link
-            to={`/tours/${slugOrId}`}
-            className="flex-1 btn-brand text-[10px] sm:text-[11px] py-2.5 rounded-xl shadow-sm active:scale-95 font-bold uppercase tracking-wider flex justify-center items-center">
+            to={slugOrId ? `/tours/${slugOrId}` : "/tours"}
+            className="ql-btn-primary flex flex-1 py-2.5 text-[10px] font-bold uppercase tracking-wider active:scale-95 sm:text-[11px]">
             Book Now
           </Link>
         </div>
@@ -232,4 +281,3 @@ const TourCard = ({ tour, index = 0 }) => {
 };
 
 export default TourCard;
-

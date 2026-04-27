@@ -1,5 +1,6 @@
 import { CheckCircle2, Play } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 const focusPoints = [
   "Curated cultural, experiential, and faith-based journeys",
@@ -9,10 +10,12 @@ const focusPoints = [
   "Family-friendly tours with safety-first planning",
 ];
 
-const youtubeVideoUrl = "https://www.youtube.com/watch?v=Uf4iDJ8LJx0";
+const youtubeEmbedUrl = "https://www.youtube.com/embed/Uf4iDJ8LJx0?autoplay=1&rel=0&modestbranding=1";
 const youtubePreviewImage = "/gb.jpg";
 
 const WhyChooseUs = () => {
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+
   return (
     <section className="py-8 lg:py-10 bg-theme-bg w-full">
       <div className="w-full border-y border-theme bg-theme-surface">
@@ -41,34 +44,44 @@ const WhyChooseUs = () => {
 
               <Link
                 to="/about"
-                className="mt-7 inline-flex items-center justify-center rounded-xl border border-theme px-6 py-2.5 text-sm font-semibold text-theme hover:border-[var(--c-brand)] hover:text-[var(--c-brand)] transition"
+                className="ql-btn-secondary mt-7 px-6 py-2.5 text-sm font-semibold"
               >
                 Learn More
               </Link>
             </div>
 
             <div className="w-full">
-              <div className="relative w-full overflow-hidden rounded-xl border border-theme shadow-[0_20px_35px_rgba(15,23,42,0.12)]">
-                <img
-                  src={youtubePreviewImage}
-                  alt="Travel video preview"
-                  className="w-full h-[280px] sm:h-[320px] md:h-[360px] object-cover"
-                />
-                <div className="absolute inset-0 bg-black/25" />
-
-                <a
-                  href={youtubeVideoUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="Watch video on YouTube"
-                  className="absolute inset-0 m-auto h-8 w-8 text-white inline-flex items-center justify-center drop-shadow-[0_2px_6px_rgba(0,0,0,0.65)] hover:scale-105 transition-transform"
-                >
-                  <Play size={12} className="ml-0.5 fill-current" />
-                </a>
-
-                <div className="absolute left-3 bottom-3 rounded-md bg-black/60 px-3 py-1.5 text-xs font-semibold text-white">
-                  Watch on YouTube
-                </div>
+              <div className="relative w-full overflow-hidden rounded-xl border border-theme bg-theme-surface shadow-[0_20px_35px_rgba(15,23,42,0.12)]">
+                {isVideoOpen ? (
+                  <iframe
+                    src={youtubeEmbedUrl}
+                    title="Why Choose Us video"
+                    className="h-[280px] w-full sm:h-[320px] md:h-[360px]"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsVideoOpen(true)}
+                    className="group relative block w-full text-left"
+                    aria-label="Play Why Choose Us video"
+                  >
+                    <img
+                      src={youtubePreviewImage}
+                      alt="Travel video preview"
+                      className="h-[280px] w-full object-cover sm:h-[320px] md:h-[360px]"
+                    />
+                    <div className="absolute inset-0 bg-black/25 transition-colors duration-300 group-hover:bg-black/20" />
+                    <span className="ql-btn-icon absolute inset-0 m-auto h-12 w-12 rounded-full border-white/30 bg-black/35 text-white [--btn-icon-hover-bg:rgba(32,183,122,0.26)] [--btn-icon-hover-border:rgba(255,255,255,0.5)] [--btn-icon-hover-text:#ffffff] shadow-[0_8px_22px_rgba(0,0,0,0.3)]">
+                      <Play size={16} className="ml-0.5 fill-current" />
+                    </span>
+                    <span className="absolute bottom-3 left-3 rounded-md bg-black/60 px-3 py-1.5 text-xs font-semibold text-white">
+                      Watch Video
+                    </span>
+                  </button>
+                )}
               </div>
             </div>
           </div>

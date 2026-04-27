@@ -73,9 +73,6 @@
   
   /* Subtle border pop to match the brand */
   border-color: var(--c-brand);
-  
-  /* Lift effect to match your cards */
-  transform: translateY(-1px);
 }
 
 .btn-ghost:active {
@@ -85,16 +82,17 @@
 
 /* Primary Brand Button */
 .btn-brand {
-  background-color: var(--c-brand);
-  color: #ffffff;
-  border: 1px solid var(--c-brand);
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: 1px solid var(--btn-primary-bg);
+  box-shadow: 0 10px 24px rgba(var(--c-brand-rgb), 0.16);
 }
 
 .btn-brand:hover {
-  background-color: var(--c-brand-dark);
-  border-color: var(--c-brand-dark);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-sm);
+  background-color: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
+  color: var(--btn-primary-text);
+  box-shadow: 0 8px 18px rgba(15, 47, 87, 0.12);
 }
 
 .btn-brand:active {
@@ -105,14 +103,14 @@
 /* Ghost / Secondary Button */
 .btn-ghost {
   background: transparent;
-  border: 1px solid var(--c-border);
-  color: var(--c-text);
+  border: 1px solid var(--btn-ghost-border);
+  color: var(--btn-ghost-text);
 }
 
 .btn-ghost:hover {
-  background: var(--c-hover);
-  border-color: var(--c-brand);
-  color: var(--c-text);
+  background: var(--btn-ghost-hover-bg);
+  border-color: var(--btn-ghost-hover-border);
+  color: var(--btn-ghost-hover-text);
 }
 
 .btn-ghost:active {

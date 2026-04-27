@@ -73,7 +73,7 @@ const Login = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl px-4 py-3 text-sm font-black uppercase tracking-[0.14em] bg-[var(--c-brand)] text-slate-900 hover:brightness-95 transition disabled:opacity-60"
+          className="ql-btn-primary w-full py-3 text-sm font-black uppercase tracking-[0.14em]"
         >
           {loading ? "Signing in..." : "Sign In"}
         </button>

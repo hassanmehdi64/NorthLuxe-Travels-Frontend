@@ -98,7 +98,7 @@ export const ToastProvider = ({ children }) => {
                 <button
                   type="button"
                   onClick={() => removeToast(toast.id)}
-                  className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-muted transition hover:bg-theme-bg hover:text-theme"
+                  className="ql-btn-icon h-7 w-7 rounded-lg border-transparent bg-transparent shadow-none"
                   aria-label="Dismiss notification"
                 >
                   <X size={16} />
@@ -109,7 +109,7 @@ export const ToastProvider = ({ children }) => {
                   <button
                     type="button"
                     onClick={() => removeToast(toast.id)}
-                    className="inline-flex items-center justify-center rounded-xl border border-white/70 bg-white/75 px-3 py-1.5 text-[11px] font-bold text-slate-600 transition hover:bg-white"
+                    className="ql-btn-secondary px-3 py-1.5 text-[11px] font-bold"
                   >
                     {toast.cancelLabel || "Dismiss"}
                   </button>
@@ -119,10 +119,10 @@ export const ToastProvider = ({ children }) => {
                       removeToast(toast.id);
                       toast.onConfirm?.();
                     }}
-                    className={`inline-flex items-center justify-center rounded-xl px-3 py-1.5 text-[11px] font-bold text-white transition hover:-translate-y-0.5 ${
+                    className={`ql-btn-primary px-3 py-1.5 text-[11px] font-bold ${
                       toast.tone === "danger"
-                        ? "bg-rose-500 shadow-[0_10px_24px_rgba(244,63,94,0.22)]"
-                        : "bg-[linear-gradient(135deg,var(--c-brand),var(--c-navy))] shadow-[0_10px_24px_rgba(32,183,122,0.2)]"
+                        ? "!border-rose-500 !bg-rose-500 hover:!border-rose-600 hover:!bg-rose-600"
+                        : ""
                     }`}
                   >
                     {toast.confirmLabel || "Confirm"}

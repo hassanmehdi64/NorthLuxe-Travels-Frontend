@@ -53,8 +53,7 @@ const BrandMark = ({ settings, navColors, compact = false, onClick }) => {
 const ActionLink = ({ to, icon, label, count = 0 }) => (
   <Link
     to={to}
-    className="group relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/20 text-white transition-all duration-300 hover:border-[var(--c-brand)]/70 hover:bg-white/10 hover:text-white sm:h-10 sm:w-10 sm:rounded-xl"
-    style={{ background: "var(--nav-bg)" }}
+    className="ql-btn-icon group relative h-9 w-9 rounded-lg border-white/20 text-white shadow-none [--btn-icon-bg:var(--nav-bg)] [--btn-icon-text:#ffffff] [--btn-icon-hover-bg:rgba(255,255,255,0.1)] [--btn-icon-hover-text:#ffffff] [--btn-icon-hover-border:rgba(32,183,122,0.7)] sm:h-10 sm:w-10 sm:rounded-xl"
     aria-label={label}
     title={label}>
     {createElement(icon, { size: 17 })}
@@ -201,12 +200,11 @@ const Navbar = () => {
               />
               <button
                 onClick={() => setIsOpen((prev) => !prev)}
-                className={`inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition-all duration-300 sm:h-10 sm:w-10 sm:rounded-xl ${
+                className={`ql-btn-icon h-9 w-9 shrink-0 rounded-lg shadow-none [--btn-icon-bg:var(--nav-bg)] [--btn-icon-text:#ffffff] [--btn-icon-hover-bg:rgba(255,255,255,0.1)] [--btn-icon-hover-text:#ffffff] sm:h-10 sm:w-10 sm:rounded-xl ${
                   isOpen
-                    ? "border-[var(--c-brand)]/70 bg-white/10 text-white"
-                    : "border-white/20 text-white hover:border-[var(--c-brand)]/70 hover:bg-white/10 hover:text-white"
+                    ? "[--btn-icon-border:rgba(32,183,122,0.7)] [--btn-icon-bg:rgba(255,255,255,0.1)]"
+                    : "[--btn-icon-border:rgba(255,255,255,0.2)] [--btn-icon-hover-border:rgba(32,183,122,0.7)]"
                 }`}
-                style={{ background: "var(--nav-bg)" }}
                 aria-label={isOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isOpen}
                 aria-controls="mobile-navbar-drawer">
@@ -245,8 +243,7 @@ const Navbar = () => {
             />
             <button
               onClick={() => setIsOpen(false)}
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[var(--c-brand)]/70 bg-white/10 text-white transition-all duration-300"
-              style={{ background: "var(--nav-bg)" }}
+              className="ql-btn-icon h-9 w-9 shrink-0 rounded-lg border-[rgba(32,183,122,0.7)] bg-white/10 text-white shadow-none [--btn-icon-bg:var(--nav-bg)] [--btn-icon-text:#ffffff] [--btn-icon-border:rgba(32,183,122,0.7)] [--btn-icon-hover-bg:rgba(255,255,255,0.1)] [--btn-icon-hover-text:#ffffff] [--btn-icon-hover-border:rgba(32,183,122,0.7)]"
               aria-label="Close menu">
               <X size={20} />
             </button>
@@ -283,8 +280,8 @@ const Navbar = () => {
                 <Link
                   to="/search"
                   onClick={handleLinkClick}
-                  className="flex min-h-11 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-xs font-medium text-white transition-all duration-200 hover:bg-white/8 hover:text-white"
-                  style={{ background: "var(--nav-bg)", color: "#ffffff" }}>
+                  className="ql-btn-secondary min-h-11 justify-start gap-2 rounded-lg px-3 py-2.5 text-xs font-medium [--btn-ghost-bg:var(--nav-bg)] [--btn-ghost-text:#ffffff] [--btn-ghost-border:rgba(255,255,255,0.1)] [--btn-ghost-hover-bg:rgba(255,255,255,0.08)] [--btn-ghost-hover-text:#ffffff] [--btn-ghost-hover-border:rgba(255,255,255,0.22)]"
+                >
                   <Search size={15} className="shrink-0" />
                   <span>Search</span>
                 </Link>
@@ -292,8 +289,8 @@ const Navbar = () => {
                 <Link
                   to="/custom-plan-request"
                   onClick={handleLinkClick}
-                  className="flex min-h-11 items-center gap-2 rounded-lg border border-[var(--c-brand)]/35 bg-[var(--c-brand)]/8 px-3 py-2.5 text-xs font-medium text-white transition-all duration-200 hover:bg-[var(--c-brand)]/12 hover:text-white"
-                  style={{ background: "var(--nav-bg)", color: "#ffffff" }}>
+                  className="ql-btn-primary min-h-11 justify-start gap-2 rounded-lg px-3 py-2.5 text-xs font-medium [--btn-primary-bg:rgba(32,183,122,0.14)] [--btn-primary-text:#ffffff] [--btn-primary-hover:rgba(32,183,122,0.22)]"
+                >
                   <Menu size={15} className="shrink-0" />
                   <span>Custom Plan</span>
                 </Link>
@@ -301,8 +298,8 @@ const Navbar = () => {
                 <Link
                   to="/wishlist"
                   onClick={handleLinkClick}
-                  className="relative flex min-h-11 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-xs font-medium text-white transition-all duration-200 hover:bg-white/8 hover:text-white"
-                  style={{ background: "var(--nav-bg)", color: "#ffffff" }}>
+                  className="ql-btn-secondary relative min-h-11 justify-start gap-2 rounded-lg px-3 py-2.5 text-xs font-medium [--btn-ghost-bg:var(--nav-bg)] [--btn-ghost-text:#ffffff] [--btn-ghost-border:rgba(255,255,255,0.1)] [--btn-ghost-hover-bg:rgba(255,255,255,0.08)] [--btn-ghost-hover-text:#ffffff] [--btn-ghost-hover-border:rgba(255,255,255,0.22)]"
+                >
                   {wishlistCount > 0 && (
                     <span className="absolute right-2.5 top-2.5 min-w-4 rounded-full bg-[var(--c-brand)] px-1 text-center text-[10px] font-black leading-4 text-white">
                       {wishlistCount > 9 ? "9+" : wishlistCount}
@@ -315,8 +312,8 @@ const Navbar = () => {
                 <Link
                   to="/cart"
                   onClick={handleLinkClick}
-                  className="relative flex min-h-11 items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2.5 text-xs font-medium text-white transition-all duration-200 hover:bg-white/8 hover:text-white"
-                  style={{ background: "var(--nav-bg)", color: "#ffffff" }}>
+                  className="ql-btn-secondary relative min-h-11 justify-start gap-2 rounded-lg px-3 py-2.5 text-xs font-medium [--btn-ghost-bg:var(--nav-bg)] [--btn-ghost-text:#ffffff] [--btn-ghost-border:rgba(255,255,255,0.1)] [--btn-ghost-hover-bg:rgba(255,255,255,0.08)] [--btn-ghost-hover-text:#ffffff] [--btn-ghost-hover-border:rgba(255,255,255,0.22)]"
+                >
                   {cartCount > 0 && (
                     <span className="absolute right-2.5 top-2.5 min-w-4 rounded-full bg-[var(--c-brand)] px-1 text-center text-[10px] font-black leading-4 text-white">
                       {cartCount > 9 ? "9+" : cartCount}

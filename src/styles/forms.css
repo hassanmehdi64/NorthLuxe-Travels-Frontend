@@ -132,32 +132,58 @@
 
   .ql-btn-primary {
     @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold;
-    @apply transition-all duration-300 disabled:opacity-60;
-    background: var(--c-brand);
-    color: #ffffff;
-    border: 1px solid var(--c-brand);
+    @apply transition-all duration-300 disabled:pointer-events-none disabled:opacity-60;
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: 1px solid var(--btn-primary-bg);
+    box-shadow: 0 10px 24px rgba(var(--c-brand-rgb), 0.16);
   }
 
   .ql-btn-primary:hover,
   .ql-btn-primary:focus-visible {
-    background: var(--c-brand-dark);
-    border-color: var(--c-brand-dark);
-    color: #ffffff;
-    transform: translateY(-1px);
+    background: var(--btn-primary-hover);
+    border-color: var(--btn-primary-hover);
+    color: var(--btn-primary-text);
     box-shadow: 0 8px 18px rgba(15, 47, 87, 0.12);
   }
 
   .ql-btn-secondary {
     @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold;
-    @apply transition-colors;
-    background: var(--c-surface);
-    color: var(--c-text);
-    border: 1px solid var(--c-border);
+    @apply transition-all duration-300 disabled:pointer-events-none disabled:opacity-60;
+    background: var(--btn-ghost-bg);
+    color: var(--btn-ghost-text);
+    border: 1px solid var(--btn-ghost-border);
   }
 
   .ql-btn-secondary:hover,
   .ql-btn-secondary:focus-visible {
-    background: var(--c-hover);
+    background: var(--btn-ghost-hover-bg);
+    color: var(--btn-ghost-hover-text);
+    border-color: var(--btn-ghost-hover-border);
+    box-shadow: 0 8px 18px rgba(15, 47, 87, 0.08);
+  }
+
+  .ql-btn-icon {
+    @apply inline-flex items-center justify-center rounded-xl;
+    @apply h-10 w-10 shrink-0 transition-all duration-300 disabled:pointer-events-none disabled:opacity-60;
+    background: var(--btn-icon-bg);
+    color: var(--btn-icon-text);
+    border: 1px solid var(--btn-icon-border);
+    box-shadow: 0 8px 20px rgba(15, 47, 87, 0.08);
+  }
+
+  .ql-btn-icon:hover,
+  .ql-btn-icon:focus-visible {
+    background: var(--btn-icon-hover-bg);
+    color: var(--btn-icon-hover-text);
+    border-color: var(--btn-icon-hover-border);
+    box-shadow: 0 12px 24px rgba(15, 47, 87, 0.12);
+  }
+
+  .ql-btn-icon[data-active="true"] {
+    background: rgba(var(--c-brand-rgb), 0.14);
+    color: var(--c-brand);
+    border-color: rgba(var(--c-brand-rgb), 0.34);
   }
 
   .ql-step-chip {

@@ -58,7 +58,7 @@ const WishlistPage = () => {
               <button
                 type="button"
                 onClick={handleClear}
-                className="inline-flex items-center gap-2 rounded-xl border border-theme px-3 py-2 text-xs font-black uppercase tracking-[0.16em] text-theme hover:bg-theme-bg transition"
+                className="ql-btn-secondary px-3 py-2 text-xs font-black uppercase tracking-[0.16em]"
               >
                 <Trash2 size={14} />
                 Clear
@@ -81,14 +81,14 @@ const WishlistPage = () => {
                       <button
                         type="button"
                         onClick={() => handleMoveToCart(item)}
-                        className="flex-1 rounded-xl bg-[var(--c-brand)] px-3 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-theme"
+                        className="ql-btn-primary flex-1 px-3 py-2.5 text-xs font-black uppercase tracking-[0.16em]"
                       >
                         Add to Cart
                       </button>
                       <button
                         type="button"
                         onClick={() => handleRemove(item.id, item.title)}
-                        className="rounded-xl border border-theme px-3 py-2.5 text-xs font-black uppercase tracking-[0.16em] text-theme hover:bg-theme-bg"
+                        className="ql-btn-secondary px-3 py-2.5 text-xs font-black uppercase tracking-[0.16em]"
                       >
                         Remove
                       </button>

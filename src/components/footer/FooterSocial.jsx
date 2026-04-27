@@ -13,7 +13,7 @@ const FooterSocial = ({ href, icon, name }) => {
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 bg-white/5 text-[var(--footer-muted)] transition-all duration-300 hover:border-[var(--footer-accent)]/70 hover:bg-[var(--footer-accent)]/20 hover:text-[var(--footer-text)]"
+      className="ql-btn-icon group relative h-10 w-10 border-white/20 bg-white/5 text-[var(--footer-muted)] shadow-none [--btn-icon-hover-bg:color-mix(in_srgb,var(--footer-accent)_20%,transparent)] [--btn-icon-hover-border:color-mix(in_srgb,var(--footer-accent)_70%,transparent)] [--btn-icon-hover-text:var(--footer-text)]"
       aria-label={name}
     >
       <span className="absolute inset-0 rounded-full bg-[var(--footer-accent)] opacity-0 blur-md transition-opacity duration-500 group-hover:opacity-20" />

@@ -1,5 +1,7 @@
 import { ChevronDown, Clock3, MapPin, Wallet } from "lucide-react";
 import { formatCurrencyAmount } from "../../utils/currency";
+import { TourBookingSidebar } from "./TourDetailsContentSections";
+import { Link } from "react-router-dom";
 
 const InfoCard = ({ icon: Icon, label, value, className = "" }) => (
   <div
@@ -19,7 +21,7 @@ const InfoCard = ({ icon: Icon, label, value, className = "" }) => (
   </div>
 );
 
-export const TourDetailsHeader = ({ tour }) => {
+export const TourDetailsHeader = ({ tour, ratingValue, reviewCount }) => {
   const durationText = tour.durationLabel || `${tour.durationDays || 0} Days`;
   const routeText = tour.location || tour.destination || "Northern Pakistan";
 
@@ -35,28 +37,48 @@ export const TourDetailsHeader = ({ tour }) => {
         {tour.title}
       </h1>
 
-      <div className="grid max-w-3xl grid-cols-2 gap-2.5 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
         <InfoCard
           icon={Wallet}
           label="Starting From"
           value={formatCurrencyAmount(tour.price, tour.currency)}
         />
         <InfoCard icon={Clock3} label="Duration" value={durationText} />
-        <InfoCard icon={MapPin} label="Route" value={routeText} className="col-span-2 sm:col-span-1" />
+        <InfoCard icon={MapPin} label="Route" value={routeText} className="sm:col-span-2 xl:col-span-1" />
+        <TourBookingSidebar
+          tour={tour}
+          ratingValue={ratingValue}
+          reviewCount={reviewCount}
+          className="h-full"
+          compact
+        />
       </div>
     </header>
   );
 };
 
-export const TourDetailsIntro = ({ shortDescription, highlights }) => (
+export const TourDetailsIntro = ({ shortDescription }) => (
   <article className="space-y-3">
     <p className="max-w-3xl text-[15px] md:text-[16px] text-muted leading-7">{shortDescription || "A refined route designed for scenic views, smooth travel operations, and memorable local experiences."}</p>
-    <div className="flex flex-wrap gap-1.5">
-      {highlights.map((item) => (
-        <span key={item} className="inline-flex items-center rounded-full border border-theme bg-theme-surface px-2.5 py-1 text-[12px] font-medium text-theme">{item}</span>
-      ))}
-    </div>
   </article>
+);
+
+export const TourDetailsActions = ({ tour }) => (
+  <div className="flex flex-wrap items-center gap-2.5">
+    <Link
+      to={`/book/${tour.id}`}
+      className="ql-btn-primary gap-1.5 px-4 py-2.5 text-[11px] font-semibold whitespace-nowrap"
+    >
+      Book This Tour
+    </Link>
+    <Link
+      to="/custom-plan-request"
+      state={{ sourceTour: { id: tour.id, title: tour.title, location: tour.location, price: tour.price, currency: tour.currency } }}
+      className="ql-btn-secondary px-4 py-2.5 text-[11px] font-semibold whitespace-nowrap"
+    >
+      Custom Request
+    </Link>
+  </div>
 );
 
 export const TourDescriptionAccordion = ({ isOpen, onToggle, description }) => (

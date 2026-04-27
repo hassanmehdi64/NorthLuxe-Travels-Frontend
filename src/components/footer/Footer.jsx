@@ -6,38 +6,65 @@ import { Mail, Phone, MapPin } from "lucide-react";
 import { useSettings } from "../../hooks/useCms";
 import { getFooterColors, getLogoUrl } from "../../lib/siteTheme";
 
-const normalizePhoneHref = (value) => String(value || "").replace(/[^\d+]/g, "");
+const normalizePhoneHref = (value) =>
+  String(value || "").replace(/[^\d+]/g, "");
+
 const splitBrandName = (name) => {
-  const parts = String(name || "North Luxe").trim().split(/\s+/).filter(Boolean);
-  if (parts.length < 2) return { main: parts[0] || "North", accent: "Luxe" };
-  return { main: parts.slice(0, -1).join(" "), accent: parts[parts.length - 1] };
+  const parts = String(name || "North Luxe")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (parts.length < 2) {
+    return { main: parts[0] || "North", accent: "Luxe" };
+  }
+
+  return {
+    main: parts.slice(0, -1).join(" "),
+    accent: parts[parts.length - 1],
+  };
 };
 
 const Footer = () => {
   const { data: settings } = useSettings(true);
+
   const siteName = settings?.siteName || "North Luxe";
   const brand = splitBrandName(siteName);
+
   const tagline =
     settings?.siteTagline ||
     "Premium tours across Gilgit-Baltistan with curated routes, reliable local support, and comfort-first planning for families, couples, and group travelers.";
-  const email = settings?.supportEmail || settings?.siteEmail || "info@northluxetravels.com";
+
+  const email =
+    settings?.supportEmail ||
+    settings?.siteEmail ||
+    "info@northluxetravels.com";
+
   const phone = settings?.sitePhone || "+92 300 1234567";
   const address = settings?.address || "Skardu, Gilgit-Baltistan";
+
   const footerColors = getFooterColors(settings);
   const logoUrl = getLogoUrl(settings);
+
   const configuredSocialLinks = socialLinks.map((item) => ({
     ...item,
     href: settings?.socialLinks?.[item.icon] || item.href,
   }));
+
   const contactInfo = [
     { icon: Mail, label: "Email", value: email, href: `mailto:${email}` },
-    { icon: Phone, label: "Phone", value: phone, href: `tel:${normalizePhoneHref(phone)}` },
+    {
+      icon: Phone,
+      label: "Phone",
+      value: phone,
+      href: `tel:${normalizePhoneHref(phone)}`,
+    },
     { icon: MapPin, label: "Base", value: address },
   ];
 
   return (
     <footer
-      className="relative overflow-hidden border-t border-white/10 text-[var(--footer-text)] pt-10 sm:pt-14 pb-24 sm:pb-8"
+      className="relative overflow-hidden border-t border-white/10 pt-10 pb-24 text-[var(--footer-text)] sm:pt-14 sm:pb-8"
       style={{
         "--footer-bg": footerColors.background,
         "--footer-text": footerColors.text,
@@ -45,70 +72,80 @@ const Footer = () => {
         "--footer-accent": footerColors.accentText,
         background: "var(--footer-bg)",
         color: "var(--footer-text)",
-      }}
-    >
-      <div className="relative max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-14 xl:px-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6 sm:gap-10 lg:gap-12 pb-8 sm:pb-12">
-          <div className="lg:col-span-4 space-y-5 sm:space-y-7 py-1 sm:py-2 text-center md:text-left">
-            <div>
+      }}>
+      <div className="relative mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-14 xl:px-16">
+        <div className="grid grid-cols-1 gap-10 pb-8 text-center md:grid-cols-2 md:text-left lg:grid-cols-12 lg:gap-12 lg:pb-12">
+          <div className="space-y-2.5 lg:col-span-4">
+            <div className="flex flex-col items-center md:items-start">
               {logoUrl ? (
-                <div className="mx-auto inline-flex h-24 max-w-[520px] items-center justify-center md:mx-0">
-                  <img src={logoUrl} alt={siteName} className="h-24 max-w-[520px] object-contain drop-shadow-[0_2px_5px_rgba(0,0,0,0.35)]" />
+                <div className="flex w-full max-w-[520px] items-center justify-center md:justify-start">
+                  <img
+                    src={logoUrl}
+                    alt={siteName}
+                    className="h-24 max-w-full object-contain drop-shadow-[0_2px_5px_rgba(0,0,0,0.35)]"
+                  />
                 </div>
               ) : (
                 <h3 className="inline-flex rounded-[1.5rem] border border-white/20 bg-white/10 px-4 py-3 text-2xl font-black uppercase tracking-tight text-[var(--footer-text)] shadow-[0_16px_38px_rgba(255,255,255,0.12)] md:text-3xl">
-                  {brand.main} <span className="text-[var(--footer-accent)]">{brand.accent}</span>
+                  {brand.main}{" "}
+                  <span className="text-[var(--footer-accent)]">
+                    {brand.accent}
+                  </span>
                 </h3>
               )}
-              <div className="mt-3 h-px w-24 bg-[var(--footer-accent)]/55 mx-auto md:mx-0" />
             </div>
 
-            <p className="max-w-sm mx-auto md:mx-0 text-sm md:text-[15px] leading-relaxed text-[var(--footer-muted)] py-1">
+            <p className="mx-auto max-w-sm text-sm leading-relaxed text-[var(--footer-muted)] md:mx-0 md:text-[15px]">
               {tagline}
             </p>
 
-            <div className="flex items-center justify-center md:justify-start gap-3">
-              {configuredSocialLinks.map((social, idx) => (
-                <FooterSocial key={idx} {...social} />
+            <div className="flex items-center justify-center gap-3 pt-0 md:justify-start">
+              {configuredSocialLinks.map((social, index) => (
+                <FooterSocial key={index} {...social} />
               ))}
             </div>
           </div>
 
-          <div className="lg:col-span-8 grid grid-cols-2 lg:grid-cols-3 gap-[25px] sm:gap-7 lg:gap-8">
-            {footerLinks.map((section, idx) => (
-              <FooterSection
-                key={idx}
-                title={section.title}
-                links={section.links}
-                className="justify-self-center lg:justify-self-auto w-full max-w-[190px] lg:max-w-none"
-              />
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:col-span-8 lg:grid-cols-3 lg:gap-10">
+            {footerLinks.map((section, index) => (
+              <div key={index} className="flex justify-center sm:justify-start">
+                <FooterSection
+                  title={section.title}
+                  links={section.links}
+                  className="w-full max-w-[240px] text-center sm:text-left"
+                />
+              </div>
             ))}
 
-            <div className="col-span-2 lg:col-span-1 justify-self-center lg:justify-self-auto w-full max-w-[320px] lg:max-w-none space-y-4 py-1 sm:py-2 mt-0 sm:mt-[6px]">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--footer-accent)] text-left">
+            <div className="mx-auto w-full max-w-[240px] space-y-4 text-center sm:mx-0 sm:text-left">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-[var(--footer-accent)]">
                 Contact
               </h4>
 
               <ul className="space-y-3">
-                {contactInfo.map((item, idx) => (
-                  <li key={idx} className="group flex items-center justify-start gap-3.5">
-                    <div className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-white/20 bg-white/5 text-[var(--footer-accent)]">
-                      <item.icon size={15} />
+                {contactInfo.map((item, index) => (
+                  <li
+                    key={index}
+                    className="flex items-start justify-center gap-4 sm:justify-start">
+                    <div className="inline-flex h-6 w-6 shrink-0 items-center justify-center pt-0.5 text-[var(--footer-accent)]">
+                      <item.icon size={18} />
                     </div>
 
-                    <div className="min-w-0">
-                      <p className="text-[9px] font-black uppercase tracking-[0.16em] text-[var(--footer-muted)] opacity-65 mb-0.5">
+                    <div className="min-w-0 flex-1 text-left">
+                      <p className="mb-0.5 text-[9px] font-black uppercase tracking-[0.16em] text-[var(--footer-muted)] opacity-65">
                         {item.label}
                       </p>
+
                       {item.href ? (
                         <a
                           href={item.href}
-                          className="text-[13px] font-semibold text-[var(--footer-muted)] transition-colors hover:text-[var(--footer-accent)]"
-                        >
+                          className="break-words text-[13px] font-semibold text-[var(--footer-muted)] transition-colors hover:text-[var(--footer-accent)]">
                           {item.value}
                         </a>
                       ) : (
-                        <p className="text-[13px] font-semibold text-[var(--footer-muted)]">{item.value}</p>
+                        <p className="break-words text-[13px] font-semibold text-[var(--footer-muted)]">
+                          {item.value}
+                        </p>
                       )}
                     </div>
                   </li>

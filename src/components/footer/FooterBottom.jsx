@@ -7,12 +7,12 @@ const FooterBottom = () => {
   const siteName = settings?.siteName || "North Luxe Travels";
 
   return (
-    <div className="mt-8 pt-6 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4">
+    <div className="mt-8 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-6 text-center md:flex-row md:items-center md:text-left">
       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--footer-muted)] opacity-65 text-center md:text-left">
         &copy; {currentYear} {siteName}. All rights reserved.
       </p>
 
-      <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+      <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:justify-end">
         <Link
           to="/privacy"
           className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--footer-muted)] opacity-65 transition-colors duration-300 hover:text-[var(--footer-accent)] hover:opacity-100"

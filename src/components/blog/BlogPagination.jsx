@@ -7,11 +7,11 @@ const BlogPagination = ({ currentPage, totalPages, onChange }) => {
       <button
         onClick={() => onChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`px-4 h-10 rounded-lg text-sm font-semibold transition
+        className={`px-4 h-10 text-sm font-semibold
           ${
             currentPage === 1
-              ? "bg-theme-surface text-muted/50 border border-theme cursor-not-allowed"
-              : "bg-theme-surface text-theme border border-theme hover:bg-theme-bg"
+              ? "ql-btn-secondary text-muted/50"
+              : "ql-btn-secondary"
           }`}
       >
         Prev
@@ -24,11 +24,11 @@ const BlogPagination = ({ currentPage, totalPages, onChange }) => {
           <button
             key={page}
             onClick={() => onChange(page)}
-            className={`w-10 h-10 rounded-lg text-sm font-semibold transition
+            className={`h-10 w-10 rounded-lg px-0 text-sm font-semibold
               ${
                 currentPage === page
-                  ? "bg-[var(--c-brand)] text-theme"
-                  : "bg-theme-surface text-theme border border-theme hover:bg-theme-bg"
+                  ? "ql-btn-primary"
+                  : "ql-btn-secondary"
               }`}
           >
             {page}
@@ -40,11 +40,11 @@ const BlogPagination = ({ currentPage, totalPages, onChange }) => {
       <button
         onClick={() => onChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`px-4 h-10 rounded-lg text-sm font-semibold transition
+        className={`px-4 h-10 text-sm font-semibold
           ${
             currentPage === totalPages
-              ? "bg-theme-surface text-muted/50 border border-theme cursor-not-allowed"
-              : "bg-theme-surface text-theme border border-theme hover:bg-theme-bg"
+              ? "ql-btn-secondary text-muted/50"
+              : "ql-btn-secondary"
           }`}
       >
         Next

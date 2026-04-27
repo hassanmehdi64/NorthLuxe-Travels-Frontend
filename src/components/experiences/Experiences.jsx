@@ -32,7 +32,7 @@ const Experiences = () => {
 
             <Link
               to="/blog"
-              className="inline-flex items-center justify-center gap-2 self-start md:self-auto rounded-xl border border-theme bg-theme-surface px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] text-theme hover:text-[var(--c-brand)] hover:border-[var(--c-brand)]/45 hover:bg-white transition-all duration-300 active:scale-[0.98]"
+              className="ql-btn-secondary gap-2 self-start px-5 py-3 text-[11px] font-black uppercase tracking-[0.14em] active:scale-[0.98] md:self-auto"
             >
               View All Stories
               <MoveUpRight size={15} />
