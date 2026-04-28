@@ -1,6 +1,11 @@
-import { Link } from "react-router-dom";
-import { displayCurrency } from "../../utils/currency";
-import { ChevronDown, Star } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  CircleDot,
+  Info,
+  MapPin,
+  Truck,
+} from "lucide-react";
 
 const formatListLabel = (value) =>
   String(value || "")
@@ -8,148 +13,360 @@ const formatListLabel = (value) =>
     .replace(/\s+/g, " ")
     .trim();
 
-export const TourBookingSidebar = ({ tour, ratingValue, reviewCount, className = "", compact = false }) => (
-  <aside className={`rounded-2xl border-[0.5px] border-[rgba(15,23,42,0.08)] bg-theme-surface shadow-[0_6px_20px_rgba(15,23,42,0.025)] ${compact ? "px-4 py-3" : "px-4 py-3.5"} ${className}`}>
-    <p className="text-[9px] font-black uppercase tracking-[0.16em] text-muted">Rating</p>
-    <div className={`${compact ? "mt-1" : "mt-1.5"} flex items-center gap-1.5`}>
-      <span className={`${compact ? "text-[1.55rem]" : "text-[1.75rem]"} font-extrabold leading-none text-theme`}>{ratingValue.toFixed(1)}</span>
-      <div className="flex items-center gap-0.5 text-[var(--c-brand)]">
-        {Array.from({ length: 5 }).map((_, idx) => (
-          <Star key={idx} size={compact ? 11 : 12} className={idx < Math.round(ratingValue) ? "fill-current" : "opacity-25"} />
-        ))}
-      </div>
-    </div>
-    <p className={`${compact ? "mt-1" : "mt-1.5"} text-[11px] text-muted`}>{reviewCount} reviews</p>
-  </aside>
+const SectionHeading = ({ eyebrow, title, description }) => (
+  <div className="space-y-2">
+    <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[var(--c-brand)]">
+      {eyebrow}
+    </p>
+
+    <h2 className="text-[1.7rem] font-semibold leading-tight tracking-[-0.03em] text-theme md:text-[2.1rem]">
+      {title}
+    </h2>
+
+    {description ? (
+      <p className="max-w-5xl text-[15px] leading-7 text-muted md:text-[16px]">
+        {description}
+      </p>
+    ) : null}
+  </div>
 );
 
-export const PackageDetailsSection = ({ description, placeName, placesLabel, planLabel, includedServices, placesCovered, packageOverview, vehicleDetails, commonFacts }) => (
-  <section className="rounded-2xl border-[0.5px] border-[rgba(15,23,42,0.08)] bg-theme-surface p-4 md:p-5 shadow-[0_8px_24px_rgba(15,23,42,0.02)]">
-    <div className="pb-3">
-      <p className="text-xl font-black tracking-tight text-[var(--c-brand)] lg:text-2xl">Package Overview</p>
-    </div>
-    {description ? (
-      <div className="mb-4">
-        <p className="text-[15px] leading-7 text-muted md:text-[16px]">{description}</p>
-      </div>
-    ) : null}
-    <p className="mt-3 max-w-4xl text-[15px] md:text-[16px] text-muted leading-7">
-      This package is arranged as a guided multi-day route through {placeName} with structured sightseeing, hotel stays, and coordinated travel support. It is planned as a {planLabel.toLowerCase()} covering {placesLabel}.
-    </p>
-    <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(280px,0.85fr)]">
-      <div className="space-y-3.5">
-        <div className="rounded-xl bg-theme-bg/35 p-3">
-          <p className="text-[13px] font-black uppercase tracking-[0.18em] text-[var(--c-brand)]">Services We Provide</p>
-          <ul className="mt-2.5 space-y-2 sm:columns-2 sm:gap-x-6 sm:space-y-0">
-            {includedServices.map((item) => (
-              <li key={item} className="mb-2 flex break-inside-avoid items-start gap-2.5 text-[15px] text-muted leading-6">
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--c-brand)]" />
-                <span>{formatListLabel(item)}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="rounded-xl bg-theme-bg/35 p-3">
-          <p className="text-[13px] font-black uppercase tracking-[0.18em] text-[var(--c-brand)]">Places of Attraction</p>
-          <ul className="mt-2.5 space-y-2 sm:columns-2 sm:gap-x-6 sm:space-y-0">
-            {placesCovered.map((item) => (
-              <li key={item} className="mb-2 flex break-inside-avoid items-start gap-2.5 text-[15px] text-muted leading-6">
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--c-brand)]" />
-                <span>{formatListLabel(item)}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="rounded-xl bg-theme-bg/35 p-3">
-          <p className="text-[13px] font-black uppercase tracking-[0.18em] text-[var(--c-brand)]">Vehicle Options</p>
-          <ul className="mt-2.5 space-y-2 sm:columns-2 sm:gap-x-6 sm:space-y-0">
-            {vehicleDetails.map((item) => (
-              <li key={item} className="mb-2 flex break-inside-avoid items-start gap-2.5 text-[15px] text-muted leading-6">
-                <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--c-brand)]" />
-                <span>{formatListLabel(item)}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-      <div className="rounded-xl border-[0.5px] border-[rgba(15,23,42,0.06)] bg-theme-bg p-4 shadow-[0_8px_22px_rgba(15,23,42,0.025)]">
-        <p className="text-[13px] font-black uppercase tracking-[0.18em] text-[var(--c-brand)]">Quick Package Facts</p>
-        <div className="mt-3 space-y-2">
-          {packageOverview.map((item) => (
-            <div key={item.label} className="rounded-lg border-[0.5px] border-[rgba(15,23,42,0.05)] bg-theme-surface px-3 py-2.5">
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-muted">{item.label}</p>
-              <p className="mt-1 text-[14px] md:text-[15px] font-semibold leading-6 text-theme">{item.value}</p>
+export const OverviewSection = ({
+  description,
+  highlights = [],
+  bestFor = [],
+  packageOverview = [],
+}) => (
+  <section className="w-full py-8">
+    <SectionHeading
+      eyebrow="Overview"
+      title="Detailed Description"
+      description={description}
+    />
+
+    <div className="mt-5 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_280px_320px]">
+      <div>
+        <h3 className="text-[13px] font-black uppercase tracking-[0.16em] text-theme">
+          Key Highlights
+        </h3>
+
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {highlights.map((item) => (
+            <div
+              key={item}
+              className="flex items-center gap-3 rounded-2xl border border-theme bg-theme-surface px-4 py-3"
+            >
+              <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[rgba(var(--c-brand-rgb),0.1)] text-[var(--c-brand)]">
+                <Check size={15} />
+              </span>
+
+              <span className="text-[14px] leading-6 text-theme">
+                {formatListLabel(item)}
+              </span>
             </div>
           ))}
-          {commonFacts?.transportNote ? (
-            <div className="rounded-xl border border-[rgba(var(--c-brand-rgb),0.18)] bg-[rgba(var(--c-brand-rgb),0.06)] px-3.5 py-3">
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-muted">Transport Note</p>
-              <p className="mt-1.5 text-[14px] md:text-[15px] leading-6 text-theme">{commonFacts.transportNote}</p>
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-theme bg-theme-surface p-5">
+        <h3 className="text-[13px] font-black uppercase tracking-[0.16em] text-theme">
+          Best For
+        </h3>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {bestFor.map((item) => (
+            <span
+              key={item}
+              className="rounded-full border border-[rgba(var(--c-brand-rgb),0.2)] bg-[rgba(var(--c-brand-rgb),0.06)] px-3 py-1.5 text-[13px] font-medium text-theme"
+            >
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-theme bg-theme-surface p-5">
+        <h3 className="text-[13px] font-black uppercase tracking-[0.16em] text-theme">
+          Package Details
+        </h3>
+
+        <div className="mt-4 space-y-3">
+          {packageOverview.map((item) => (
+            <div
+              key={item.label}
+              className="flex items-start justify-between gap-4 border-b border-[rgba(15,23,42,0.08)] pb-3 last:border-b-0 last:pb-0"
+            >
+              <span className="text-[13px] text-muted">{item.label}</span>
+
+              <span className="max-w-[62%] text-right text-[14px] font-medium text-theme">
+                {item.value}
+              </span>
             </div>
-          ) : null}
-          {commonFacts?.vehicleStartingPrices?.length ? (
-            <div className="overflow-hidden rounded-xl border border-[rgba(15,23,42,0.07)] bg-theme-surface">
-              <div className="border-b border-[rgba(15,23,42,0.06)] bg-[rgba(var(--c-brand-rgb),0.06)] px-3.5 py-3">
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-muted">Available Vehicles & Starting Prices</p>
-              </div>
-              <ul className="divide-y divide-[rgba(15,23,42,0.06)]">
-                {commonFacts.vehicleStartingPrices.map((item) => (
-                  <li key={item.label} className="flex items-center justify-between gap-3 px-3.5 py-3">
-                    <span className="text-[14px] md:text-[15px] leading-6 text-theme">{item.label}</span>
-                    <span className="shrink-0 rounded-full bg-[rgba(var(--c-brand-rgb),0.12)] px-2.5 py-1 text-[12px] font-bold text-[var(--c-brand)]">
-                      PKR {item.dailyRate.toLocaleString()}/day
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
+          ))}
         </div>
       </div>
     </div>
   </section>
 );
 
-export const ItinerarySection = ({ items, openIndex, onToggle }) => (
-  <section className="rounded-2xl border-[0.5px] border-[rgba(15,23,42,0.08)] bg-theme-surface p-4 md:p-5 shadow-[0_8px_24px_rgba(15,23,42,0.02)]">
-    <h2 className="text-[1.65rem] leading-none md:text-[2.1rem] font-semibold tracking-[-0.02em] text-[var(--c-brand)]">Itinerary</h2>
-    {items.length ? (
-      <div className="mt-3 space-y-2.5">
-        {items.map((item, idx) => (
-          <div key={`${item.day}-${idx}`} className="overflow-hidden rounded-xl border-[0.5px] border-[rgba(15,23,42,0.06)] bg-theme-bg">
-            <button type="button" onClick={() => onToggle(idx)} className="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left">
-              <span className="text-[15px] md:text-[16px] font-semibold leading-6 text-theme">Day {item.day || idx + 1}: {item.title || "Route Plan"}</span>
-              <ChevronDown size={16} className={`shrink-0 text-[var(--c-brand)] transition-transform duration-200 ${openIndex === idx ? "rotate-180" : ""}`} />
-            </button>
-            {openIndex === idx ? (
-              <div className="px-4 py-2.5">
-                <p className="text-[14px] md:text-[15px] font-medium leading-6 text-theme">{item.placesCovered.join(", ")}</p>
-                <ul className="mt-1.5 space-y-1">{item.bulletPoints.map((point) => <li key={point} className="text-[14px] md:text-[15px] leading-6 text-muted">- {point}</li>)}</ul>
-              </div>
-            ) : null}
-          </div>
-        ))}
+export const InclusionsSection = ({ includedServices = [], beforeYouBook = [] }) => (
+  <section className="w-full py-8">
+    <SectionHeading
+      eyebrow="Know Before You Go"
+      title="What's Included"
+      description="Clear travel inclusions and practical notes before you confirm the booking."
+    />
+
+    <div className="mt-5 grid gap-4 lg:grid-cols-2">
+      <div className="rounded-2xl border border-theme bg-theme-surface p-5">
+        <h3 className="text-[13px] font-black uppercase tracking-[0.16em] text-theme">
+          Included
+        </h3>
+
+        <ul className="mt-4 space-y-3">
+          {includedServices.map((item) => (
+            <li
+              key={item}
+              className="flex items-start gap-3 text-[14px] leading-6 text-theme"
+            >
+              <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[rgba(var(--c-brand-rgb),0.12)] text-[var(--c-brand)]">
+                <Check size={14} />
+              </span>
+
+              <span>{formatListLabel(item)}</span>
+            </li>
+          ))}
+        </ul>
       </div>
-    ) : <p className="mt-3 text-sm text-muted">Detailed itinerary is shared after booking confirmation.</p>}
+
+      <div className="rounded-2xl border border-theme bg-theme-surface p-5">
+        <h3 className="text-[13px] font-black uppercase tracking-[0.16em] text-theme">
+          Before You Book
+        </h3>
+
+        <ul className="mt-4 space-y-3">
+          {beforeYouBook.map((item) => (
+            <li
+              key={item}
+              className="flex items-start gap-3 text-[14px] leading-6 text-theme"
+            >
+              <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-theme-bg text-muted">
+                <Info size={14} />
+              </span>
+
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   </section>
 );
 
-export const FaqSection = ({ items, openIndex, onToggle }) => (
-  <section>
-    <h2 className="text-[1.6rem] leading-none md:text-[2rem] font-semibold tracking-[-0.02em] text-theme">Pakistan Travel FAQs</h2>
-    <div className="mt-3 space-y-2">
-      {items.map((faq, idx) => {
-        const active = openIndex === idx;
-        return (
-          <div key={faq.q} className="rounded-xl border-[0.5px] border-[rgba(15,23,42,0.06)] bg-theme-surface shadow-[0_6px_18px_rgba(15,23,42,0.015)] overflow-hidden">
-            <button type="button" onClick={() => onToggle(active ? -1 : idx)} className="w-full px-4 py-3 text-left flex items-center justify-between gap-3">
-              <span className="text-[15px] md:text-[16px] font-semibold text-theme">{faq.q}</span>
-              <ChevronDown size={16} className={`text-muted transition-transform ${active ? "rotate-180" : ""}`} />
-            </button>
-            {active ? <p className="px-4 pb-4 text-[15px] md:text-[16px] text-muted leading-7">{faq.a}</p> : null}
+export const ItinerarySection = ({ items = [], openIndex, onToggle }) => (
+  <section className="w-full py-8">
+    <SectionHeading
+      eyebrow="Plan"
+      title="Itinerary"
+      description="Day-by-day route flow with sightseeing highlights and travel pacing."
+    />
+
+    {items.length ? (
+      <div className="mt-5 space-y-3">
+        {items.map((item, idx) => {
+          const isOpen = openIndex === idx;
+
+          return (
+            <div
+              key={`${item.day}-${idx}`}
+              className="overflow-hidden rounded-2xl border border-theme bg-theme-surface"
+            >
+              <button
+                type="button"
+                onClick={() => onToggle(idx)}
+                className="flex w-full cursor-pointer items-center justify-between gap-4 px-4 py-4 text-left md:px-5"
+              >
+                <div className="flex min-w-0 items-start gap-4">
+                  <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[rgba(var(--c-brand-rgb),0.1)] text-[12px] font-black uppercase tracking-[0.08em] text-[var(--c-brand)]">
+                    Day {item.day || idx + 1}
+                  </span>
+
+                  <div className="min-w-0">
+                    <p className="text-[15px] font-semibold leading-6 text-theme md:text-[16px]">
+                      {item.title || `Day ${idx + 1}`}
+                    </p>
+
+                    <p className="mt-1 text-sm leading-6 text-muted">
+                      {item.placesCovered?.join(" / ")}
+                    </p>
+                  </div>
+                </div>
+
+                <ChevronDown
+                  size={18}
+                  className={`shrink-0 text-muted transition-transform duration-200 ${
+                    isOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {isOpen && (
+                <div className="border-t border-theme px-4 py-4 md:px-5">
+                  <ul className="space-y-3">
+                    {item.bulletPoints?.map((point) => (
+                      <li
+                        key={point}
+                        className="flex items-start gap-3 text-[14px] leading-6 text-muted"
+                      >
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--c-brand)]" />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    ) : (
+      <p className="mt-4 text-[14px] text-muted">
+        Detailed itinerary is shared after booking confirmation.
+      </p>
+    )}
+  </section>
+);
+
+export const RouteSection = ({
+  placeName,
+  placesCovered = [],
+  placesLabel,
+  planLabel,
+  vehicleDetails = [],
+}) => (
+  <section className="w-full py-8">
+    <SectionHeading
+      eyebrow="Route"
+      title="Places Covered"
+      description={`This route is designed around ${placeName} with practical travel flow and sightseeing coverage.`}
+    />
+
+    <div className="mt-5 space-y-5">
+      <div className="flex flex-wrap gap-2">
+        {placesCovered.map((item) => (
+          <span
+            key={item}
+            className="rounded-full border border-[rgba(15,23,42,0.12)] bg-theme-surface px-3 py-1.5 text-[13px] font-medium text-theme"
+          >
+            {formatListLabel(item)}
+          </span>
+        ))}
+      </div>
+
+      <div className="rounded-2xl border border-theme bg-theme-surface p-5">
+        <h3 className="text-[13px] font-black uppercase tracking-[0.16em] text-theme">
+          Route Summary
+        </h3>
+
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <div className="flex items-center gap-3 text-[14px] text-theme">
+            <MapPin size={16} className="text-[var(--c-brand)]" />
+            <span>{placesLabel}</span>
           </div>
-        );
-      })}
+
+          <div className="flex items-center gap-3 text-[14px] text-theme">
+            <Truck size={16} className="text-[var(--c-brand)]" />
+            <span>{planLabel}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {vehicleDetails.map((item) => (
+          <div
+            key={item}
+            className="rounded-2xl border border-theme bg-theme-surface p-4"
+          >
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[rgba(var(--c-brand-rgb),0.1)] text-[var(--c-brand)]">
+                <Truck size={17} />
+              </span>
+
+              <div>
+                <p className="text-[14px] font-semibold text-theme">
+                  {formatListLabel(item)}
+                </p>
+
+                <p className="mt-1 text-[13px] text-muted">
+                  Suitable for selected route and trip setup.
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   </section>
+);
+
+export const FaqSection = ({ items = [], openIndex, onToggle }) => (
+  <section className="w-full py-8">
+    <div className="grid gap-5 lg:grid-cols-[300px_minmax(0,1fr)]">
+      <SectionHeading
+        eyebrow="Support"
+        title="Frequently Asked Questions"
+        description="Helpful details before booking, from customization to transport and payment expectations."
+      />
+
+      <div className="space-y-3">
+        {items.map((faq, idx) => {
+          const isOpen = openIndex === idx;
+
+          return (
+            <div
+              key={faq.q}
+              className="overflow-hidden rounded-2xl border border-theme bg-theme-surface"
+            >
+              <button
+                type="button"
+                onClick={() => onToggle(idx)}
+                className="flex w-full cursor-pointer items-center justify-between gap-3 px-5 py-4 text-left"
+              >
+                <span className="text-[15px] font-semibold text-theme md:text-[16px]">
+                  {faq.q}
+                </span>
+
+                <ChevronDown
+                  size={16}
+                  className={`shrink-0 text-muted transition-transform duration-200 ${
+                    isOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+
+              {isOpen && (
+                <div className="border-t border-theme px-5 py-4">
+                  <p className="text-[15px] leading-7 text-muted">{faq.a}</p>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+);
+
+export const BookingNoteList = ({ items = [] }) => (
+  <div className="space-y-3">
+    {items.map((item) => (
+      <div
+        key={item}
+        className="flex items-start gap-3 text-[14px] leading-6 text-muted"
+      >
+        <CircleDot size={16} className="mt-1 shrink-0 text-[var(--c-brand)]" />
+        <span>{item}</span>
+      </div>
+    ))}
+  </div>
 );

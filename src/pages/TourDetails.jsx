@@ -1,31 +1,30 @@
 import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
-
-import "swiper/css";
-import "swiper/css/pagination";
 
 import { usePublicTour, usePublicTours, useSettings } from "../hooks/useCms";
 import {
+  MobileBookingBar,
+  TourBookingCard,
   TourDetailsActions,
+  TourDetailsBreadcrumbs,
   TourDetailsHeader,
-  TourDetailsIntro,
+  TourImageGallery,
 } from "../components/tour-details/TourDetailsSections";
 import {
   FaqSection,
+  InclusionsSection,
   ItinerarySection,
-  PackageDetailsSection,
-  TourBookingSidebar,
+  OverviewSection,
+  RouteSection,
 } from "../components/tour-details/TourDetailsContentSections";
 import {
   RelatedToursSection,
   ReviewsSection,
 } from "../components/tour-details/TourDetailsFooterSections";
 import {
+  buildCommonTourFacts,
   buildDetailedDescription,
   buildDisplayItinerary,
-  buildCommonTourFacts,
   buildIncludedServices,
   buildPackageOverview,
   buildPlacesCovered,
@@ -48,6 +47,8 @@ const FALLBACK_HIGHLIGHTS = [
   "Flexible pacing",
 ];
 
+const DEFAULT_BEST_FOR = ["Families", "Couples", "Groups", "Private tours"];
+
 const getRatingValue = (tour, reviews) => {
   if (reviews.length) {
     const totalRating = reviews.reduce(
@@ -59,8 +60,24 @@ const getRatingValue = (tour, reviews) => {
   }
 
   const tourRating = Number(tour?.rating);
-
   return Number.isFinite(tourRating) && tourRating > 0 ? tourRating : 4.8;
+};
+
+const buildBeforeYouBookNotes = (transportNote, durationText, planLabel) => {
+  const noteParts = String(transportNote || "")
+    .split(".")
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 2);
+
+  return Array.from(
+    new Set([
+      ...noteParts,
+      `Trip duration: ${durationText}.`,
+      `Plan type: ${planLabel}.`,
+      "Final route flow and operational details are reconfirmed before departure.",
+    ]),
+  ).slice(0, 4);
 };
 
 const TourDetails = () => {
@@ -75,7 +92,6 @@ const TourDetails = () => {
 
   const tour = useMemo(() => {
     if (directTour) return directTour;
-
     return tours.find((item) => item.slug === slug || item.id === slug);
   }, [directTour, tours, slug]);
 
@@ -95,37 +111,46 @@ const TourDetails = () => {
       0,
       MAX_ITINERARY_DAYS,
     );
-
     const reviews = buildTourReviews(tour);
     const ratingValue = getRatingValue(tour, reviews);
     const reviewCount = reviews.length || Number(tour.reviews || 0);
-
-    const heroImages = getTourHeroImages(tour);
-    const highlights = tour.tags?.length ? tour.tags : FALLBACK_HIGHLIGHTS;
+    const includedServices = buildIncludedServices(tour);
+    const vehicleDetails = buildVehicleDetails(tour);
+    const planLabel = getTourPlanLabel(tour);
+    const placesLabel = getTourPlacesLabel(tour, displayItinerary);
+    const commonFacts = buildCommonTourFacts(settings);
+    const durationText = tour.durationLabel || `${tour.durationDays || 0} Days`;
 
     return {
-      heroImages,
-      highlights,
+      heroImages: getTourHeroImages(tour),
       displayItinerary,
       reviews,
       ratingValue,
       reviewCount,
+      includedServices,
+      vehicleDetails,
+      planLabel,
+      placesLabel,
+      commonFacts,
+      durationText,
       packageOverview: buildPackageOverview(tour),
-      includedServices: buildIncludedServices(tour),
       placesCovered: buildPlacesCovered(tour, displayItinerary),
-      vehicleDetails: buildVehicleDetails(tour),
       placeName: getTourPlaceName(tour),
-      placesLabel: getTourPlacesLabel(tour, displayItinerary),
-      planLabel: getTourPlanLabel(tour),
-      commonFacts: buildCommonTourFacts(settings),
       detailedDescription: buildDetailedDescription(tour),
+      highlights: tour.tags?.length ? tour.tags : FALLBACK_HIGHLIGHTS,
+      bestFor: DEFAULT_BEST_FOR,
+      beforeYouBook: buildBeforeYouBookNotes(
+        commonFacts.transportNote,
+        durationText,
+        planLabel,
+      ),
     };
   }, [tour, settings]);
 
   if (!tour || !tourData) {
     return (
-      <section className="bg-theme-bg py-12 lg:py-14">
-        <div className="mx-auto max-w-[1600px] px-4 sm:px-6 lg:px-10 xl:px-14">
+      <section className="bg-theme-bg py-12">
+        <div className="mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-8">
           <div className="rounded-2xl border border-dashed border-theme bg-theme-surface py-16 text-center text-muted">
             Tour not found or not published.
           </div>
@@ -136,117 +161,111 @@ const TourDetails = () => {
 
   const {
     heroImages,
-    highlights,
     displayItinerary,
     reviews,
     ratingValue,
     reviewCount,
-    packageOverview,
     includedServices,
-    placesCovered,
     vehicleDetails,
-    placeName,
-    placesLabel,
     planLabel,
+    placesLabel,
     commonFacts,
+    durationText,
+    packageOverview,
+    placesCovered,
+    placeName,
     detailedDescription,
+    highlights,
+    bestFor,
+    beforeYouBook,
   } = tourData;
 
   return (
-    <section className="bg-theme-bg py-10 md:py-12">
-      <div className="mx-auto max-w-[1600px] space-y-6 px-4 sm:px-6 lg:px-10 xl:px-14">
-        <TourDetailsHeader
-          tour={tour}
-          ratingValue={ratingValue}
-          reviewCount={reviewCount}
-        />
+    <section className="bg-theme-bg pb-28 pt-8 md:pb-12 md:pt-10">
+      <div className="mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-8">
+        <TourDetailsBreadcrumbs tour={tour} />
 
-        {heroImages.length > 0 && (
-          <div className="mx-auto max-w-[1240px] overflow-hidden rounded-[1.45rem] border border-[rgba(15,23,42,0.08)] bg-theme-surface shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
-            <Swiper
-              modules={[Autoplay, Pagination]}
-              loop={heroImages.length > 1}
-              speed={800}
-              spaceBetween={12}
-              autoplay={
-                heroImages.length > 1
-                  ? {
-                      delay: 3200,
-                      disableOnInteraction: false,
-                      pauseOnMouseEnter: true,
-                    }
-                  : false
-              }
-              pagination={{ clickable: heroImages.length > 1 }}
-              breakpoints={{
-                0: { slidesPerView: 1 },
-                768: {
-                  slidesPerView: Math.min(2, heroImages.length),
-                },
-              }}
-              className="tour-hero-swiper">
-              {heroImages.map((image, index) => (
-                <SwiperSlide key={`${image}-${index}`}>
-                  <div className="relative">
-                    <img
-                      src={image}
-                      alt={`${tour.title || "Tour"} image ${index + 1}`}
-                      loading={index === 0 ? "eager" : "lazy"}
-                      decoding="async"
-                      className="h-[180px] w-full object-cover object-center sm:h-[235px] lg:h-[285px]"
-                    />
+        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+          <section className="w-full">
+            <div className="space-y-6">
+              <TourDetailsHeader
+                tour={tour}
+                ratingValue={ratingValue}
+                reviewCount={reviewCount}
+                placesLabel={placesLabel}
+                planLabel={planLabel}
+                vehicleDetails={vehicleDetails}
+              />
 
-                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[rgba(8,15,30,0.18)] via-transparent to-transparent" />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
-        )}
+              <div className="lg:hidden">
+                <TourDetailsActions tour={tour} />
+              </div>
 
-        <div className="space-y-4">
-          <TourDetailsIntro
-            shortDescription={tour.shortDescription}
-          />
-          <TourDetailsActions tour={tour} />
+              <TourImageGallery images={heroImages} title={tour.title} />
+            </div>
+          </section>
+
+          <aside className="hidden lg:block">
+            <div className="sticky top-24">
+              <TourBookingCard
+                tour={tour}
+                ratingValue={ratingValue}
+                reviewCount={reviewCount}
+                planLabel={planLabel}
+                durationText={durationText}
+              />
+            </div>
+          </aside>
         </div>
 
-        <PackageDetailsSection
-          description={detailedDescription}
-          placeName={placeName}
-          placesLabel={placesLabel}
-          planLabel={planLabel}
-          includedServices={includedServices}
-          placesCovered={placesCovered}
-          packageOverview={packageOverview}
-          vehicleDetails={vehicleDetails}
-          commonFacts={commonFacts}
-        />
+        <div className="mt-10 w-full divide-y divide-[rgba(15,23,42,0.08)]">
+          <OverviewSection
+            description={detailedDescription}
+            highlights={highlights}
+            bestFor={bestFor}
+            packageOverview={packageOverview}
+          />
 
-        <ItinerarySection
-          items={displayItinerary}
-          openIndex={openItineraryDay}
-          onToggle={(index) =>
-            setOpenItineraryDay((current) => (current === index ? -1 : index))
-          }
-        />
+          <InclusionsSection
+            includedServices={includedServices}
+            beforeYouBook={beforeYouBook}
+          />
 
-        <FaqSection
-          items={fallbackFaq}
-          openIndex={openFaq}
-          onToggle={(index) =>
-            setOpenFaq((current) => (current === index ? -1 : index))
-          }
-        />
+          <ItinerarySection
+            items={displayItinerary}
+            openIndex={openItineraryDay}
+            onToggle={(index) =>
+              setOpenItineraryDay((current) => (current === index ? -1 : index))
+            }
+          />
 
-        <ReviewsSection
-          ratingValue={ratingValue}
-          reviewCount={reviewCount}
-          reviews={reviews}
-        />
+          <RouteSection
+            placeName={placeName}
+            placesCovered={placesCovered}
+            placesLabel={placesLabel}
+            planLabel={planLabel}
+            vehicleDetails={vehicleDetails}
+          />
 
-        <RelatedToursSection tours={relatedTours} />
+          <ReviewsSection
+            ratingValue={ratingValue}
+            reviewCount={reviewCount}
+            reviews={reviews}
+          />
+
+          <FaqSection
+            items={fallbackFaq}
+            openIndex={openFaq}
+            onToggle={(index) =>
+              setOpenFaq((current) => (current === index ? -1 : index))
+            }
+          />
+
+          <RelatedToursSection tours={relatedTours} />
+        </div>
       </div>
+
+      <MobileBookingBar tour={tour} />
     </section>
   );
 };
