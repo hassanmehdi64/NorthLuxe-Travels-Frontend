@@ -939,11 +939,12 @@ const TourManagement = () => {
                   <td className="px-6 py-4">{tour.availableSeats}</td>
                   <td className="px-6 py-4 capitalize">{tour.status}</td>
                   <td className="px-6 py-4">
-                    <div className="flex justify-end gap-2">
+                    <div className="flex justify-end gap-1.5">
                       <button
                         type="button"
                         onClick={() => printTourPdf(tour)}
                         className="admin-soft-icon-button"
+                        data-tone="print"
                       >
                         <Printer size={16} />
                       </button>
@@ -976,6 +977,7 @@ const TourManagement = () => {
                           });
                         }}
                         className="admin-soft-icon-button"
+                        data-tone="edit"
                       >
                         <Edit2 size={16} />
                       </button>
@@ -993,6 +995,7 @@ const TourManagement = () => {
                           )
                         }
                         className="admin-soft-icon-button"
+                        data-tone="danger"
                       >
                         <Trash2 size={16} />
                       </button>

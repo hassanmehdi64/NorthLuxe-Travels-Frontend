@@ -279,9 +279,19 @@ h6 {
 .admin-shell-soft .admin-soft-dialog,
 .admin-shell-soft .admin-soft-form {
   border-radius: 2rem;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease, transform 180ms ease;
   box-shadow:
       0 14px 32px rgba(15, 23, 42, 0.06),
       inset 0 1px 0 rgba(255, 255, 255, 0.46);
+}
+
+.admin-shell-soft .admin-soft-panel:hover,
+.admin-shell-soft .admin-soft-table:hover,
+.admin-shell-soft .admin-soft-dialog:hover {
+  border-color: var(--admin-border-strong);
+  box-shadow:
+    0 16px 34px rgba(15, 23, 42, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .admin-shell-soft .admin-soft-kpi {
@@ -401,6 +411,7 @@ h6 {
 .admin-shell-soft .admin-soft-button-ghost:hover,
 .admin-shell-soft .admin-soft-button-subtle:hover {
   transform: translateY(-1px);
+  border-color: var(--admin-border-strong);
 }
 
 .admin-shell-soft .admin-soft-button {
@@ -410,11 +421,21 @@ h6 {
     box-shadow: 0 12px 24px rgba(var(--c-brand-rgb), 0.22);
 }
 
+.admin-shell-soft .admin-soft-button:hover {
+  box-shadow: 0 14px 26px rgba(var(--c-brand-rgb), 0.26);
+}
+
 .admin-shell-soft .admin-soft-button-ghost {
   color: var(--admin-text);
   border: 1px solid var(--admin-border-strong);
   background: rgba(255, 255, 255, 0.76);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
+}
+
+.admin-shell-soft .admin-soft-button-ghost:hover,
+.admin-shell-soft .admin-soft-button-subtle:hover {
+  background: rgba(248, 251, 253, 0.96);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
 }
 
 .admin-shell-soft .admin-soft-button-subtle {
@@ -477,6 +498,32 @@ h6 {
   border-color: rgba(var(--c-brand-rgb), 0.34) !important;
     box-shadow: 0 0 0 4px rgba(var(--c-brand-rgb), 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.78) !important;
   }
+
+.admin-shell-soft .admin-soft-search-shell {
+  border: 1px solid var(--admin-border-strong);
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.admin-shell-soft .admin-soft-search-shell:focus-within {
+  border-color: rgba(var(--c-brand-rgb), 0.36);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.admin-shell-soft .admin-soft-search-input,
+.admin-shell-soft .admin-soft-search-input:hover,
+.admin-shell-soft .admin-soft-search-input:focus,
+.admin-shell-soft .admin-soft-search-input:focus-visible {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+  
+.admin-shell-soft input:hover,
+.admin-shell-soft select:hover,
+.admin-shell-soft textarea:hover {
+  border-color: var(--admin-border-strong) !important;
+}
   
   .admin-shell-soft textarea {
     min-height: 7rem;
@@ -543,6 +590,7 @@ h6 {
 
 .admin-shell-soft .admin-soft-table tbody tr:hover {
   background: rgba(236, 243, 248, 0.88);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 .admin-shell-soft.dark .admin-soft-table tbody tr:hover {
@@ -585,7 +633,10 @@ h6 {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border-radius: 1rem;
+  min-width: 2rem;
+  min-height: 2rem;
+  padding: 0.35rem;
+  border-radius: 0.8rem;
   border: 1px solid var(--admin-border-strong);
   background: rgba(255, 255, 255, 0.76);
   color: var(--admin-muted);
@@ -599,6 +650,19 @@ h6 {
   border-color: rgba(var(--c-brand-rgb), 0.24);
   background: rgba(248, 251, 253, 0.96);
   box-shadow: 0 10px 18px rgba(15, 23, 42, 0.06);
+}
+
+.admin-shell-soft .admin-soft-icon-button[data-tone="edit"]:hover,
+.admin-shell-soft .admin-soft-icon-button[data-tone="view"]:hover,
+.admin-shell-soft .admin-soft-icon-button[data-tone="print"]:hover {
+  color: var(--admin-accent);
+  border-color: rgba(var(--c-brand-rgb), 0.28);
+}
+
+.admin-shell-soft .admin-soft-icon-button[data-tone="danger"]:hover {
+  color: #dc2626;
+  border-color: rgba(220, 38, 38, 0.24);
+  background: rgba(254, 242, 242, 0.96);
 }
 
 .admin-shell-soft .admin-soft-icon-button:active {
@@ -622,7 +686,7 @@ h6 {
   transform: translateX(2px);
   color: var(--admin-text);
   background: rgba(255, 255, 255, 0.82);
-    border-color: var(--admin-border);
+    border-color: var(--admin-border-strong);
 }
 
 .admin-shell-soft .admin-soft-nav-link[data-active="true"] {

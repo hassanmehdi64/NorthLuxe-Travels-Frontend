@@ -177,6 +177,14 @@ const BookingStage = ({ title, active = false, done = false }) => (
   </div>
 );
 
+const bookingActionButtonClass =
+  "inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[1rem] px-4 text-[15px] font-bold transition-all duration-200";
+const bookingActionGhostClass = `${bookingActionButtonClass} admin-soft-button-ghost`;
+const bookingActionSuccessClass =
+  `${bookingActionButtonClass} border border-emerald-200 bg-emerald-50 text-emerald-700 hover:-translate-y-[1px] hover:border-emerald-300 hover:bg-emerald-100 hover:text-emerald-800`;
+const bookingActionDangerClass =
+  `${bookingActionButtonClass} border border-rose-200 bg-white text-rose-600 hover:-translate-y-[1px] hover:border-rose-300 hover:bg-rose-50 hover:text-rose-700`;
+
 const parseLegacyPlanDays = (value = "") => {
   const text = String(value || "").trim();
   if (!text) return [];
@@ -948,7 +956,7 @@ const BookingDetails = () => {
                 Confirm Booking
               </button>
             ) : null}
-            <button onClick={handleOpenItineraryEditor} className="admin-soft-button-ghost inline-flex w-full min-h-12 items-center justify-center gap-2 text-[15px] font-bold text-[#132847]">
+            <button onClick={handleOpenItineraryEditor} className={`${bookingActionGhostClass} text-[#132847]`}>
               <PencilLine size={14} />
               Edit Itinerary
             </button>
@@ -962,7 +970,7 @@ const BookingDetails = () => {
                     { confirmLabel: "Verify" },
                   )
                 }
-                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[1rem] border border-[#caead8] bg-[#e5f5ec] px-4 text-[15px] font-bold text-[#129655]"
+                className={bookingActionSuccessClass}
               >
                 Verify Advance Payment
               </button>
@@ -977,12 +985,12 @@ const BookingDetails = () => {
                     { confirmLabel: "Cancel", tone: "danger" },
                   )
                 }
-                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-[1rem] border border-[#f2c9c9] bg-white px-4 text-[15px] font-bold text-[#e04b4b]"
+                className={bookingActionDangerClass}
               >
                 Cancel Booking
               </button>
             ) : null}
-            <Link to="/admin/bookings" className="admin-soft-button-ghost inline-flex w-full min-h-12 items-center justify-center gap-2 text-[15px] font-bold">
+            <Link to="/admin/bookings" className={bookingActionGhostClass}>
               <ArrowLeft size={14} />
               Back to List
             </Link>

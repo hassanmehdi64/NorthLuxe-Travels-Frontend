@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Search, Command, Moon, PanelLeftClose, PanelLeftOpen, Sun } from "lucide-react";
+import { Bell, Moon, PanelLeftClose, PanelLeftOpen, Sun } from "lucide-react";
 import ProfileDropdown from "../profile/ProfileDropdown";
 import { useAdminBlogs, useBookings, useContacts, useGallery, useNotifications, useUsers } from "../../hooks/useCms";
 import { useAuth } from "../../context/useAuth";
@@ -147,28 +147,24 @@ const Topbar = ({
 
   return (
     <header
-      className="admin-soft-topbar sticky top-0 z-30 flex min-h-18 items-center justify-between gap-3 px-4 py-3 sm:px-5 lg:px-7"
+      className="admin-soft-topbar sticky top-0 z-30 flex min-h-18 items-center justify-between gap-2 px-4 py-3 sm:px-5 lg:px-7"
     >
       {/* --- LEFT SECTION: MOBILE MENU & SMART SEARCH --- */}
-      <div className="flex flex-1 items-center gap-3 sm:gap-4">
+      <div className="flex flex-1 items-center gap-2 sm:gap-2.5">
         <button
           onClick={onSidebarControlClick}
-          className="admin-soft-icon-button h-10 w-10 sm:h-11 sm:w-11"
+          className="admin-soft-icon-button h-9 w-9"
           aria-label={sidebarControlLabel}
           title={sidebarControlLabel}
         >
           {isDesktopSidebar
-            ? (isSidebarCollapsed ? <PanelLeftOpen size={18} className="sm:h-[1.15rem] sm:w-[1.15rem]" /> : <PanelLeftClose size={18} className="sm:h-[1.15rem] sm:w-[1.15rem]" />)
-            : (isSidebarOpen ? <PanelLeftClose size={18} className="sm:h-[1.15rem] sm:w-[1.15rem]" /> : <PanelLeftOpen size={18} className="sm:h-[1.15rem] sm:w-[1.15rem]" />)}
+            ? (isSidebarCollapsed ? <PanelLeftOpen size={16} className="sm:h-[1rem] sm:w-[1rem]" /> : <PanelLeftClose size={16} className="sm:h-[1rem] sm:w-[1rem]" />)
+            : (isSidebarOpen ? <PanelLeftClose size={16} className="sm:h-[1rem] sm:w-[1rem]" /> : <PanelLeftOpen size={16} className="sm:h-[1rem] sm:w-[1rem]" />)}
         </button>
 
         {/* Global Search Bar */}
         <div ref={searchRef} className="relative hidden w-full max-w-xl sm:block">
-          <div className="group flex w-full items-center gap-3 rounded-[1.2rem] border border-white/35 bg-white/70 px-4 py-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] backdrop-blur-xl">
-          <Search
-            size={18}
-            className="text-[var(--admin-muted)] transition-colors group-focus-within:text-[var(--admin-accent)]"
-          />
+          <div className="admin-soft-search-shell group relative flex h-10 w-full items-center rounded-[1rem] border border-white/35 bg-white/70 px-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] backdrop-blur-xl">
           <input
             type="text"
             value={globalQuery}
@@ -179,12 +175,8 @@ const Topbar = ({
             onFocus={() => setIsSearchOpen(Boolean(globalQuery.trim()))}
             onKeyDown={handleSearchSubmit}
             placeholder="Search bookings, blogs, users, gallery..."
-            className="w-full border-none bg-transparent px-1 text-sm font-bold outline-none shadow-none ring-0"
+            className="admin-soft-search-input w-full border-none bg-transparent px-1 text-sm font-bold outline-none shadow-none ring-0"
           />
-          {/* Keyboard Shortcut Hint */}
-          <div className="hidden items-center gap-1 rounded-xl border border-white/45 bg-white/60 px-2.5 py-1 text-[10px] font-black text-[var(--admin-muted)] lg:flex">
-            <Command size={10} /> K
-          </div>
         </div>
           {isSearchOpen ? (
             <div className="admin-soft-panel absolute left-0 right-0 top-[calc(100%+0.7rem)] z-40 overflow-hidden rounded-[1.4rem] border border-white/40 p-2">
@@ -217,23 +209,23 @@ const Topbar = ({
       </div>
 
       {/* --- RIGHT SECTION: SYSTEM ALERTS & USER PROFILE --- */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-1 sm:gap-1.5">
         <button
           onClick={toggleTheme}
-          className="admin-soft-icon-button hidden lg:inline-flex"
+          className="admin-soft-icon-button hidden lg:inline-flex lg:h-9 lg:w-9"
           aria-label="Toggle dark mode"
         >
-          {isDark ? <Sun size={20} /> : <Moon size={20} />}
+          {isDark ? <Sun size={16} /> : <Moon size={16} />}
         </button>
 
         {/* Activity Notifications */}
         {isAdmin ? (
           <button
             onClick={() => navigate("notifications")}
-            className="admin-soft-icon-button group relative hidden lg:inline-flex"
+            className="admin-soft-icon-button group relative hidden lg:inline-flex lg:h-9 lg:w-9"
           >
             <Bell
-              size={22}
+              size={16}
               className={`group-hover:rotate-[15deg] transition-transform duration-300 ${unreadCount > 0 ? "animate-pulse" : ""}`}
             />
             {/* Unread Count Badge */}
@@ -252,10 +244,10 @@ const Topbar = ({
         ) : null}
 
         {/* Divider Line */}
-        <div className="mx-1 hidden h-10 w-px bg-white/35 lg:block"></div>
+        <div className="hidden h-9 w-px bg-white/35 lg:block"></div>
 
         {/* Profile Component (External logic for Logout/Profile) */}
-        <div className="pl-0 lg:pl-1">
+        <div className="pl-0.5">
           <ProfileDropdown />
         </div>
       </div>

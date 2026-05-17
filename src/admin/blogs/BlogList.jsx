@@ -169,17 +169,18 @@ const BlogList = () => {
                       {new Date(blog.date).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-5">
-                      <div className="flex items-center justify-center gap-2">
+                      <div className="flex items-center justify-center gap-1.5">
                         <button
                           onClick={() => navigate(`/blog/${blog.slug}`)}
                           className="admin-soft-icon-button"
+                          data-tone="view"
                         >
                           <Eye size={18} />
                         </button>
-                        <Link to={`/admin/blogs/edit/${blog.id}`} className="admin-soft-icon-button">
+                        <Link to={`/admin/blogs/edit/${blog.id}`} className="admin-soft-icon-button" data-tone="edit">
                           <Edit2 size={18} />
                         </Link>
-                        <button onClick={() => handleDelete(blog.id)} className="admin-soft-icon-button">
+                        <button onClick={() => handleDelete(blog.id)} className="admin-soft-icon-button" data-tone="danger">
                           <Trash2 size={18} />
                         </button>
                       </div>

@@ -456,14 +456,15 @@ const BookingManagement = () => {
                           <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase tracking-wider ${statusStyles[booking.status]}`}>{booking.status}</span>
                         </td>
                         <td className="px-5 py-3.5">
-                          <div className="flex justify-end gap-2">
-                            <Link to={`/admin/bookings/${booking.id}`} className="admin-soft-icon-button">
+                          <div className="flex justify-end gap-1.5">
+                            <Link to={`/admin/bookings/${booking.id}`} className="admin-soft-icon-button" data-tone="view">
                               <Eye size={18} />
                             </Link>
                             <button
                               type="button"
                               onClick={() => openTourPlanPrint(booking)}
                               className="admin-soft-icon-button"
+                              data-tone="print"
                             >
                               <Printer size={18} />
                             </button>
