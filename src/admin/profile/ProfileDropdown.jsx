@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronDown, User, Settings, LogOut, History } from "lucide-react";
 import { useAuth } from "../../context/useAuth";
+import { getUserAvatar } from "../utils/userAvatar";
 
 const ProfileDropdown = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -38,19 +39,22 @@ const ProfileDropdown = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="group flex items-center gap-3 rounded-2xl border border-white/35 bg-white/45 px-3 py-2 shadow-[0_12px_28px_rgba(148,163,184,0.08)] backdrop-blur-xl transition-all focus:outline-none hover:-translate-y-0.5"
+        className="group flex items-center gap-3 rounded-[1.35rem] border border-white/35 bg-white/70 px-3.5 py-2.5 shadow-[0_12px_28px_rgba(148,163,184,0.08)] backdrop-blur-xl transition-all focus:outline-none hover:-translate-y-0.5"
       >
         <div className="text-right hidden sm:block">
-          <p className="text-xs font-black uppercase tracking-tight text-[var(--admin-text)]">
+          <p className="text-[11px] font-black uppercase tracking-tight text-[var(--admin-text)]">
             {user?.name || "Admin User"}
           </p>
           <p className="text-[10px] font-bold text-[var(--admin-accent)]">{user?.role || "Admin"}</p>
         </div>
-        <img
-          src="https://i.pravatar.cc/150?u=hassan"
-          alt="profile"
-          className="h-10 w-10 rounded-2xl border-2 border-white/80 object-cover shadow-[0_10px_24px_rgba(148,163,184,0.18)]"
-        />
+        <div className="relative shrink-0">
+          <img
+            src={getUserAvatar(user)}
+            alt={user?.name || "profile"}
+            className="h-11 w-11 rounded-[1rem] border-2 border-white/80 object-cover shadow-[0_10px_24px_rgba(148,163,184,0.18)]"
+          />
+          <span className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-[var(--admin-accent)]" />
+        </div>
         <ChevronDown
           size={14}
           className={`text-[var(--admin-muted)] transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
@@ -59,7 +63,7 @@ const ProfileDropdown = () => {
 
       {/* Dropdown Menu */}
       {isOpen && (
-        <div className="absolute right-0 z-50 mt-3 w-60 rounded-[1.5rem] border border-white/35 bg-white/80 py-2 shadow-[0_24px_50px_rgba(148,163,184,0.18)] backdrop-blur-2xl animate-in fade-in slide-in-from-top-2">
+        <div className="absolute right-0 z-50 mt-3 w-60 rounded-[1.5rem] border border-white/35 bg-white/88 py-2 shadow-[0_24px_50px_rgba(148,163,184,0.18)] backdrop-blur-2xl animate-in fade-in slide-in-from-top-2">
           {/* User Email Header */}
           <div className="mb-1 border-b border-white/35 px-5 py-4">
             <p className="text-[10px] font-black uppercase tracking-widest text-[var(--admin-muted)]">

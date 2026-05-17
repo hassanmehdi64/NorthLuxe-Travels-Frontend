@@ -8,7 +8,6 @@ import {
   ShieldCheck,
   Star,
   Users,
-  Wallet,
 } from "lucide-react";
 import { formatCurrencyAmount } from "../../utils/currency";
 
@@ -67,33 +66,25 @@ export const TourDetailsHeader = ({
   tour,
   ratingValue,
   reviewCount,
-  placesLabel,
   planLabel,
-  vehicleDetails = [],
 }) => {
   const durationText = tour.durationLabel || `${tour.durationDays || 0} Days`;
   const locationText = tour.location || tour.destination || "Northern Pakistan";
-  const transportText = vehicleDetails[0] || "Transport on request";
 
   return (
-    <header className="space-y-5">
-      <div className="flex flex-wrap items-center gap-3">
+    <header className="space-y-4">
+      <div className="flex flex-wrap items-center gap-2.5">
         <span className="inline-flex items-center rounded-full bg-[rgba(var(--c-brand-rgb),0.1)] px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">
           {locationText}
         </span>
-
-        <span className="inline-flex items-center gap-2 text-[13px] text-muted">
-          <ShieldCheck size={14} className="text-[var(--c-brand)]" />
-          Verified local operator
-        </span>
       </div>
 
-      <div className="space-y-3">
-        <h1 className="max-w-4xl text-[2rem] font-semibold leading-[1.02] tracking-[-0.04em] text-theme md:text-[3rem]">
+      <div className="space-y-2.5">
+        <h1 className="max-w-4xl text-[1.95rem] font-semibold leading-[1.04] tracking-[-0.04em] text-theme md:text-[2.7rem]">
           {tour.title}
         </h1>
 
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[14px] text-muted">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-muted md:text-[14px]">
           <span className="inline-flex items-center gap-1.5">
             <div className="flex items-center gap-0.5 text-[var(--c-brand)]">
               {Array.from({ length: 5 }).map((_, idx) => (
@@ -128,11 +119,9 @@ export const TourDetailsHeader = ({
           "Thoughtfully planned scenic touring with local support, practical pacing, and comfortable route coordination."}
       </p>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2">
         <HeroFact icon={Clock3} label="Duration" value={durationText} />
         <HeroFact icon={Users} label="Group Size" value={planLabel} />
-        <HeroFact icon={Wallet} label="Transport" value={transportText} />
-        <HeroFact icon={MapPin} label="Places Covered" value={placesLabel} />
       </div>
     </header>
   );
@@ -184,79 +173,86 @@ export const TourImageGallery = ({ images, title }) => {
   if (!displayImages.length) return null;
 
   const mainImage = displayImages[0];
-  const sideImages = displayImages.slice(1, 5);
+  const sideImages = displayImages.slice(1, 3);
+  const hasSingleSideImage = sideImages.length === 1;
 
   return (
-    <div className="space-y-3">
-      <div className="hidden gap-3 md:grid md:grid-cols-[minmax(0,1.35fr)_minmax(280px,0.85fr)]">
-        <div className="relative overflow-hidden rounded-3xl">
+    <div className="space-y-2.5">
+      <div className="hidden gap-3 md:grid md:grid-cols-[minmax(0,1.45fr)_minmax(260px,0.85fr)]">
+        <div className="relative overflow-hidden rounded-[1.5rem] bg-theme-bg shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
           <GalleryImage
             src={mainImage}
             alt={`${title} main`}
-            className="h-[420px] lg:h-[460px]"
+            className="h-[340px] lg:h-[380px]"
           />
 
           {images.length > 1 ? (
             <button
               type="button"
               onClick={() => setShowAll((current) => !current)}
-              className="absolute bottom-4 right-4 inline-flex cursor-pointer items-center gap-2 rounded-full bg-white px-4 py-2 text-[13px] font-semibold text-theme shadow-[0_10px_20px_rgba(15,23,42,0.12)] transition hover:bg-theme-bg">
+              className="absolute bottom-4 right-4 inline-flex cursor-pointer items-center gap-2 rounded-full bg-white/96 px-4 py-2 text-[13px] font-semibold text-theme shadow-[0_10px_20px_rgba(15,23,42,0.12)] transition hover:bg-theme-bg">
               <Images size={15} className="text-[var(--c-brand)]" />
               {showAll ? "Show less" : `View all photos (${images.length})`}
             </button>
           ) : null}
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-1">
-          {sideImages.map((image, index) => (
-            <div
-              key={`${image}-${index}`}
-              className="overflow-hidden rounded-3xl">
-              <GalleryImage
-                src={image}
-                alt={`${title} gallery ${index + 2}`}
-                className="h-[204px] lg:h-[224px]"
-              />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-3 md:hidden">
-        <div className="overflow-hidden rounded-[1.75rem]">
-          <GalleryImage
-            src={mainImage}
-            alt={`${title} main`}
-            className="h-[280px]"
-          />
-        </div>
-
         {sideImages.length ? (
-          <div className="grid grid-cols-2 gap-3">
-            {sideImages.slice(0, 2).map((image, index) => (
+          <div className="grid gap-3 grid-rows-2">
+            {sideImages.map((image, index) => (
               <div
                 key={`${image}-${index}`}
-                className="overflow-hidden rounded-2xl">
+                className={`overflow-hidden rounded-[1.5rem] bg-theme-bg shadow-[0_12px_28px_rgba(15,23,42,0.06)] ${
+                  hasSingleSideImage ? "row-span-2" : ""
+                }`}>
                 <GalleryImage
                   src={image}
                   alt={`${title} gallery ${index + 2}`}
-                  className="h-[135px]"
+                  className={`w-full object-cover ${
+                    hasSingleSideImage
+                      ? "h-[340px] lg:h-[380px]"
+                      : "h-[164px] lg:h-[184px]"
+                  }`}
                 />
               </div>
             ))}
           </div>
         ) : null}
+      </div>
 
-        {images.length > 1 ? (
-          <button
-            type="button"
-            onClick={() => setShowAll((current) => !current)}
-            className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[rgba(15,23,42,0.12)] bg-theme-surface px-4 py-2 text-[13px] font-semibold text-theme transition hover:border-[rgba(var(--c-brand-rgb),0.4)] hover:text-[var(--c-brand)]">
-            <Images size={15} className="text-[var(--c-brand)]" />
-            {showAll
-              ? "Show fewer photos"
-              : `View all photos (${images.length})`}
-          </button>
+      <div className="space-y-3 md:hidden">
+        <div className="relative overflow-hidden rounded-[1.35rem] bg-theme-bg shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
+          <GalleryImage
+            src={mainImage}
+            alt={`${title} main`}
+            className="h-[250px]"
+          />
+
+          {images.length > 1 ? (
+            <button
+              type="button"
+              onClick={() => setShowAll((current) => !current)}
+              className="absolute bottom-3 right-3 inline-flex cursor-pointer items-center gap-2 rounded-full bg-white/96 px-3.5 py-2 text-[12px] font-semibold text-theme shadow-[0_10px_20px_rgba(15,23,42,0.12)] transition hover:bg-theme-bg">
+              <Images size={14} className="text-[var(--c-brand)]" />
+              {showAll ? "Show less" : `View all photos (${images.length})`}
+            </button>
+          ) : null}
+        </div>
+
+        {sideImages.length ? (
+          <div className="grid gap-3">
+            {sideImages.map((image, index) => (
+              <div
+                key={`${image}-${index}`}
+                className="overflow-hidden rounded-[1.15rem] bg-theme-bg shadow-[0_10px_24px_rgba(15,23,42,0.06)]">
+                <GalleryImage
+                  src={image}
+                  alt={`${title} gallery ${index + 2}`}
+                  className="h-[150px]"
+                />
+              </div>
+            ))}
+          </div>
         ) : null}
       </div>
 
@@ -265,11 +261,11 @@ export const TourImageGallery = ({ images, title }) => {
           {images.slice(3).map((image, index) => (
             <div
               key={`${image}-extra-${index}`}
-              className="overflow-hidden rounded-2xl">
+              className="overflow-hidden rounded-[1.25rem] bg-theme-bg shadow-[0_10px_24px_rgba(15,23,42,0.06)]">
               <GalleryImage
                 src={image}
                 alt={`${title} extra ${index + 4}`}
-                className="h-[220px]"
+                className="h-[200px]"
               />
             </div>
           ))}
@@ -279,13 +275,7 @@ export const TourImageGallery = ({ images, title }) => {
   );
 };
 
-export const TourBookingCard = ({
-  tour,
-  ratingValue,
-  reviewCount,
-  planLabel,
-  durationText,
-}) => (
+export const TourBookingCard = ({ tour }) => (
   <aside className="rounded-[1.75rem] border border-[rgba(15,23,42,0.08)] bg-theme-surface p-5 shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
     <div className="space-y-4">
       <div>
@@ -302,40 +292,6 @@ export const TourBookingCard = ({
         <p className="mt-1 text-[13px] text-muted">
           Per trip, based on selected plan
         </p>
-      </div>
-
-      <div className="rounded-2xl border border-theme bg-theme-bg p-4">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-0.5 text-[var(--c-brand)]">
-            {Array.from({ length: 5 }).map((_, idx) => (
-              <Star
-                key={idx}
-                size={14}
-                className={
-                  idx < Math.round(ratingValue) ? "fill-current" : "opacity-25"
-                }
-              />
-            ))}
-          </div>
-
-          <span className="font-semibold text-theme">
-            {ratingValue.toFixed(1)}
-          </span>
-
-          <span className="text-sm text-muted">({reviewCount} reviews)</span>
-        </div>
-
-        <div className="mt-4 space-y-3 text-[14px] text-theme">
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-muted">Duration</span>
-            <span className="font-medium">{durationText}</span>
-          </div>
-
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-muted">Plan</span>
-            <span className="text-right font-medium">{planLabel}</span>
-          </div>
-        </div>
       </div>
 
       <TourDetailsActions tour={tour} layout="compact" />

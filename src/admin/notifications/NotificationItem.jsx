@@ -6,7 +6,6 @@ import {
   ArrowRight,
   MoreVertical,
   BellOff,
-  Flag,
 } from "lucide-react";
 
 const NotificationItem = ({ item, onMarkAsRead, onDelete }) => {
@@ -40,93 +39,103 @@ const NotificationItem = ({ item, onMarkAsRead, onDelete }) => {
 
   return (
     <div
-      className={`group relative flex items-start gap-4 p-5 rounded-[2.5rem] border transition-all duration-500 ${
-        item.isLatest
-          ? "bg-blue-50/65 border-blue-200 shadow-sm shadow-blue-100/60"
-          : item.isRead
-            ? "bg-slate-50/40 border-slate-100 opacity-75"
-            : "bg-white border-blue-100 shadow-sm shadow-blue-100/50 hover:shadow-xl hover:shadow-blue-200/20"
+      className={`group relative rounded-[1.5rem] border p-4 transition-all duration-300 ${
+        !item.isRead
+          ? "border-[rgba(var(--c-brand-rgb),0.16)] bg-white shadow-[0_12px_28px_rgba(148,163,184,0.08)]"
+          : item.isLatest
+            ? "border-blue-100 bg-blue-50/45 shadow-[0_10px_24px_rgba(148,163,184,0.06)]"
+            : "border-white/35 bg-white/68 shadow-[0_10px_24px_rgba(148,163,184,0.05)]"
       }`}
     >
-      {/* Unread Indicator */}
       {!item.isRead && (
-        <span className="absolute left-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-blue-600 rounded-full" />
+        <span className="absolute right-4 top-4 h-2.5 w-2.5 rounded-full bg-[var(--admin-accent)]" />
       )}
 
-      {/* Type Icon */}
-      <div
-        className={`shrink-0 p-4 rounded-2xl ${item.bgColor} ${item.color} group-hover:scale-110 transition-transform`}
-      >
-        {item.icon}
-      </div>
-
-      {/* Content Area */}
-      <div className="flex-1 min-w-0">
-        <div className="flex justify-between items-start mb-1">
-          <h4
-            className={`text-sm font-black uppercase tracking-tight ${item.isRead ? "text-slate-500" : "text-slate-900"}`}
-          >
-            {item.title}
-          </h4>
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter whitespace-nowrap">
-            {item.time}
-          </span>
+      <div className="flex items-start gap-4">
+        <div
+          className={`inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-[1rem] ${item.bgColor} ${item.color} transition-transform group-hover:scale-[1.03]`}
+        >
+          {item.icon}
         </div>
-        <p className="text-sm font-medium text-slate-500 line-clamp-2 mb-4 leading-relaxed">
-          {item.message}
-        </p>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-3">
-          <button
-            onClick={handleViewDetails}
-            className="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-200 transition-all flex items-center gap-2 active:scale-95"
-          >
-            View Details <ArrowRight size={12} />
-          </button>
+        <div className="min-w-0 flex-1">
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+            <div className="min-w-0">
+              <div className="mb-2 flex flex-wrap items-center gap-2">
+                <span className="inline-flex rounded-full bg-[rgba(var(--c-brand-rgb),0.08)] px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-[var(--admin-accent)]">
+                  {item.type}
+                </span>
+                {item.isLatest ? (
+                  <span className="inline-flex rounded-full bg-blue-50 px-2.5 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-blue-600">
+                    New
+                  </span>
+                ) : null}
+              </div>
+              <h4
+                className={`text-[15px] font-black tracking-tight ${item.isRead ? "text-slate-600" : "text-[var(--admin-text)]"}`}
+              >
+                {item.title}
+              </h4>
+            </div>
+            <span className="shrink-0 text-[11px] font-semibold text-[var(--admin-muted)]">
+              {item.time}
+            </span>
+          </div>
 
-          {/* More Actions Dropdown */}
-          <div className="relative">
+          <p className="mb-4 text-[13.5px] leading-6 text-[var(--admin-muted)]">
+            {item.message}
+          </p>
+
+          <div className="flex items-center gap-3">
             <button
-              onClick={() => setShowMenu(!showMenu)}
-              className={`p-2.5 rounded-xl transition-all ${showMenu ? "bg-slate-100 text-slate-900" : "text-slate-300 hover:text-slate-900 hover:bg-slate-50"}`}
+              onClick={handleViewDetails}
+              className="admin-soft-button inline-flex min-h-10 items-center gap-2 px-4 text-[10px] font-black uppercase tracking-[0.12em]"
             >
-              <MoreVertical size={18} />
+              View Details <ArrowRight size={12} />
             </button>
 
-            {showMenu && (
-              <>
-                <div
-                  className="fixed inset-0 z-10"
-                  onClick={() => setShowMenu(false)}
-                />
-                <div className="absolute left-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-slate-100 py-2 z-20 animate-in fade-in zoom-in duration-200 origin-top-left">
-                  {!item.isRead && (
+            <div className="relative">
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className={`admin-soft-icon-button h-10 w-10 ${showMenu ? "bg-slate-100 text-[var(--admin-text)]" : ""}`}
+              >
+                <MoreVertical size={16} />
+              </button>
+
+              {showMenu && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setShowMenu(false)}
+                  />
+                  <div className="absolute left-0 z-20 mt-2 w-48 rounded-[1.25rem] border border-white/35 bg-white/92 py-2 shadow-[0_24px_50px_rgba(148,163,184,0.18)] backdrop-blur-xl animate-in fade-in zoom-in duration-200 origin-top-left">
+                    {!item.isRead && (
+                      <button
+                        onClick={() => {
+                          onMarkAsRead(item.id);
+                          setShowMenu(false);
+                        }}
+                        className="flex w-full items-center gap-3 px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.12em] text-slate-600 transition-colors hover:bg-blue-50 hover:text-blue-600"
+                      >
+                        <Check size={14} /> Mark Read
+                      </button>
+                    )}
+                    <button className="flex w-full items-center gap-3 px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.12em] text-slate-600 transition-colors hover:bg-slate-50">
+                      <BellOff size={14} /> Mute
+                    </button>
                     <button
                       onClick={() => {
-                        onMarkAsRead(item.id);
+                        onDelete(item.id);
                         setShowMenu(false);
                       }}
-                      className="w-full flex items-center gap-3 px-4 py-2.5 text-[10px] font-black uppercase text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                      className="flex w-full items-center gap-3 border-t border-slate-50 px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.12em] text-rose-500 transition-colors hover:bg-rose-50"
                     >
-                      <Check size={14} /> Mark Read
+                      <Trash2 size={14} /> Delete
                     </button>
-                  )}
-                  <button className="w-full flex items-center gap-3 px-4 py-2.5 text-[10px] font-black uppercase text-slate-600 hover:bg-slate-50 transition-colors">
-                    <BellOff size={14} /> Mute
-                  </button>
-                  <button
-                    onClick={() => {
-                      onDelete(item.id);
-                      setShowMenu(false);
-                    }}
-                    className="w-full flex items-center gap-3 px-4 py-2.5 text-[10px] font-black uppercase text-rose-500 hover:bg-rose-50 transition-colors border-t border-slate-50"
-                  >
-                    <Trash2 size={14} /> Delete
-                  </button>
-                </div>
-              </>
-            )}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>

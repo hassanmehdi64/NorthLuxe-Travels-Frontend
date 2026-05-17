@@ -1,19 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ChevronDown, Edit2, Plus, Printer, Trash2, X, ListTodo, Upload } from "lucide-react";
+import { Check, ChevronDown, Edit2, Plus, Printer, Trash2, X, ListTodo, Upload } from "lucide-react";
 import { useAdminTours, useCreateTour, useDeleteTour, useSettings, useUpdateTour, useUpdateBooking } from "../../hooks/useCms";
 import { useToast } from "../../context/ToastContext";
 import { getApiErrorMessage } from "../../lib/apiError";
+import { CURRENCY_OPTIONS, displayCurrency } from "../../utils/currency";
 
 const initialForm = {
   title: "",
   location: "",
   durationDays: 5,
-  durationLabel: "",
   price: 0,
-  discountPercent: 0,
   currency: "PKR",
   image: "",
+  galleryText: "",
   shortDescription: "",
   description: "",
   status: "draft",
@@ -22,7 +22,6 @@ const initialForm = {
   hotelCategoryKeys: "",
   vehicleTypeKeys: [],
   itinerary: [{ day: 1, title: "", description: "" }],
-  reviewItems: [{ name: "", rating: 5, date: "", tag: "", comment: "" }],
 };
 
 const normalizeKeyList = (value) => {
@@ -34,16 +33,18 @@ const normalizeKeyList = (value) => {
 };
 
 const mergeUniqueKeys = (...lists) => Array.from(new Set(lists.flatMap((list) => normalizeKeyList(list))));
-const normalizeReviewItems = (items) => {
-  if (!Array.isArray(items) || !items.length) return initialForm.reviewItems;
-  return items.map((item) => ({
-    name: String(item?.name || ""),
-    rating: Math.max(1, Math.min(5, Number(item?.rating || 5))),
-    date: String(item?.date || ""),
-    tag: String(item?.tag || ""),
-    comment: String(item?.comment || ""),
-  }));
-};
+const normalizeGalleryText = (items) =>
+  (Array.isArray(items) ? items : [])
+    .map((item) => String(item || "").trim())
+    .filter(Boolean)
+    .join("\n");
+
+const parseGalleryText = (value) =>
+  String(value || "")
+    .split(/\r?\n|,/)
+    .map((item) => item.trim())
+    .filter(Boolean);
+
 const readFileAsDataUrl = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -63,6 +64,63 @@ const sectionToggleButtonClassName = "flex w-full items-center justify-between g
 const segmentedButtonBaseClassName = "rounded-xl px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.14em] transition";
 const inlineIconButtonClassName = "inline-flex h-5 w-5 items-center justify-center rounded-full text-slate-400 transition hover:text-rose-600 dark:text-slate-300 dark:hover:text-rose-200";
 const compactInputClassName = "w-full rounded-lg px-3 py-2 text-xs font-medium";
+const selectClassName = `${inputClassName} admin-select-field`;
+
+const AdminDropdownField = ({
+  label,
+  value,
+  options = [],
+  open,
+  onToggle,
+  onSelect,
+  dropdownRef,
+}) => (
+  <div className="space-y-2" ref={dropdownRef}>
+    <span className={labelClassName}>{label}</span>
+    <div className="relative">
+      <button
+        type="button"
+        onClick={onToggle}
+        className={`${selectClassName} !border !border-[var(--admin-border)] flex min-h-[46px] items-center justify-between gap-3 text-left`}
+      >
+        <span className="truncate text-[14px] font-medium">
+          {options.find((item) => item.value === value)?.label || value}
+        </span>
+        <ChevronDown
+          size={15}
+          className={`shrink-0 text-slate-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {open ? (
+        <div className="absolute left-0 top-full z-30 mt-2 w-full overflow-hidden rounded-[1.15rem] border border-slate-200 bg-white shadow-[0_18px_36px_rgba(15,23,42,0.14)] dark:border-slate-700 dark:bg-slate-900">
+          <div className="max-h-60 overflow-y-auto p-1.5">
+            {options.map((item) => {
+              const isActive = item.value === value;
+              return (
+                <button
+                  key={item.value}
+                  type="button"
+                  onClick={() => onSelect(item.value)}
+                  className={`flex w-full items-center justify-between gap-2 rounded-xl px-3 py-2 text-left transition ${
+                    isActive
+                      ? "bg-[rgba(var(--c-brand-rgb),0.12)] text-[var(--c-brand)]"
+                      : "text-slate-700 hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
+                  }`}
+                >
+                  <span className={`truncate text-[13px] ${isActive ? "font-semibold" : "font-medium"}`}>
+                    {item.label}
+                  </span>
+                  {isActive ? <Check size={14} className="shrink-0" /> : null}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
+    </div>
+  </div>
+);
 
 const isRecentlyAdded = (value) => {
   if (!value) return false;
@@ -90,10 +148,13 @@ const TourManagement = () => {
   const [sourceBookingCode, setSourceBookingCode] = useState("");
   const [isItineraryOpen, setIsItineraryOpen] = useState(false);
   const [isAvailabilityOpen, setIsAvailabilityOpen] = useState(false);
-  const [isReviewsOpen, setIsReviewsOpen] = useState(false);
   const [customVehicleInput, setCustomVehicleInput] = useState("");
   const [isVehicleDropdownOpen, setIsVehicleDropdownOpen] = useState(false);
+  const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false);
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const vehicleDropdownRef = useRef(null);
+  const currencyDropdownRef = useRef(null);
+  const statusDropdownRef = useRef(null);
 
   useEffect(() => {
     const prefill = location.state?.prefill;
@@ -107,10 +168,11 @@ const TourManagement = () => {
     setIsFormOpen(true);
     setIsItineraryOpen(false);
     setIsAvailabilityOpen(false);
-    setIsReviewsOpen(false);
     setForm({
       ...initialForm,
       ...prefill,
+      currency: displayCurrency(prefill.currency || settings?.currency || "PKR"),
+      galleryText: normalizeGalleryText(prefill.gallery),
       hotelCategoryKeys: prefill.hotelCategoryKeys || "",
       vehicleTypeKeys: normalizeKeyList(prefill.vehicleTypeKeys),
       itinerary: Array.isArray(prefill.itinerary) && prefill.itinerary.length
@@ -120,9 +182,8 @@ const TourManagement = () => {
             description: item?.description || "",
           }))
         : initialForm.itinerary,
-      reviewItems: normalizeReviewItems(prefill.reviewItems),
     });
-  }, [location.state]);
+  }, [location.state, settings?.currency]);
 
   useEffect(() => {
     if (!isVehicleDropdownOpen) return;
@@ -134,6 +195,20 @@ const TourManagement = () => {
     document.addEventListener("mousedown", handleOutside);
     return () => document.removeEventListener("mousedown", handleOutside);
   }, [isVehicleDropdownOpen]);
+
+  useEffect(() => {
+    const handleOutside = (event) => {
+      if (currencyDropdownRef.current && !currencyDropdownRef.current.contains(event.target)) {
+        setIsCurrencyDropdownOpen(false);
+      }
+      if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
+        setIsStatusDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutside);
+    return () => document.removeEventListener("mousedown", handleOutside);
+  }, []);
 
   const sortedTours = useMemo(
     () =>
@@ -192,6 +267,23 @@ const TourManagement = () => {
     event.target.value = "";
   };
 
+  const handleGalleryUpload = async (event) => {
+    const files = Array.from(event.target.files || []);
+    if (!files.length) return;
+
+    try {
+      const uploaded = await Promise.all(files.map((file) => readFileAsDataUrl(file)));
+      setForm((prev) => ({
+        ...prev,
+        galleryText: normalizeGalleryText([...parseGalleryText(prev.galleryText), ...uploaded]),
+      }));
+    } catch {
+      toast.error("Upload failed", "Could not read one or more selected gallery images.");
+    }
+
+    event.target.value = "";
+  };
+
   const printTourPdf = (tour) => {
     const win = window.open("", "_blank", "width=900,height=700");
     if (!win) return;
@@ -241,15 +333,13 @@ const TourManagement = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const discountPercentValue = Number(form.discountPercent);
     const syncedSeats = Math.max(0, Number(form.availableSeats || 0));
     const payload = {
       ...form,
+      currency: displayCurrency(form.currency || settings?.currency || "PKR"),
       capacity: syncedSeats,
       availableSeats: syncedSeats,
-      discountPercent: Number.isFinite(discountPercentValue)
-        ? Math.max(0, Math.min(95, discountPercentValue))
-        : 0,
+      gallery: parseGalleryText(form.galleryText),
       itinerary: form.itinerary
         .map((item, index) => ({
           day: index + 1,
@@ -257,15 +347,6 @@ const TourManagement = () => {
           description: String(item?.description || "").trim(),
         }))
         .filter((item) => item.title || item.description),
-      reviewItems: form.reviewItems
-        .map((item) => ({
-          name: String(item?.name || "").trim(),
-          rating: Math.max(1, Math.min(5, Number(item?.rating || 5))),
-          date: String(item?.date || "").trim(),
-          tag: String(item?.tag || "").trim(),
-          comment: String(item?.comment || "").trim(),
-        }))
-        .filter((item) => item.name || item.comment || item.tag || item.date),
       availableOptions: {
         hotelCategories: form.hotelCategoryKeys
           .split(",")
@@ -309,6 +390,7 @@ const TourManagement = () => {
       setSourceBookingId("");
       setSourceBookingCode("");
       setIsItineraryOpen(false);
+      setIsAvailabilityOpen(false);
     } catch (error) {
       toast.error("Save failed", getApiErrorMessage(error, "Could not save tour."));
     }
@@ -334,7 +416,7 @@ const TourManagement = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="admin-soft-heading text-xl xl:3xl font-black tracking-tighter uppercase">
+          <h1 className="admin-page-title">
             Tour Management
           </h1>
           <p className="admin-soft-muted text-sm">Manage all package details shown on website.</p>
@@ -345,11 +427,10 @@ const TourManagement = () => {
             setEditing(null);
             setSourceBookingId("");
             setSourceBookingCode("");
-            setForm(initialForm);
+            setForm({ ...initialForm, currency: displayCurrency(settings?.currency || "PKR") });
             setCustomVehicleInput("");
             setIsItineraryOpen(false);
             setIsAvailabilityOpen(false);
-            setIsReviewsOpen(false);
             setIsVehicleDropdownOpen(false);
             setIsFormOpen((value) => !value);
           }}
@@ -373,7 +454,7 @@ const TourManagement = () => {
               <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[var(--c-brand)]">
                 {editing ? "Editing Tour" : sourceBookingId ? "Custom Request Tour" : "New Tour"}
               </p>
-              <h2 className="admin-soft-heading mt-1 text-lg font-black tracking-tight">
+              <h2 className="admin-section-title mt-1 text-[1.05rem]">
                 {editing ? form.title || "Update tour package" : "Create tour package"}
               </h2>
               <p className="admin-soft-muted mt-1 text-sm">
@@ -390,7 +471,7 @@ const TourManagement = () => {
             </div>
           </div>
 
-          <div className="grid items-stretch gap-4 xl:grid-cols-[1.35fr_0.95fr]">
+          <div className="grid items-stretch gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.9fr)]">
             <section className={sectionClassName}>
               <div className="mb-5 border-b border-slate-200 pb-3 dark:border-slate-700">
                 <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">Basics</p>
@@ -411,26 +492,46 @@ const TourManagement = () => {
                   <input className={inputClassName} type="number" placeholder="Duration Days" value={form.durationDays} onChange={(e) => setForm((p) => ({ ...p, durationDays: Number(e.target.value) }))} required />
                 </label>
                 <label className="space-y-2">
-                  <span className={labelClassName}>Duration Label</span>
-                  <input className={inputClassName} placeholder="e.g. 7 Days / 6 Nights" value={form.durationLabel} onChange={(e) => setForm((p) => ({ ...p, durationLabel: e.target.value }))} />
+                  <span className={labelClassName}>Available Seats</span>
+                  <input className={inputClassName} type="number" placeholder="Seats" value={form.availableSeats} onChange={(e) => setForm((p) => ({ ...p, availableSeats: Number(e.target.value) }))} />
                 </label>
                 <label className="space-y-2 md:col-span-2">
-                  <span className={labelClassName}>Image URL *</span>
+                  <span className={labelClassName}>Cover Image *</span>
                   <div className="space-y-3">
                     <input className={inputClassName} placeholder="Image URL" value={form.image} onChange={(e) => setForm((p) => ({ ...p, image: e.target.value }))} required />
                     <div className="flex flex-wrap items-center gap-3">
                       <label className={subtleButtonClassName}>
                         <Upload size={14} />
-                        Upload Image
+                        Upload Cover
                         <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
                       </label>
-                      <p className="text-xs text-slate-500 dark:text-slate-300">Paste a URL or upload a cover image.</p>
+                      <p className="text-xs text-slate-500 dark:text-slate-300">Paste a URL or upload the main tour image.</p>
                     </div>
                     {form.image ? (
                       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 dark:border-slate-700 dark:bg-slate-800">
                         <img src={form.image} alt="Tour cover preview" className="h-40 w-full object-cover" />
                       </div>
                     ) : null}
+                  </div>
+                </label>
+                <label className="space-y-2 md:col-span-2">
+                  <span className={labelClassName}>Gallery Images</span>
+                  <div className="space-y-3">
+                    <textarea
+                      rows={4}
+                      className={textareaClassName}
+                      placeholder="Add one image URL per line for the Tour Detail gallery"
+                      value={form.galleryText}
+                      onChange={(e) => setForm((p) => ({ ...p, galleryText: e.target.value }))}
+                    />
+                    <div className="flex flex-wrap items-center gap-3">
+                      <label className={subtleButtonClassName}>
+                        <Upload size={14} />
+                        Upload Gallery
+                        <input type="file" accept="image/*" multiple className="hidden" onChange={handleGalleryUpload} />
+                      </label>
+                      <p className="text-xs text-slate-500 dark:text-slate-300">These images appear in the website tour gallery.</p>
+                    </div>
                   </div>
                 </label>
               </div>
@@ -447,46 +548,82 @@ const TourManagement = () => {
                   <span className={labelClassName}>Price *</span>
                   <input className={inputClassName} type="number" placeholder="Price" value={form.price} onChange={(e) => setForm((p) => ({ ...p, price: Number(e.target.value) }))} required />
                 </label>
-                <label className="space-y-2">
-                  <span className={labelClassName}>Currency</span>
-                  <select className={inputClassName} value={form.currency || "PKR"} onChange={(e) => setForm((p) => ({ ...p, currency: e.target.value }))}>
-                    <option value="PKR">PKR - Pakistani Rupees</option>
-                  </select>
-                </label>
-                <label className="space-y-2">
-                  <span className={labelClassName}>Discount %</span>
-                  <input className={inputClassName} type="number" min="0" max="95" placeholder="e.g. 15" value={form.discountPercent} onChange={(e) => setForm((p) => ({ ...p, discountPercent: Math.max(0, Math.min(95, Number(e.target.value || 0))) }))} />
-                </label>
-                <label className="space-y-2">
-                  <span className={labelClassName}>Available Seats</span>
-                  <input className={inputClassName} type="number" placeholder="Seats" value={form.availableSeats} onChange={(e) => setForm((p) => ({ ...p, availableSeats: Number(e.target.value) }))} />
-                </label>
-                <div className="md:col-span-2 rounded-2xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/60">
-                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500 dark:text-slate-300">Publishing</p>
-                  <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,180px)_1fr] md:items-end">
-                    <label className="space-y-2 min-w-[180px]">
-                      <span className={labelClassName}>Status</span>
-                      <select className={inputClassName} value={form.status} onChange={(e) => setForm((p) => ({ ...p, status: e.target.value }))}>
-                        <option value="draft">Draft</option>
-                        <option value="published">Published</option>
-                      </select>
-                    </label>
+                <AdminDropdownField
+                  label="Currency"
+                  value={form.currency || displayCurrency(settings?.currency || "PKR")}
+                  options={CURRENCY_OPTIONS}
+                  open={isCurrencyDropdownOpen}
+                  onToggle={() => {
+                    setIsCurrencyDropdownOpen((value) => !value);
+                    setIsStatusDropdownOpen(false);
+                  }}
+                  onSelect={(nextValue) => {
+                    setForm((p) => ({ ...p, currency: nextValue }));
+                    setIsCurrencyDropdownOpen(false);
+                  }}
+                  dropdownRef={currencyDropdownRef}
+                />
+                <div className="md:col-span-2 border-t border-slate-200 pt-4 dark:border-slate-700">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <p className="text-[10px] font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">Publishing</p>
+                      <h4 className="mt-1 text-sm font-bold text-slate-900 dark:text-slate-100">Visibility & Placement</h4>
+                      <p className="mt-1 text-xs text-slate-500 dark:text-slate-300">Control whether this tour is live and whether it gets homepage priority.</p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <span className={`inline-flex items-center rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${form.status === "published" ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                        {form.status === "published" ? "Live" : "Draft"}
+                      </span>
+                      <span className={`inline-flex items-center rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${form.featured ? "bg-slate-900 text-white dark:bg-white dark:text-slate-900" : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-200"}`}>
+                        {form.featured ? "Featured" : "Standard"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-4 space-y-3">
+                    <AdminDropdownField
+                      label="Status"
+                      value={form.status}
+                      options={[
+                        { value: "draft", label: "Draft" },
+                        { value: "published", label: "Published" },
+                      ]}
+                      open={isStatusDropdownOpen}
+                      onToggle={() => {
+                        setIsStatusDropdownOpen((value) => !value);
+                        setIsCurrencyDropdownOpen(false);
+                      }}
+                      onSelect={(nextValue) => {
+                        setForm((p) => ({ ...p, status: nextValue }));
+                        setIsStatusDropdownOpen(false);
+                      }}
+                      dropdownRef={statusDropdownRef}
+                    />
+
                     <div className="space-y-2">
                       <span className={labelClassName}>Feature Handling</span>
-                      <div className="inline-flex rounded-2xl border border-slate-200 bg-white p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] dark:border-slate-700 dark:bg-slate-900">
+                      <div className="inline-flex w-full rounded-2xl border border-slate-200 bg-slate-50 p-1.5 dark:border-slate-700 dark:bg-slate-800/70">
                         <button
                           type="button"
                           onClick={() => setForm((p) => ({ ...p, featured: false }))}
-                          className={`${segmentedButtonBaseClassName} ${!form.featured ? "bg-slate-900 text-white shadow-[0_8px_18px_rgba(15,23,42,0.18)] dark:bg-white dark:text-slate-900" : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"}`}
+                          className={`inline-flex min-h-[42px] flex-1 items-center justify-center rounded-xl px-3 py-2 text-center transition ${
+                            !form.featured
+                              ? "bg-white text-slate-900 shadow-[0_8px_18px_rgba(15,23,42,0.08)] dark:bg-slate-900 dark:text-slate-100"
+                              : "text-slate-500 hover:bg-white/70 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-900/70"
+                          }`}
                         >
-                          Regular
+                          <span className="text-[11px] font-black uppercase tracking-[0.14em]">Regular</span>
                         </button>
                         <button
                           type="button"
                           onClick={() => setForm((p) => ({ ...p, featured: true }))}
-                          className={`${segmentedButtonBaseClassName} ${form.featured ? "bg-slate-900 text-white shadow-[0_8px_18px_rgba(15,23,42,0.18)] dark:bg-white dark:text-slate-900" : "text-slate-500 hover:bg-slate-50 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"}`}
+                          className={`inline-flex min-h-[42px] flex-1 items-center justify-center rounded-xl px-3 py-2 text-center transition ${
+                            form.featured
+                              ? "bg-slate-900 text-white shadow-[0_10px_22px_rgba(15,23,42,0.16)] dark:bg-white dark:text-slate-900"
+                              : "text-slate-500 hover:bg-white/70 hover:text-slate-700 dark:text-slate-300 dark:hover:bg-slate-900/70"
+                          }`}
                         >
-                          Featured
+                          <span className="text-[11px] font-black uppercase tracking-[0.14em]">Featured</span>
                         </button>
                       </div>
                     </div>
@@ -513,156 +650,6 @@ const TourManagement = () => {
               </label>
             </div>
           </section>
-
-          <div className={`${sectionClassName} overflow-hidden`}>
-            <button
-              type="button"
-              onClick={() => setIsReviewsOpen((value) => !value)}
-              className={sectionToggleButtonClassName}
-            >
-              <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--c-brand)]">Guest Feedback</p>
-                <h3 className="mt-1 text-sm font-bold text-slate-900 dark:text-slate-100">Tour Reviews</h3>
-                <p className="mt-1 text-xs text-slate-500 dark:text-slate-300">Add reviews for this specific tour.</p>
-              </div>
-              <ChevronDown
-                size={16}
-                className={`text-slate-500 transition-transform duration-200 ${isReviewsOpen ? "rotate-180" : ""}`}
-              />
-            </button>
-
-            {isReviewsOpen ? (
-              <div className="space-y-3 px-1 pb-1 pt-4">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-300">These reviews appear on this tour's details page.</p>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setForm((prev) => ({
-                        ...prev,
-                        reviewItems: [...prev.reviewItems, { name: "", rating: 5, date: "", tag: "", comment: "" }],
-                      }))
-                    }
-                    className={subtleButtonClassName}
-                  >
-                    <Plus size={13} />
-                    Add Review
-                  </button>
-                </div>
-
-                <div className="space-y-3">
-                  {form.reviewItems.map((item, index) => (
-                    <div key={`tour-review-${index}`} className="rounded-xl border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/60">
-                      <div className="mb-3 flex items-center justify-between gap-3">
-                        <div className="text-xs font-bold uppercase tracking-[0.12em] text-slate-600 dark:text-slate-200">
-                          Review {index + 1}
-                        </div>
-                        {form.reviewItems.length > 1 ? (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setForm((prev) => ({
-                                ...prev,
-                                reviewItems: prev.reviewItems.filter((_, reviewIndex) => reviewIndex !== index),
-                              }))
-                            }
-                            className="inline-flex items-center gap-1 rounded-lg border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-rose-700 transition hover:bg-rose-100 dark:border-rose-900/40 dark:bg-rose-950/30 dark:text-rose-200"
-                          >
-                            <X size={12} />
-                            Remove
-                          </button>
-                        ) : null}
-                      </div>
-
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <label className="space-y-2">
-                          <span className={labelClassName}>Guest Name</span>
-                          <input
-                            className={compactInputClassName}
-                            value={item.name}
-                            onChange={(e) =>
-                              setForm((prev) => ({
-                                ...prev,
-                                reviewItems: prev.reviewItems.map((entry, reviewIndex) =>
-                                  reviewIndex === index ? { ...entry, name: e.target.value } : entry,
-                                ),
-                              }))
-                            }
-                          />
-                        </label>
-                        <label className="space-y-2">
-                          <span className={labelClassName}>Trip Tag</span>
-                          <input
-                            className={compactInputClassName}
-                            placeholder="Family Trip"
-                            value={item.tag}
-                            onChange={(e) =>
-                              setForm((prev) => ({
-                                ...prev,
-                                reviewItems: prev.reviewItems.map((entry, reviewIndex) =>
-                                  reviewIndex === index ? { ...entry, tag: e.target.value } : entry,
-                                ),
-                              }))
-                            }
-                          />
-                        </label>
-                        <label className="space-y-2">
-                          <span className={labelClassName}>Date Label</span>
-                          <input
-                            className={compactInputClassName}
-                            placeholder="Apr 2026"
-                            value={item.date}
-                            onChange={(e) =>
-                              setForm((prev) => ({
-                                ...prev,
-                                reviewItems: prev.reviewItems.map((entry, reviewIndex) =>
-                                  reviewIndex === index ? { ...entry, date: e.target.value } : entry,
-                                ),
-                              }))
-                            }
-                          />
-                        </label>
-                        <label className="space-y-2">
-                          <span className={labelClassName}>Rating</span>
-                          <input
-                            type="number"
-                            min="1"
-                            max="5"
-                            className={compactInputClassName}
-                            value={item.rating}
-                            onChange={(e) =>
-                              setForm((prev) => ({
-                                ...prev,
-                                reviewItems: prev.reviewItems.map((entry, reviewIndex) =>
-                                  reviewIndex === index ? { ...entry, rating: Math.max(1, Math.min(5, Number(e.target.value || 5))) } : entry,
-                                ),
-                              }))
-                            }
-                          />
-                        </label>
-                        <label className="space-y-2 md:col-span-2">
-                          <span className={labelClassName}>Review Comment</span>
-                          <textarea
-                            rows={3}
-                            className={`${compactInputClassName} resize-y`}
-                            value={item.comment}
-                            onChange={(e) =>
-                              setForm((prev) => ({
-                                ...prev,
-                                reviewItems: prev.reviewItems.map((entry, reviewIndex) =>
-                                  reviewIndex === index ? { ...entry, comment: e.target.value } : entry,
-                                ),
-                              }))
-                            }
-                          />
-                        </label>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-          </div>
 
           <div className="grid items-start gap-4 xl:grid-cols-[1.1fr_0.9fr]">
             <div className="space-y-4">
@@ -908,7 +895,7 @@ const TourManagement = () => {
                 {editing ? "Update Tour" : sourceBookingId ? "Create Itinerary" : "Create Tour"}
               </button>
             {editing && (
-              <button type="button" onClick={() => { setEditing(null); setForm(initialForm); setCustomVehicleInput(""); setIsFormOpen(false); setSourceBookingId(""); setSourceBookingCode(""); setIsAvailabilityOpen(false); setIsReviewsOpen(false); setIsVehicleDropdownOpen(false); }} className={secondaryButtonClassName}>
+              <button type="button" onClick={() => { setEditing(null); setForm(initialForm); setCustomVehicleInput(""); setIsFormOpen(false); setSourceBookingId(""); setSourceBookingCode(""); setIsAvailabilityOpen(false); setIsVehicleDropdownOpen(false); }} className={secondaryButtonClassName}>
                 Cancel
               </button>
             )}
@@ -947,11 +934,6 @@ const TourManagement = () => {
                   <td className="px-6 py-4 font-bold">
                     <div className="flex items-center gap-2">
                       <span>{tour.currency} {tour.price}</span>
-                      {Number(tour.discountPercent || 0) > 0 ? (
-                        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.12em] text-amber-700">
-                          {tour.discountPercent}% Off
-                        </span>
-                      ) : null}
                     </div>
                   </td>
                   <td className="px-6 py-4">{tour.availableSeats}</td>
@@ -975,12 +957,13 @@ const TourManagement = () => {
                           setCustomVehicleInput("");
                           setIsItineraryOpen(false);
                           setIsAvailabilityOpen(false);
-                          setIsReviewsOpen(false);
                           setIsVehicleDropdownOpen(false);
                           setForm({
                             ...initialForm,
                             ...tour,
+                            currency: displayCurrency(tour.currency || settings?.currency || "PKR"),
                             image: tour.image,
+                            galleryText: normalizeGalleryText(tour.gallery),
                             hotelCategoryKeys: tour.availableOptions?.hotelCategories?.join(", ") || "",
                             vehicleTypeKeys: normalizeKeyList(tour.availableOptions?.vehicleTypes),
                             itinerary: Array.isArray(tour.itinerary) && tour.itinerary.length
@@ -990,7 +973,6 @@ const TourManagement = () => {
                                   description: item?.description || "",
                                 }))
                               : initialForm.itinerary,
-                            reviewItems: normalizeReviewItems(tour.reviewItems),
                           });
                         }}
                         className="admin-soft-icon-button"

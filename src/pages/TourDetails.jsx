@@ -29,25 +29,14 @@ import {
   buildPackageOverview,
   buildPlacesCovered,
   buildTourReviews,
-  buildVehicleDetails,
   fallbackFaq,
   getTourHeroImages,
   getTourPlaceName,
-  getTourPlacesLabel,
   getTourPlanLabel,
 } from "../components/tour-details/tourDetailsData";
 
 const MAX_RELATED_TOURS = 4;
 const MAX_ITINERARY_DAYS = 10;
-
-const FALLBACK_HIGHLIGHTS = [
-  "Scenic routes",
-  "Comfort stays",
-  "Local support",
-  "Flexible pacing",
-];
-
-const DEFAULT_BEST_FOR = ["Families", "Couples", "Groups", "Private tours"];
 
 const getRatingValue = (tour, reviews) => {
   if (reviews.length) {
@@ -63,7 +52,7 @@ const getRatingValue = (tour, reviews) => {
   return Number.isFinite(tourRating) && tourRating > 0 ? tourRating : 4.8;
 };
 
-const buildBeforeYouBookNotes = (transportNote, durationText, planLabel) => {
+const buildBeforeYouBookNotes = (transportNote) => {
   const noteParts = String(transportNote || "")
     .split(".")
     .map((item) => item.trim())
@@ -73,8 +62,6 @@ const buildBeforeYouBookNotes = (transportNote, durationText, planLabel) => {
   return Array.from(
     new Set([
       ...noteParts,
-      `Trip duration: ${durationText}.`,
-      `Plan type: ${planLabel}.`,
       "Final route flow and operational details are reconfirmed before departure.",
     ]),
   ).slice(0, 4);
@@ -115,11 +102,8 @@ const TourDetails = () => {
     const ratingValue = getRatingValue(tour, reviews);
     const reviewCount = reviews.length || Number(tour.reviews || 0);
     const includedServices = buildIncludedServices(tour);
-    const vehicleDetails = buildVehicleDetails(tour);
     const planLabel = getTourPlanLabel(tour);
-    const placesLabel = getTourPlacesLabel(tour, displayItinerary);
     const commonFacts = buildCommonTourFacts(settings);
-    const durationText = tour.durationLabel || `${tour.durationDays || 0} Days`;
 
     return {
       heroImages: getTourHeroImages(tour),
@@ -128,22 +112,13 @@ const TourDetails = () => {
       ratingValue,
       reviewCount,
       includedServices,
-      vehicleDetails,
       planLabel,
-      placesLabel,
       commonFacts,
-      durationText,
       packageOverview: buildPackageOverview(tour),
       placesCovered: buildPlacesCovered(tour, displayItinerary),
       placeName: getTourPlaceName(tour),
       detailedDescription: buildDetailedDescription(tour),
-      highlights: tour.tags?.length ? tour.tags : FALLBACK_HIGHLIGHTS,
-      bestFor: DEFAULT_BEST_FOR,
-      beforeYouBook: buildBeforeYouBookNotes(
-        commonFacts.transportNote,
-        durationText,
-        planLabel,
-      ),
+      beforeYouBook: buildBeforeYouBookNotes(commonFacts.transportNote),
     };
   }, [tour, settings]);
 
@@ -166,17 +141,11 @@ const TourDetails = () => {
     ratingValue,
     reviewCount,
     includedServices,
-    vehicleDetails,
     planLabel,
-    placesLabel,
-    commonFacts,
-    durationText,
     packageOverview,
     placesCovered,
     placeName,
     detailedDescription,
-    highlights,
-    bestFor,
     beforeYouBook,
   } = tourData;
 
@@ -187,14 +156,12 @@ const TourDetails = () => {
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
           <section className="w-full">
-            <div className="space-y-6">
+            <div className="space-y-5">
               <TourDetailsHeader
                 tour={tour}
                 ratingValue={ratingValue}
                 reviewCount={reviewCount}
-                placesLabel={placesLabel}
                 planLabel={planLabel}
-                vehicleDetails={vehicleDetails}
               />
 
               <div className="lg:hidden">
@@ -209,59 +176,46 @@ const TourDetails = () => {
             <div className="sticky top-24">
               <TourBookingCard
                 tour={tour}
-                ratingValue={ratingValue}
-                reviewCount={reviewCount}
-                planLabel={planLabel}
-                durationText={durationText}
               />
             </div>
           </aside>
-        </div>
 
-        <div className="mt-10 w-full divide-y divide-[rgba(15,23,42,0.08)]">
-          <OverviewSection
-            description={detailedDescription}
-            highlights={highlights}
-            bestFor={bestFor}
-            packageOverview={packageOverview}
-          />
+          <div className="w-full space-y-0 lg:col-span-2">
+            <OverviewSection
+              description={detailedDescription}
+              packageOverview={packageOverview}
+            />
 
-          <InclusionsSection
-            includedServices={includedServices}
-            beforeYouBook={beforeYouBook}
-          />
+            <InclusionsSection
+              includedServices={includedServices}
+              beforeYouBook={beforeYouBook}
+            />
 
-          <ItinerarySection
-            items={displayItinerary}
-            openIndex={openItineraryDay}
-            onToggle={(index) =>
-              setOpenItineraryDay((current) => (current === index ? -1 : index))
-            }
-          />
+            <ItinerarySection
+              items={displayItinerary}
+              openIndex={openItineraryDay}
+              onToggle={(index) =>
+                setOpenItineraryDay((current) => (current === index ? -1 : index))
+              }
+            />
 
-          <RouteSection
-            placeName={placeName}
-            placesCovered={placesCovered}
-            placesLabel={placesLabel}
-            planLabel={planLabel}
-            vehicleDetails={vehicleDetails}
-          />
+            <RouteSection
+              placeName={placeName}
+              placesCovered={placesCovered}
+            />
 
-          <ReviewsSection
-            ratingValue={ratingValue}
-            reviewCount={reviewCount}
-            reviews={reviews}
-          />
+            <ReviewsSection reviews={reviews} />
 
-          <FaqSection
-            items={fallbackFaq}
-            openIndex={openFaq}
-            onToggle={(index) =>
-              setOpenFaq((current) => (current === index ? -1 : index))
-            }
-          />
+            <FaqSection
+              items={fallbackFaq}
+              openIndex={openFaq}
+              onToggle={(index) =>
+                setOpenFaq((current) => (current === index ? -1 : index))
+              }
+            />
 
-          <RelatedToursSection tours={relatedTours} />
+            <RelatedToursSection tours={relatedTours} />
+          </div>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   Eye,
   Search,
@@ -115,8 +115,9 @@ const BookingManagement = () => {
   const deleteBooking = useDeleteBooking();
   const { data: notifications = [] } = useNotifications();
   const updateNotification = useUpdateNotification();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(() => searchParams.get("search") || "");
   const [activeTab, setActiveTab] = useState("standard");
   const customTab = activeTab === "custom";
 
@@ -137,6 +138,20 @@ const BookingManagement = () => {
       updateNotification.mutate({ id: n.id, isRead: true });
     });
   }, [notifications, updateNotification]);
+
+  useEffect(() => {
+    const next = searchParams.get("search") || "";
+    setSearchTerm((current) => (current === next ? current : next));
+  }, [searchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (searchTerm.trim()) params.set("search", searchTerm.trim());
+    else params.delete("search");
+    if (params.toString() !== searchParams.toString()) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [searchParams, searchTerm, setSearchParams]);
 
   const filteredBookings = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
@@ -211,26 +226,22 @@ const BookingManagement = () => {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="admin-soft-heading text-xl xl:3xl font-black tracking-tighter uppercase">
+          <h1 className="admin-page-title">
             Booking Management
           </h1>
-          <p className="admin-soft-muted text-sm font-bold">
+          <p className="admin-page-subtitle">
             Monitor, confirm, and manage customer reservations.
           </p>
         </div>
 
         <div className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row sm:items-center">
-          <div className="relative group">
-            <Search
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--admin-muted)] transition-colors group-focus-within:text-[var(--c-brand)]"
-              size={16}
-            />
+          <div className="group">
             <input
               type="text"
               placeholder={customTab ? "Search by name, destinations, itinerary..." : "Search by name, booking code, email, tour..."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full py-2.5 pl-10 pr-4 text-xs font-medium md:w-72"
+              className="w-full px-4 py-2.5 text-xs font-medium md:w-72"
             />
           </div>
           <button className="admin-soft-button-ghost flex items-center gap-2 whitespace-nowrap">
@@ -411,8 +422,8 @@ const BookingManagement = () => {
       <section className="admin-soft-panel space-y-4 p-5">
           <div>
             <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[var(--c-brand)]">{customTab ? "Custom Tour Plans" : "Standard Tour Plans"}</p>
-            <h2 className="mt-2 text-xl font-black tracking-tight text-slate-900 dark:text-slate-100">{customTab ? "Saved Itineraries for Custom Requests" : "Saved Itineraries for Standard Bookings"}</h2>
-            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{customTab ? "Every itinerary created from a custom request is saved here so you can reopen or print it anytime." : "Every itinerary created for a standard booking is saved here so you can reopen or print it anytime."}</p>
+            <h2 className="admin-section-title mt-2 text-[1.05rem]">{customTab ? "Saved Itineraries for Custom Requests" : "Saved Itineraries for Standard Bookings"}</h2>
+            <p className="mt-1 text-[13px] text-slate-500 dark:text-slate-400">{customTab ? "Every itinerary created from a custom request is saved here so you can reopen or print it anytime." : "Every itinerary created for a standard booking is saved here so you can reopen or print it anytime."}</p>
           </div>
 
           {createdPlans.length ? (

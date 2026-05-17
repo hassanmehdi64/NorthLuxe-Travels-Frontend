@@ -41,7 +41,7 @@ const SEOSettings = ({ settings, setSettings }) => {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {["facebook", "instagram", "whatsapp", "twitter", "linkedin"].map((platform) => (
-            <div key={platform} className="relative">
+            <div key={platform}>
               <input
                 type="text"
                 placeholder={`${platform} URL`}
@@ -55,11 +55,8 @@ const SEOSettings = ({ settings, setSettings }) => {
                     },
                   })
                 }
-                className="w-full p-4 pl-12 bg-slate-50 border-none rounded-2xl font-bold text-xs outline-none focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-2xl border-none bg-slate-50 p-4 font-bold text-xs outline-none focus:ring-2 focus:ring-blue-100"
               />
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-slate-300 uppercase tracking-tighter">
-                {platform.charAt(0)}
-              </span>
             </div>
           ))}
         </div>

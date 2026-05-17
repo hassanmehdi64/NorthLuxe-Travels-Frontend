@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Plus,
   Trash2,
@@ -19,6 +20,8 @@ const initialForm = {
   url: "",
   category: "Nature",
   alt: "",
+  status: "published",
+  sortOrder: 0,
 };
 
 const GalleryList = () => {
@@ -29,13 +32,42 @@ const GalleryList = () => {
   const [form, setForm] = useState(initialForm);
   const [isReadingFile, setIsReadingFile] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("All");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [search, setSearch] = useState(() => searchParams.get("search") || "");
   const [openMenuId, setOpenMenuId] = useState("");
   const menuRef = useRef(null);
   const { data: galleryItems = [] } = useGallery();
   const createGallery = useCreateGalleryItem();
   const updateGallery = useUpdateGalleryItem();
   const deleteGallery = useDeleteGalleryItem();
-  const categories = ["All", ...new Set(galleryItems.map((item) => item.category))];
+  useEffect(() => {
+    const next = searchParams.get("search") || "";
+    setSearch((current) => (current === next ? current : next));
+  }, [searchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (search.trim()) params.set("search", search.trim());
+    else params.delete("search");
+    if (params.toString() !== searchParams.toString()) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [search, searchParams, setSearchParams]);
+
+  const categories = ["All", ...new Set(galleryItems.map((item) => item.category).filter(Boolean))];
+  const filteredItems = galleryItems.filter((item) => {
+    const matchesCategory = activeCategory === "All" || item.category === activeCategory;
+    const matchesStatus = statusFilter === "All" || item.status === statusFilter.toLowerCase();
+    const query = search.trim().toLowerCase();
+    const matchesSearch = !query || [item.title, item.category, item.alt, item.status, item.url]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase()
+      .includes(query);
+
+    return matchesCategory && matchesStatus && matchesSearch;
+  });
 
   const resetForm = () => {
     setForm(initialForm);
@@ -52,6 +84,8 @@ const GalleryList = () => {
       category: form.category,
       url: form.url.trim(),
       alt: form.alt.trim(),
+      status: form.status,
+      sortOrder: Number(form.sortOrder || 0),
     };
 
     try {
@@ -75,6 +109,8 @@ const GalleryList = () => {
       url: item.url || "",
       category: item.category || "Nature",
       alt: item.alt || "",
+      status: item.status || "published",
+      sortOrder: Number(item.sortOrder || 0),
     });
     setIsFormOpen(true);
   };
@@ -136,10 +172,10 @@ const GalleryList = () => {
       {/* --- HEADER --- */}
       <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
         <div>
-          <h1 className="admin-soft-heading text-xl font-black tracking-tighter uppercase xl:text-3xl">
+          <h1 className="admin-page-title">
             Gallery Management
           </h1>
-          <p className="admin-soft-muted text-sm font-bold">
+          <p className="admin-page-subtitle">
             Manage high-quality visuals for your landing page.
           </p>
         </div>
@@ -154,7 +190,7 @@ const GalleryList = () => {
             setForm(initialForm);
             setIsFormOpen(true);
           }}
-          className="admin-soft-button group inline-flex items-center gap-2 px-4 py-2 text-xs"
+          className="admin-soft-button group inline-flex items-center gap-2 px-4 py-2"
         >
           <Plus size={16} /> {isFormOpen ? "Close Form" : "Add New"}
         </button>
@@ -180,16 +216,22 @@ const GalleryList = () => {
             <span className="admin-soft-label">
               Category
             </span>
-            <select
+            <input
+              list="gallery-category-options"
               className="w-full rounded-xl p-2.5 text-sm"
               value={form.category}
               onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))}
-            >
-              <option value="Nature">Nature</option>
-              <option value="Hotels">Hotels</option>
-              <option value="Adventure">Adventure</option>
-            </select>
+              placeholder="Nature"
+            />
           </label>
+          <datalist id="gallery-category-options">
+            {categories.filter((item) => item !== "All").map((item) => (
+              <option key={item} value={item} />
+            ))}
+            <option value="Nature" />
+            <option value="Hotels" />
+            <option value="Adventure" />
+          </datalist>
           <label className="space-y-2">
             <span className="admin-soft-label">
               Alt Text
@@ -200,6 +242,19 @@ const GalleryList = () => {
               value={form.alt}
               onChange={(e) => setForm((prev) => ({ ...prev, alt: e.target.value }))}
             />
+          </label>
+          <label className="space-y-2">
+            <span className="admin-soft-label">
+              Status
+            </span>
+            <select
+              className="w-full rounded-xl p-2.5 text-sm"
+              value={form.status}
+              onChange={(e) => setForm((prev) => ({ ...prev, status: e.target.value }))}
+            >
+              <option value="published">Published</option>
+              <option value="draft">Draft</option>
+            </select>
           </label>
           <label className="md:col-span-3 space-y-2">
             <span className="admin-soft-label">
@@ -212,6 +267,17 @@ const GalleryList = () => {
               value={form.url}
               onChange={(e) => setForm((prev) => ({ ...prev, url: e.target.value }))}
               required
+            />
+          </label>
+          <label className="space-y-2 md:col-span-3">
+            <span className="admin-soft-label">
+              Sort Order
+            </span>
+            <input
+              className="w-full rounded-xl p-2.5 text-sm"
+              type="number"
+              value={form.sortOrder}
+              onChange={(e) => setForm((prev) => ({ ...prev, sortOrder: Number(e.target.value || 0) }))}
             />
           </label>
           <div className="md:col-span-3 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
@@ -236,14 +302,14 @@ const GalleryList = () => {
           <div className="md:col-span-3 flex flex-wrap gap-2 pt-1">
             <button
               type="submit"
-              className="admin-soft-button px-4 py-2 text-xs"
+              className="admin-soft-button px-4 py-2"
             >
               {editingId ? "Update" : "Create"}
             </button>
             <button
               type="button"
               onClick={resetForm}
-              className="admin-soft-button-ghost px-4 py-2 text-xs"
+              className="admin-soft-button-ghost px-4 py-2"
             >
               Cancel
             </button>
@@ -252,7 +318,8 @@ const GalleryList = () => {
       ) : null}
 
       {/* --- CATEGORY FILTER --- */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-wrap items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
         {categories.map((cat) => (
           <button
             key={cat}
@@ -266,16 +333,30 @@ const GalleryList = () => {
             {cat}
           </button>
         ))}
+        </div>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <input
+            type="text"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search title, category, or alt text..."
+            className="w-full rounded-2xl border border-white/35 bg-white/70 px-4 py-2.5 text-sm shadow-[0_16px_34px_rgba(148,163,184,0.08)] backdrop-blur-xl sm:flex-1"
+          />
+          <select
+            value={statusFilter}
+            onChange={(event) => setStatusFilter(event.target.value)}
+            className="rounded-2xl border border-white/35 bg-white/70 px-4 py-2.5 text-sm font-semibold shadow-[0_16px_34px_rgba(148,163,184,0.08)] backdrop-blur-xl"
+          >
+            <option value="All">All statuses</option>
+            <option value="Published">Published</option>
+            <option value="Draft">Draft</option>
+          </select>
+        </div>
       </div>
 
       {/* --- GALLERY GRID --- */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        {galleryItems
-          .filter(
-            (item) =>
-              activeCategory === "All" || item.category === activeCategory,
-          )
-          .map((item) => (
+        {filteredItems.map((item) => (
             <div
               key={item.id}
               className={`group admin-soft-panel relative overflow-visible rounded-[1.2rem] border border-white/55 bg-white/80 p-0 shadow-[0_14px_28px_rgba(15,23,42,0.06)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_18px_34px_rgba(15,23,42,0.1)] ${
@@ -287,6 +368,15 @@ const GalleryList = () => {
                 <div className="absolute left-3 top-3 z-20">
                   <span className="rounded-full border border-white/25 bg-white/92 px-2.5 py-1 text-[8px] font-black uppercase tracking-[0.22em] text-[var(--c-navy)] shadow-sm backdrop-blur-md">
                     {item.category}
+                  </span>
+                </div>
+                <div className="absolute right-3 top-3 z-20">
+                  <span className={`rounded-full px-2 py-1 text-[8px] font-black uppercase tracking-[0.18em] shadow-sm ${
+                    item.status === "published"
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "bg-amber-50 text-amber-700"
+                  }`}>
+                    {item.status}
                   </span>
                 </div>
 
@@ -304,7 +394,7 @@ const GalleryList = () => {
                       {item.title}
                     </h3>
                     <p className="mt-1 text-[10px] font-semibold text-slate-400">
-                      {new Date(item.createdAt).toLocaleDateString()}
+                      {`Order ${Number(item.sortOrder || 0)} | ${new Date(item.createdAt).toLocaleDateString()}`}
                     </p>
                   </div>
                   <div className="relative shrink-0" ref={openMenuId === item.id ? menuRef : null}>
@@ -346,6 +436,11 @@ const GalleryList = () => {
               </div>
             </div>
           ))}
+        {!filteredItems.length ? (
+          <div className="col-span-full rounded-2xl border border-dashed border-slate-200 bg-white/70 px-6 py-12 text-center text-sm font-semibold text-slate-500">
+            No gallery items match the current filters.
+          </div>
+        ) : null}
       </div>
     </div>
   );

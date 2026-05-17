@@ -20,8 +20,10 @@ import {
   useNotifications,
   usePublicBlogs,
   usePublicTours,
+  useSettings,
   useUsers,
 } from "../../hooks/useCms";
+import { displayCurrency, formatCurrencyAmount } from "../../utils/currency";
 
 const isManualPaymentMethod = (value = "") => {
   const v = String(value).toLowerCase();
@@ -33,14 +35,6 @@ const formatNumber = (value) => {
   return new Intl.NumberFormat("en-US").format(num);
 };
 
-const formatCurrency = (value) => {
-  const num = Number(value || 0);
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "PKR",
-    maximumFractionDigits: 0,
-  }).format(num);
-};
 const isRecentlyReceived = (value) => {
   if (!value) return false;
   const at = new Date(value).getTime();
@@ -90,8 +84,10 @@ const DashboardHome = () => {
   const { data: blogs = [] } = usePublicBlogs();
   const { data: gallery = [] } = useGallery();
   const { data: users = [] } = useUsers();
+  const { data: settings = {} } = useSettings();
   const { data: activities = [] } = useAdminContentList("activity");
   const { data: services = [] } = useAdminContentList("service");
+  const activeCurrency = displayCurrency(settings?.currency || "PKR");
 
   const stats = overview?.stats || {};
   const unreadBookingCodes = new Set(
@@ -131,28 +127,24 @@ const DashboardHome = () => {
       title: "Weekly Sales",
       value: formatNumber(stats.totalBookings ?? bookings.length),
       hint: "New bookings processed",
-      icon: Briefcase,
       tone: "peach",
     },
     {
       title: "Weekly Orders",
-      value: formatCurrency(stats.totalRevenue || 0),
+      value: formatCurrencyAmount(stats.totalRevenue || 0, activeCurrency),
       hint: "Confirmed collections",
-      icon: CreditCard,
       tone: "sky",
     },
     {
       title: "Visitors Online",
       value: formatNumber(stats.totalUsers ?? users.length),
       hint: "Active customer touchpoints",
-      icon: Users,
       tone: "mint",
     },
     {
       title: "Pending Payments",
       value: formatNumber(pendingPaymentVerifications),
       hint: "Need verification",
-      icon: ShieldCheck,
       tone: "violet",
     },
   ];
@@ -198,14 +190,14 @@ const DashboardHome = () => {
 
   return (
     <div className="space-y-8">
-      <div className="admin-soft-panel p-6 md:p-7">
+      <div className="admin-soft-panel p-5 md:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
             <p className="admin-soft-label text-[var(--admin-accent)]">Overview</p>
-            <h1 className="admin-soft-heading mt-2 text-2xl md:text-3xl font-black tracking-tight">
+            <h1 className="admin-page-title mt-2 normal-case">
               Dashboard Overview
             </h1>
-            <p className="admin-soft-muted mt-2 max-w-2xl text-sm">
+            <p className="admin-page-subtitle mt-2 max-w-2xl">
               A softer control center for bookings, payments, team activity, and content updates.
             </p>
           </div>
@@ -236,21 +228,19 @@ const DashboardHome = () => {
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((card) => {
-          const Icon = card.icon;
           return (
             <div
               key={card.title}
               className="admin-soft-kpi"
               data-tone={card.tone}
             >
-              <div className="relative z-[1] flex items-center justify-between">
-                <p className="text-sm font-bold tracking-wide text-white/88">{card.title}</p>
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-white/15 text-white">
-                  <Icon size={16} />
-                </span>
+              <div className="relative z-[1]">
+                <div className="min-w-0">
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-[var(--admin-muted)]">{card.title}</p>
+              <p className="mt-2.5 text-[1.8rem] font-black tracking-tight text-[var(--admin-text)] sm:text-[1.95rem]">{card.value}</p>
+                </div>
               </div>
-              <p className="relative z-[1] mt-5 text-[2rem] font-black tracking-tight text-white">{card.value}</p>
-              <p className="relative z-[1] mt-4 text-sm font-semibold text-white/85">{card.hint}</p>
+              <p className="relative z-[1] mt-2.5 text-[13px] font-semibold text-[var(--admin-muted)]">{card.hint}</p>
             </div>
           );
         })}
@@ -260,10 +250,10 @@ const DashboardHome = () => {
         <div className="admin-soft-table xl:col-span-2 overflow-hidden">
           <div className="flex items-center justify-between border-b border-white/30 px-6 py-5">
             <div>
-              <h2 className="admin-soft-heading text-lg font-bold">Recent Bookings</h2>
+              <h2 className="admin-section-title">Recent Bookings</h2>
               <p className="admin-soft-muted text-xs">Latest customer transactions and status.</p>
             </div>
-            <Link to="/admin/bookings" className="admin-soft-button-ghost px-4 py-2 text-xs">
+            <Link to="/admin/bookings" className="admin-soft-button-ghost px-4 py-2">
               View All
               <ArrowRight size={12} />
             </Link>
@@ -283,7 +273,9 @@ const DashboardHome = () => {
                     <p className="admin-soft-muted text-xs">{item.tour || item.tourTitle || item.bookingCode || "Tour Booking"}</p>
                   </div>
                   <div className="text-right">
-                    <p className="admin-soft-heading text-sm font-bold">${item.amount || 0}</p>
+                    <p className="admin-soft-heading text-sm font-bold">
+                      {formatCurrencyAmount(item.amount || 0, item.currency || "PKR")}
+                    </p>
                     <p className="admin-soft-muted text-[10px] uppercase font-black tracking-[0.12em]">{item.status || "pending"}</p>
                   </div>
                 </div>
@@ -296,7 +288,7 @@ const DashboardHome = () => {
 
         <div className="space-y-4">
           <div className="admin-soft-panel p-5">
-            <h3 className="admin-soft-heading text-sm font-bold">Quick Actions</h3>
+            <h3 className="admin-section-title text-[0.98rem]">Quick Actions</h3>
             <div className="mt-3 space-y-2.5">
               {quickLinks.map((item) => {
                 const Icon = item.icon;
@@ -304,10 +296,10 @@ const DashboardHome = () => {
                   <Link
                     key={item.title}
                     to={item.to}
-                    className="block rounded-[1.35rem] border border-white/35 bg-white/45 px-3 py-3 transition hover:-translate-y-0.5 hover:border-[rgba(155,108,255,0.28)] hover:bg-white/70"
+                    className="block rounded-[1.15rem] border border-white/35 bg-white/62 px-3.5 py-3 transition hover:-translate-y-0.5 hover:border-[rgba(32,183,122,0.18)] hover:bg-white/82"
                   >
                     <div className="flex items-start gap-2.5">
-                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(155,108,255,0.16),rgba(87,199,255,0.16))] text-[var(--admin-accent)]">
+                      <span className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/55 bg-[linear-gradient(135deg,rgba(32,183,122,0.12),rgba(15,47,87,0.08))] text-[var(--admin-accent)]">
                         <Icon size={14} />
                       </span>
                       <div>
@@ -322,7 +314,7 @@ const DashboardHome = () => {
           </div>
 
           <div className="admin-soft-panel p-5">
-            <h3 className="admin-soft-heading text-sm font-bold">Content Snapshot</h3>
+            <h3 className="admin-section-title text-[0.98rem]">Content Snapshot</h3>
             <div className="mt-4 space-y-3 text-sm text-slate-700 dark:text-slate-200">
               <p className="flex items-center justify-between"><span className="inline-flex items-center gap-1.5"><Briefcase size={13} /> Tours</span><b>{tours.length}</b></p>
               <p className="flex items-center justify-between"><span className="inline-flex items-center gap-1.5"><Briefcase size={13} /> Activities</span><b>{activities.length}</b></p>

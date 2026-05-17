@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Edit2, Plus, Trash2, Upload, X } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 import {
   useAdminContentList,
   useCreateContent,
@@ -266,8 +267,9 @@ const typeText = {
 
 const ContentManagement = ({ fixedType = null }) => {
   const toast = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selectedType, setSelectedType] = useState(fixedType || "destination");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(() => searchParams.get("search") || "");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState(initialForm);
@@ -278,13 +280,31 @@ const ContentManagement = ({ fixedType = null }) => {
   const updateContent = useUpdateContent();
   const deleteContent = useDeleteContent();
 
+  useEffect(() => {
+    const next = searchParams.get("search") || "";
+    setSearch((current) => (current === next ? current : next));
+  }, [searchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (search.trim()) params.set("search", search.trim());
+    else params.delete("search");
+    if (params.toString() !== searchParams.toString()) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [search, searchParams, setSearchParams]);
+
   const filtered = useMemo(
     () =>
       items.filter((item) => {
         const q = search.toLowerCase();
         return (
-          String(item.title || "").toLowerCase().includes(q) ||
-          String(item.slug || "").toLowerCase().includes(q)
+          !q ||
+          [item.title, item.slug, item.status, item.location, item.category, item.type]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase()
+            .includes(q)
         );
       }),
     [items, search],
@@ -382,7 +402,7 @@ const ContentManagement = ({ fixedType = null }) => {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="admin-soft-heading text-xl xl:3xl font-black tracking-tighter uppercase">
+          <h1 className="admin-page-title">
             {fixedType ? `${typeText[activeType] || "Content"} Management` : "Content Management"}
           </h1>
           <p className="admin-soft-muted text-sm">
@@ -424,7 +444,7 @@ const ContentManagement = ({ fixedType = null }) => {
         ) : null}
         <input
           className="flex-1 rounded-2xl px-4 py-3 text-sm font-medium"
-          placeholder="Search by title or slug..."
+          placeholder="Search title, slug, type, category, location, or status..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />

@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Plus, Search, Edit2, Trash2, Eye, FileText, CheckCircle2, Circle, Filter } from "lucide-react";
 import { useAdminBlogs, useDeleteBlog, useUpdateBlog } from "../../hooks/useCms";
 import { useToast } from "../../context/ToastContext";
@@ -11,9 +11,24 @@ const BlogList = () => {
   const { data: blogs = [] } = useAdminBlogs();
   const updateBlog = useUpdateBlog();
   const deleteBlog = useDeleteBlog();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get("search") || "");
   const [statusFilter, setStatusFilter] = useState("All Posts");
+
+  useEffect(() => {
+    const next = searchParams.get("search") || "";
+    setSearchQuery((current) => (current === next ? current : next));
+  }, [searchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (searchQuery.trim()) params.set("search", searchQuery.trim());
+    else params.delete("search");
+    if (params.toString() !== searchParams.toString()) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [searchQuery, searchParams, setSearchParams]);
 
   const toggleStatus = (id) => {
     const blog = blogs.find((item) => item.id === id);
@@ -41,7 +56,14 @@ const BlogList = () => {
   const filteredBlogs = useMemo(
     () =>
       blogs.filter((blog) => {
-        const matchesSearch = blog.title.toLowerCase().includes(searchQuery.toLowerCase());
+        const query = searchQuery.toLowerCase().trim();
+        const matchesSearch =
+          !query ||
+          [blog.title, blog.slug, blog.author, blog.excerpt, blog.status]
+            .filter(Boolean)
+            .join(" ")
+            .toLowerCase()
+            .includes(query);
         const matchesStatus =
           statusFilter === "All Posts" || blog.status === statusFilter.toLowerCase();
         return matchesSearch && matchesStatus;
@@ -53,10 +75,10 @@ const BlogList = () => {
     <div className="space-y-6">
       <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="admin-soft-heading text-xl font-black uppercase tracking-tighter xl:3xl">
+          <h1 className="admin-page-title">
             Blog Management
           </h1>
-          <p className="admin-soft-muted text-sm font-medium">Create and manage your travel stories.</p>
+          <p className="admin-page-subtitle">Create and manage your travel stories.</p>
         </div>
         <Link to="/admin/blogs/new" className="admin-soft-button w-full sm:w-auto">
           <Plus size={18} /> Write New Post
@@ -64,14 +86,13 @@ const BlogList = () => {
       </div>
 
       <div className="flex flex-col gap-4 md:flex-row">
-        <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[var(--admin-muted)]" size={18} />
+        <div className="flex-1">
           <input
             type="text"
-            placeholder="Search by title..."
+            placeholder="Search title, author, slug, or status..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full py-3 pl-12 pr-4 text-sm font-medium"
+            className="w-full px-4 py-3 text-sm font-medium"
           />
         </div>
         <div className="flex items-center gap-2 rounded-2xl border border-white/35 bg-white/50 px-4 py-1 shadow-[0_16px_34px_rgba(148,163,184,0.08)] backdrop-blur-xl">

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import {
-  Bell,
   CheckCheck,
   Calendar,
-  AlertTriangle,
   Inbox,
   Sparkles,
+  BellRing,
+  ShieldCheck,
 } from "lucide-react";
 import NotificationItem from "./NotificationItem";
 import NotificationFilters from "./NotificationFilters";
@@ -55,6 +55,7 @@ const Notifications = () => {
     });
 
   const unread = notifications.filter((n) => !n.isRead);
+  const recent = notifications.filter((n) => isRecentlyReceived(n.time || n.createdAt));
   const counts = {
     All: unread.length,
     Bookings: unread.filter((n) => n.type === "Bookings").length,
@@ -62,64 +63,96 @@ const Notifications = () => {
   };
 
   return (
-    <div className="max-w-4xl space-y-10 py-6 animate-in fade-in duration-700">
-      {/* Header Area */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+    <div className="space-y-6 py-2 animate-in fade-in duration-500">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className=" text-2xl md:text-3xl font-black text-slate-900 tracking-tighter uppercase">
-            Notifications
+          <p className="admin-soft-label">Notifications</p>
+          <h1 className="admin-page-title mt-2 normal-case">
+            Alerts & Activity
           </h1>
-          <p className="text-sm font-bold text-slate-400">
-            Manage your latest activity and system alerts.
+          <p className="admin-page-subtitle mt-2 max-w-2xl">
+            Review live booking updates, system alerts, and recent admin activity from one clean inbox.
           </p>
         </div>
 
         <button
           onClick={handleMarkAllRead}
-          className="flex items-center gap-2 px-6 py-4 bg-white border border-slate-100 text-slate-900 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all shadow-xl shadow-slate-200/50 active:scale-95"
+          className="admin-soft-button-ghost inline-flex items-center gap-2 px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.12em]"
         >
           <CheckCheck size={16} /> Mark all read
         </button>
       </div>
 
-      {/* Filter Component */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="admin-soft-panel rounded-[1.35rem] p-4">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-[1rem] bg-[rgba(var(--c-brand-rgb),0.1)] text-[var(--admin-accent)]">
+              <BellRing size={18} />
+            </span>
+            <div>
+              <p className="admin-soft-label">Unread</p>
+              <p className="mt-1 text-[1.2rem] font-black text-[var(--admin-text)]">{unread.length}</p>
+            </div>
+          </div>
+        </div>
+        <div className="admin-soft-panel rounded-[1.35rem] p-4">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-[1rem] bg-blue-50 text-blue-600">
+              <Calendar size={18} />
+            </span>
+            <div>
+              <p className="admin-soft-label">Booking Alerts</p>
+              <p className="mt-1 text-[1.2rem] font-black text-[var(--admin-text)]">{counts.Bookings}</p>
+            </div>
+          </div>
+        </div>
+        <div className="admin-soft-panel rounded-[1.35rem] p-4">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-10 w-10 items-center justify-center rounded-[1rem] bg-violet-50 text-violet-600">
+              <ShieldCheck size={18} />
+            </span>
+            <div>
+              <p className="admin-soft-label">Recent Updates</p>
+              <p className="mt-1 text-[1.2rem] font-black text-[var(--admin-text)]">{recent.length}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <NotificationFilters
         activeFilter={activeFilter}
         setActiveFilter={setActiveFilter}
         counts={counts}
       />
 
-      {/* List Container */}
       <div className="grid gap-5">
         {filteredData.length > 0 ? (
           filteredData.map((item) => {
             const typeStyles =
               item.type === "Bookings"
                 ? { icon: <Calendar size={18} />, color: "text-blue-600", bgColor: "bg-blue-50" }
-                : { icon: <Sparkles size={18} />, color: "text-purple-600", bgColor: "bg-purple-50" };
+                : { icon: <Sparkles size={18} />, color: "text-violet-600", bgColor: "bg-violet-50" };
             return (
-            <NotificationItem
-              key={item.id}
-              item={{
-                ...item,
-                ...typeStyles,
-                time: new Date(item.time).toLocaleString(),
-                isLatest: isRecentlyReceived(item.time || item.createdAt),
-              }}
-              onMarkAsRead={handleMarkAsRead}
-              onDelete={handleDelete}
-            />
-          );
-        })
+              <NotificationItem
+                key={item.id}
+                item={{
+                  ...item,
+                  ...typeStyles,
+                  time: new Date(item.time || item.createdAt || Date.now()).toLocaleString(),
+                  isLatest: isRecentlyReceived(item.time || item.createdAt),
+                }}
+                onMarkAsRead={handleMarkAsRead}
+                onDelete={handleDelete}
+              />
+            );
+          })
         ) : (
-          <div className="py-24 text-center bg-slate-50/50 rounded-[3rem] border-2 border-dashed border-slate-100">
-            <div className="inline-flex p-8 bg-white rounded-full text-slate-200 mb-6 shadow-sm">
+          <div className="rounded-[2rem] border border-dashed border-white/40 bg-white/45 py-20 text-center">
+            <div className="mb-5 inline-flex rounded-full bg-white p-6 text-slate-200 shadow-sm">
               <Inbox size={48} strokeWidth={1} />
             </div>
-            <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">
-              Zero Notifications
-            </h3>
-            <p className="text-sm font-medium text-slate-400">
+            <h3 className="admin-section-title text-[1.02rem]">No Notifications</h3>
+            <p className="admin-soft-muted text-sm">
               Everything looks clear in {activeFilter}.
             </p>
           </div>

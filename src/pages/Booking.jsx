@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
-  useCreateJazzCashSession,
   useCreatePaymentIntent,
   useCreatePublicBooking,
   usePublicBookingQuote,
@@ -42,26 +41,6 @@ const EMPTY_CARD_INTENT = {
   status: "idle",
 };
 
-const submitHostedPaymentForm = ({ actionUrl, fields }) => {
-  if (typeof document === "undefined" || !actionUrl || !fields) return;
-
-  const form = document.createElement("form");
-  form.method = "POST";
-  form.action = actionUrl;
-  form.style.display = "none";
-
-  Object.entries(fields).forEach(([key, value]) => {
-    const input = document.createElement("input");
-    input.type = "hidden";
-    input.name = key;
-    input.value = String(value ?? "");
-    form.appendChild(input);
-  });
-
-  document.body.appendChild(form);
-  form.submit();
-};
-
 const Booking = () => {
   const { tourId } = useParams();
   const location = useLocation();
@@ -72,7 +51,6 @@ const Booking = () => {
   const { data: settings } = useSettings(true);
   const quoteBooking = usePublicBookingQuote();
   const createBooking = useCreatePublicBooking();
-  const createJazzCashSession = useCreateJazzCashSession();
   const createPaymentIntent = useCreatePaymentIntent();
   const verifyPaymentIntent = useVerifyPaymentIntent();
 
@@ -93,7 +71,7 @@ const Booking = () => {
 
   const paymentConfig = useMemo(() => ensurePaymentConfig(settings || {}), [settings]);
   const paymentMethods = useMemo(
-    () => paymentConfig.methods.filter((item) => item.active !== false && item.mode !== "card"),
+    () => paymentConfig.methods.filter((item) => item.active !== false),
     [paymentConfig.methods],
   );
   const paymentAccounts = paymentConfig.accounts;
@@ -510,19 +488,6 @@ const Booking = () => {
     try {
       const response = await quoteBooking.mutateAsync(buildQuotePayload());
       setQuoteData(response.quote);
-
-      if (isCardPayment) {
-        const booking = await createBooking.mutateAsync(buildBookingPayload({ paymentVerified: false }));
-        const session = await createJazzCashSession.mutateAsync({ bookingId: booking.id });
-
-        if (!session?.actionUrl || !session?.fields) {
-          throw new Error("JazzCash session could not be prepared.");
-        }
-
-        submitHostedPaymentForm(session);
-        return;
-      }
-
       setStep(2);
     } catch (error) {
       toast.error("Quote failed", error?.response?.data?.message || "Could not calculate quote.");

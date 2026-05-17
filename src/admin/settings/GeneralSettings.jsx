@@ -1,4 +1,5 @@
 import { CheckCircle2, Clock3, Globe2, Mail, MapPin, Phone, Power, RefreshCw } from "lucide-react";
+import { CURRENCY_OPTIONS } from "../../utils/currency";
 
 const setField = (settings, setSettings, key, value) => {
   setSettings({ ...settings, [key]: value });
@@ -96,10 +97,11 @@ const GeneralSettings = ({ settings, setSettings }) => {
               value={settings.currency || "PKR"}
               onChange={(e) => setField(settings, setSettings, "currency", e.target.value)}
             >
-              <option value="PKR">PKR - Pakistani Rupee</option>
-              <option value="USD">USD - US Dollar</option>
-              <option value="GBP">GBP - British Pound</option>
-              <option value="EUR">EUR - Euro</option>
+              {CURRENCY_OPTIONS.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
             </select>
           </div>
         </div>

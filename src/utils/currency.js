@@ -1,5 +1,12 @@
+export const CURRENCY_OPTIONS = [
+  { value: "PKR", label: "PKR - Pakistani Rupee" },
+  { value: "GBP", label: "GBP - British Pound" },
+  { value: "EUR", label: "EUR - Euro" },
+];
+
 export const displayCurrency = (currency) => {
-  return "PKR";
+  const normalized = String(currency || "").trim().toUpperCase();
+  return CURRENCY_OPTIONS.find((item) => item.value === normalized)?.value || "PKR";
 };
 
 export const formatCurrencyAmount = (amount, currency = "PKR") =>

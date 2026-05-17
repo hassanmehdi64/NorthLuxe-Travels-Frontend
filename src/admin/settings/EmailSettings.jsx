@@ -76,7 +76,7 @@ const EmailSettings = () => {
           </span>
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">SMTP Delivery</p>
-            <h2 className="mt-1 text-lg font-black tracking-tight text-slate-950">
+            <h2 className="admin-section-title mt-1 text-[1.05rem]">
               {configured ? "Email variables are present" : "Email variables are incomplete"}
             </h2>
             <p className="mt-1 text-sm font-medium text-slate-600">

@@ -34,7 +34,7 @@ const UploadMedia = ({ isOpen, onClose, onUpload }) => {
       {/* Modal Card */}
       <div className="admin-soft-dialog relative w-full max-w-md overflow-hidden p-5 animate-in fade-in zoom-in duration-200 sm:p-6">
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="admin-soft-heading text-xl font-black">Upload</h2>
+          <h2 className="admin-section-title text-[1.08rem]">Upload</h2>
           <button
             onClick={onClose}
             className="admin-soft-icon-button !h-8 !w-8"
@@ -118,14 +118,14 @@ const UploadMedia = ({ isOpen, onClose, onUpload }) => {
             <button
               type="button"
               onClick={onClose}
-              className="admin-soft-button-ghost flex-1 px-4 py-2 text-xs"
+              className="admin-soft-button-ghost flex-1 px-4 py-2"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={!url}
-              className="admin-soft-button flex-1 px-4 py-2 text-xs disabled:opacity-50 disabled:hover:translate-y-0"
+              className="admin-soft-button flex-1 px-4 py-2 disabled:opacity-50 disabled:hover:translate-y-0"
             >
               Start Upload
             </button>

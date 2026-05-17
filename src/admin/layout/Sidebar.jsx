@@ -4,8 +4,13 @@ import { LogOut, X } from "lucide-react";
 import { adminNavItems } from "./navConfig";
 import { useAuth } from "../../context/useAuth";
 import { useNotifications } from "../../hooks/useCms";
+import { getUserAvatar } from "../utils/userAvatar";
 
-const playAdminNotificationSound = async ({ audioContextRef, audioUnlockedRef, force = false } = {}) => {
+const playAdminNotificationSound = async ({
+  audioContextRef,
+  audioUnlockedRef,
+  force = false,
+} = {}) => {
   if (typeof window === "undefined") return false;
 
   const AudioContextClass = window.AudioContext || window.webkitAudioContext;
@@ -54,7 +59,13 @@ const playAdminNotificationSound = async ({ audioContextRef, audioUnlockedRef, f
   }
 };
 
-const Sidebar = ({ isSidebarOpen, setSidebarOpen, theme }) => {
+const Sidebar = ({
+  isSidebarOpen,
+  setSidebarOpen,
+  isSidebarCollapsed,
+  setSidebarCollapsed,
+  theme,
+}) => {
   const { user, logout } = useAuth();
   const isDark = theme === "dark";
   const role = user?.role;
@@ -107,7 +118,9 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen, theme }) => {
 
     const unreadItems = notifications.filter((n) => !n?.isRead);
     const currentUnreadCount = unreadItems.length;
-    const currentIds = new Set(unreadItems.map((item) => String(item?.id || "")));
+    const currentIds = new Set(
+      unreadItems.map((item) => String(item?.id || "")),
+    );
 
     if (previousUnreadRef.current === null) {
       previousUnreadRef.current = currentUnreadCount;
@@ -127,11 +140,14 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen, theme }) => {
       if ("Notification" in window && Notification.permission === "granted") {
         newItems.slice(0, 2).forEach((item) => {
           try {
-            const notification = new Notification(item?.title || "New admin update", {
-              body: item?.message || "A new update has arrived.",
-              tag: `northluxe-${item?.id || Date.now()}`,
-              renotify: true,
-            });
+            const notification = new Notification(
+              item?.title || "New admin update",
+              {
+                body: item?.message || "A new update has arrived.",
+                tag: `northluxe-${item?.id || Date.now()}`,
+                renotify: true,
+              },
+            );
             notification.onclick = () => {
               window.focus();
               notification.close();
@@ -153,7 +169,10 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen, theme }) => {
   ).length;
   const unreadContactAlerts = unreadNotifications.filter((n) => {
     const text = `${n?.title || ""} ${n?.message || ""}`.toLowerCase();
-    return String(n?.type || "") === "System" && (text.includes("contact") || text.includes("inquiry"));
+    return (
+      String(n?.type || "") === "System" &&
+      (text.includes("contact") || text.includes("inquiry"))
+    );
   }).length;
 
   const badgeCounts = {
@@ -166,43 +185,60 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen, theme }) => {
     (item) => !item.roles?.length || item.roles.includes(role),
   );
 
-  const mobileVisibility = isSidebarOpen
+  const visibilityClass = isSidebarOpen
     ? "translate-x-0"
-    : "-translate-x-full md:translate-x-0";
+    : "-translate-x-full sm:translate-x-0";
+  const desktopWidth = isSidebarCollapsed ? "sm:w-24" : "sm:w-72";
 
   return (
     <aside
       className={`
-        admin-soft-sidebar fixed inset-y-0 left-0 z-50 w-72 transform transition-transform duration-300 ease-in-out md:static md:inset-0 md:shrink-0
+        admin-soft-sidebar fixed inset-y-0 left-0 z-50 w-72 overflow-hidden transform transition-[width,transform] duration-180 ease-out will-change-[width,transform] sm:static sm:inset-0 sm:shrink-0
+        ${desktopWidth}
         ${isDark ? "text-white" : "text-slate-900"}
-        ${mobileVisibility}
+        ${visibilityClass}
       `}>
       <div className="flex flex-col h-full">
-        <div className="flex h-22 items-center justify-between border-b border-white/30 px-7">
-          <div>
-            <p className="text-sm md:text-xl font-black uppercase tracking-[0.28em] text-[var(--admin-accent)]">
-              North Luxe
-            </p>
-          </div>
-          <button
-            onClick={() => setSidebarOpen(false)}
-            className="admin-soft-icon-button md:hidden">
-            <X size={20} />
-          </button>
-        </div>
-
-        <div className="px-5 pt-5">
-          <div className="rounded-[1.6rem] border border-white/35 bg-white/55 px-4 py-4 shadow-[0_16px_34px_rgba(148,163,184,0.12)] backdrop-blur-xl">
-            <p className="text-sm font-black text-[var(--admin-text)]">
-              {user?.name || "North Luxe Team"}
-            </p>
-            <p className="mt-1 text-xs font-semibold text-[var(--admin-muted)]">
-              {role || "Editor Access"}
-            </p>
+        <div className="relative border-b border-white/30 px-4 py-4">
+          <div
+            className={`flex min-w-0 items-center px-4 ${
+              isSidebarCollapsed ? "justify-center sm:px-0" : "justify-start"
+            }`}>
+            <img
+              src="/logo-light.png"
+              alt="North Luxe"
+              className="h-16 w-auto object-contain lg:h-20"
+            />
           </div>
         </div>
 
-        <nav className="flex-1 overflow-y-auto px-4 py-5">
+        <div className="px-4 pt-4">
+          <div
+            className={`rounded-[1.3rem] border border-white/35 bg-white/74 px-4 py-4 shadow-[0_10px_24px_rgba(148,163,184,0.08)] backdrop-blur-xl ${isSidebarCollapsed ? "sm:px-2.5" : ""}`}>
+            <div
+              className={`flex items-center gap-3 ${isSidebarCollapsed ? "sm:flex-col sm:justify-center" : ""}`}>
+              <div className="relative shrink-0">
+                <img
+                  src={getUserAvatar(user)}
+                  alt={user?.name || "North Luxe Team"}
+                  className="h-12 w-12 rounded-[1rem] border-2 border-white/80 object-cover shadow-[0_10px_24px_rgba(15,23,42,0.14)]"
+                />
+                <span className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-[var(--admin-accent)]" />
+              </div>
+              <div
+                className={`${isSidebarCollapsed ? "sm:hidden" : "min-w-0"}`}>
+                <p className="truncate text-[14px] font-black text-[var(--admin-text)]">
+                  {user?.name || "North Luxe Team"}
+                </p>
+                <p className="mt-1 text-[11px] font-semibold text-[var(--admin-muted)]">
+                  {role || "Editor Access"}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto px-4 py-4">
           {visibleNavItems.map((item) => (
             <NavLink
               key={item.id}
@@ -212,19 +248,24 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen, theme }) => {
               {({ isActive }) => (
                 <div
                   className="admin-soft-nav-link flex items-center justify-between gap-3 px-4 py-3 text-sm font-bold"
-                  data-active={isActive ? "true" : "false"}>
-                  <span className="inline-flex min-w-0 items-center gap-3">
+                  data-active={isActive ? "true" : "false"}
+                  title={isSidebarCollapsed ? item.label : undefined}>
+                  <span
+                    className={`inline-flex min-w-0 items-center gap-3 ${isSidebarCollapsed ? "sm:w-full sm:justify-center" : ""}`}>
                     <span
                       className={`inline-flex h-10 w-10 items-center justify-center rounded-2xl ${
                         isActive
-                          ? "bg-[linear-gradient(135deg,var(--admin-accent),var(--admin-accent-2))] text-white shadow-[0_14px_30px_rgba(155,108,255,0.24)]"
+                          ? "bg-[rgba(var(--c-brand-rgb),0.12)] text-[var(--admin-accent)] shadow-[0_10px_22px_rgba(15,23,42,0.05)]"
                           : "bg-white/70 text-[var(--admin-muted)]"
                       }`}>
                       <item.icon size={18} />
                     </span>
-                    <span className="truncate">{item.label}</span>
+                    <span
+                      className={`${isSidebarCollapsed ? "sm:hidden" : "truncate"}`}>
+                      {item.label}
+                    </span>
                   </span>
-                  {badgeCounts[item.id] > 0 ? (
+                  {badgeCounts[item.id] > 0 && !isSidebarCollapsed ? (
                     <span className="inline-flex min-w-6 items-center justify-center rounded-full bg-[var(--admin-accent)] px-2 py-1 text-[10px] font-black leading-none text-white shadow-[0_10px_22px_rgba(155,108,255,0.26)]">
                       {badgeCounts[item.id] > 99 ? "99+" : badgeCounts[item.id]}
                     </span>
@@ -238,9 +279,12 @@ const Sidebar = ({ isSidebarOpen, setSidebarOpen, theme }) => {
         <div className="border-t border-white/30 p-4">
           <button
             onClick={logout}
-            className="admin-soft-button-ghost w-full justify-start text-rose-500">
+            className={`admin-soft-button-ghost w-full text-rose-500 ${isSidebarCollapsed ? "justify-center sm:px-0" : "justify-start"}`}
+            title={isSidebarCollapsed ? "Sign Out" : undefined}>
             <LogOut size={20} />
-            Sign Out
+            <span className={`${isSidebarCollapsed ? "sm:hidden" : ""}`}>
+              Sign Out
+            </span>
           </button>
         </div>
       </div>

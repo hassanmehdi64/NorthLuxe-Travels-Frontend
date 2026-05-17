@@ -5,6 +5,31 @@ import { AuthContext } from "./auth-context";
 const TOKEN_KEY = "admin-token";
 const USER_KEY = "admin-user";
 
+const sanitizeUserForStorage = (user) => {
+  if (!user) return null;
+  const avatar = typeof user.avatar === "string" ? user.avatar.trim() : "";
+
+  return {
+    ...user,
+    // Keep local session storage lightweight; large data URLs should come from the API/DB.
+    avatar: avatar.startsWith("data:") ? "" : avatar,
+  };
+};
+
+const persistStoredUser = (user) => {
+  if (!user) {
+    localStorage.removeItem(USER_KEY);
+    return;
+  }
+
+  try {
+    localStorage.setItem(USER_KEY, JSON.stringify(sanitizeUserForStorage(user)));
+  } catch {
+    // If storage quota is exceeded, keep auth alive via token and drop cached user snapshot.
+    localStorage.removeItem(USER_KEY);
+  }
+};
+
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
   const [user, setUser] = useState(() => {
@@ -27,7 +52,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const data = await apiClient.get("/auth/me").then(unwrap);
         setUser(data.user);
-        localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+        persistStoredUser(data.user);
       } catch (error) {
         // Keep session on transient failures; clear only when token is truly invalid.
         if (error?.response?.status === 401) {
@@ -46,7 +71,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     const data = await apiClient.post("/auth/login", { email, password }).then(unwrap);
     localStorage.setItem(TOKEN_KEY, data.token);
-    localStorage.setItem(USER_KEY, JSON.stringify(data.user));
+    persistStoredUser(data.user);
     setToken(data.token);
     setUser(data.user);
     return data.user;
@@ -59,6 +84,11 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const setUserData = (nextUser) => {
+    setUser(nextUser);
+    persistStoredUser(nextUser);
+  };
+
   const value = useMemo(
     () => ({
       token,
@@ -67,6 +97,7 @@ export const AuthProvider = ({ children }) => {
       isAuthenticated: Boolean(token),
       login,
       logout,
+      setUserData,
     }),
     [token, user, loading],
   );

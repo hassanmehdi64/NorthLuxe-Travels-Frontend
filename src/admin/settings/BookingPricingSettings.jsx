@@ -329,7 +329,7 @@ const BookingPricingSettings = ({ settings, setSettings }) => {
         <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
           <div className="space-y-1.5">
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Payment Setup</p>
-            <h2 className="text-lg font-black tracking-tight text-slate-950">Booking payments and account details</h2>
+            <h2 className="admin-section-title text-[1.05rem]">Booking payments and account details</h2>
             <p className="text-sm text-slate-600">A smaller overview so you can focus on the tables below.</p>
           </div>
 
@@ -417,7 +417,7 @@ const BookingPricingSettings = ({ settings, setSettings }) => {
           <div className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white">
             <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
               <div>
-                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Payment Methods</h3>
+                <h3 className="admin-section-title uppercase text-[1rem]">Payment Methods</h3>
                 <p className="mt-1 text-xs font-medium text-slate-500">Everything is shown in a simple list. Use edit to update any method later.</p>
               </div>
             </div>
@@ -477,7 +477,7 @@ const BookingPricingSettings = ({ settings, setSettings }) => {
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Edit Method</p>
-                  <h4 className="mt-2 text-xl font-black tracking-tight text-slate-950">{selectedMethod.label}</h4>
+                  <h4 className="admin-section-title mt-2 text-[1.02rem]">{selectedMethod.label}</h4>
                 </div>
                 <div className="flex items-center gap-2">
                   <label className="inline-flex items-center gap-2 text-sm font-semibold text-slate-700">
@@ -553,7 +553,7 @@ const BookingPricingSettings = ({ settings, setSettings }) => {
           <div className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white">
             <div className="flex items-center justify-between gap-3 border-b border-slate-200 px-5 py-4">
               <div>
-                <h3 className="text-lg font-black text-slate-900 uppercase tracking-tight">Payment Details</h3>
+                <h3 className="admin-section-title uppercase text-[1rem]">Payment Details</h3>
                 <p className="mt-1 text-xs font-medium text-slate-500">Add or edit account details in the same list view.</p>
               </div>
               <button
@@ -618,7 +618,7 @@ const BookingPricingSettings = ({ settings, setSettings }) => {
               <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Edit Details</p>
-                  <h4 className="mt-2 text-xl font-black tracking-tight text-slate-950">{selectedAccount.label || "Payment Details"}</h4>
+                  <h4 className="admin-section-title mt-2 text-[1.02rem]">{selectedAccount.label || "Payment Details"}</h4>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-700">
@@ -719,7 +719,7 @@ const BookingPricingSettings = ({ settings, setSettings }) => {
         <div className="space-y-5">
           <div className="rounded-[1.75rem] border border-slate-200 bg-white overflow-hidden">
             <div className="border-b border-slate-200 px-5 py-4">
-              <h3 className="text-lg font-black uppercase tracking-tight text-slate-900">Pricing</h3>
+              <h3 className="admin-section-title uppercase text-[1rem]">Pricing</h3>
               <p className="mt-1 text-xs font-medium text-slate-500">Set the main booking charges in one clean table.</p>
             </div>
 
@@ -786,7 +786,7 @@ const BookingPricingSettings = ({ settings, setSettings }) => {
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h3 className="text-lg font-black uppercase tracking-tight text-slate-900">Hotel Categories</h3>
+              <h3 className="admin-section-title uppercase text-[1rem]">Hotel Categories</h3>
               <p className="mt-1 text-xs font-medium text-slate-500">Manage hotel options in a labeled table.</p>
             </div>
             <button type="button" onClick={() => addOption("hotelCategories", "hotel")} className="cursor-pointer rounded-xl bg-slate-100 px-4 py-2 text-xs font-bold inline-flex items-center gap-2 text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-200 hover:text-slate-900">
@@ -836,7 +836,7 @@ const BookingPricingSettings = ({ settings, setSettings }) => {
         <div className="space-y-4">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <h3 className="text-lg font-black uppercase tracking-tight text-slate-900">Vehicle Types</h3>
+              <h3 className="admin-section-title uppercase text-[1rem]">Vehicle Types</h3>
               <p className="mt-1 text-xs font-medium text-slate-500">Manage vehicle options, rates, and the common note shown on all tour detail pages.</p>
             </div>
             <button type="button" onClick={() => addOption("vehicleTypes", "vehicle")} className="cursor-pointer rounded-xl bg-slate-100 px-4 py-2 text-xs font-bold inline-flex items-center gap-2 text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-200 hover:text-slate-900">

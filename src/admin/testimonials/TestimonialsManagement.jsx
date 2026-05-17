@@ -100,7 +100,7 @@ const TestimonialsManagement = () => {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-xl xl:3xl font-black text-slate-900 tracking-tighter uppercase">
+        <h1 className="admin-page-title">
           Testimonials
         </h1>
         <p className="text-sm font-medium text-slate-500">

@@ -18,27 +18,10 @@ const GuestsSelector = ({ guests, setGuests }) => {
   return (
     <div className="relative w-full">
       <div className="relative">
-        {/* Icon Overlay */}
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted z-10">
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-            />
-          </svg>
-        </span>
-
         <select
           value={`${guests.adults}-${guests.children}`}
           onChange={handleSelectChange}
-          className="w-full appearance-none bg-bg-main border border-border-light text-text-main rounded-lg pl-10 pr-10 py-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
+          className="w-full appearance-none rounded-lg border border-border-light bg-bg-main px-4 py-3 pr-10 text-text-main transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-secondary"
         >
           {options.map((opt, index) => (
             <option key={index} value={`${opt.adults}-${opt.children}`}>

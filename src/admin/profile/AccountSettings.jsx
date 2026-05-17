@@ -1,41 +1,97 @@
-import React from "react";
+import React, { useState } from "react";
 import { Lock, ShieldCheck } from "lucide-react";
+import { useUpdateUser } from "../../hooks/useCms";
+import { useAuth } from "../../context/useAuth";
+import { useToast } from "../../context/ToastContext";
+import { getApiErrorMessage } from "../../lib/apiError";
 
 const AccountSettings = () => {
+  const { user } = useAuth();
+  const toast = useToast();
+  const updateUser = useUpdateUser();
+  const [passwords, setPasswords] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!user?.id) return;
+    if (!passwords.newPassword || passwords.newPassword.length < 8) {
+      toast.error("Weak password", "New password must be at least 8 characters.");
+      return;
+    }
+    if (passwords.newPassword !== passwords.confirmPassword) {
+      toast.error("Password mismatch", "Confirm password must match the new password.");
+      return;
+    }
+
+    try {
+      await updateUser.mutateAsync({
+        id: user.id,
+        password: passwords.newPassword,
+      });
+      setPasswords({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      toast.success("Password updated", "Your account password has been changed.");
+    } catch (error) {
+      toast.error("Update failed", getApiErrorMessage(error, "Could not update password."));
+    }
+  };
+
   return (
-    <div className="max-w-2xl space-y-8 animate-in fade-in duration-500">
-      <div className="p-8 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm space-y-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl">
-            <Lock size={20} />
+    <div className="max-w-2xl space-y-6 animate-in fade-in duration-500">
+      <form onSubmit={handleSubmit} className="admin-soft-panel space-y-6 p-6 sm:p-7">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/40 bg-[rgba(var(--c-brand-rgb),0.1)] text-[var(--c-brand)]">
+            <Lock size={18} />
           </div>
-          <h3 className="text-lg font-black text-slate-900">
-            Security Credentials
-          </h3>
+          <div>
+            <h3 className="admin-section-title text-[1.02rem]">Security Credentials</h3>
+            <p className="admin-soft-muted mt-1 text-sm">
+              Keep your admin account protected with a strong password.
+            </p>
+          </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="grid gap-4">
           <input
             type="password"
             placeholder="Current Password"
-            className="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 outline-none focus:ring-2 focus:ring-slate-100"
+            value={passwords.currentPassword}
+            onChange={(e) => setPasswords((prev) => ({ ...prev, currentPassword: e.target.value }))}
+            className="w-full p-4 font-bold"
           />
           <input
             type="password"
             placeholder="New Password"
-            className="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 outline-none focus:ring-2 focus:ring-slate-100"
+            value={passwords.newPassword}
+            onChange={(e) => setPasswords((prev) => ({ ...prev, newPassword: e.target.value }))}
+            className="w-full p-4 font-bold"
           />
           <input
             type="password"
             placeholder="Confirm New Password"
-            className="w-full p-4 bg-slate-50 border-none rounded-2xl font-bold text-slate-900 outline-none focus:ring-2 focus:ring-slate-100"
+            value={passwords.confirmPassword}
+            onChange={(e) => setPasswords((prev) => ({ ...prev, confirmPassword: e.target.value }))}
+            className="w-full p-4 font-bold"
           />
         </div>
 
-        <button className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-blue-600 transition-all">
+        <div className="rounded-2xl border border-white/35 bg-white/45 p-4">
+          <div className="flex items-start gap-3 text-sm text-slate-600">
+            <ShieldCheck size={18} className="mt-0.5 text-[var(--c-brand)]" />
+            <p>
+              The current password field is shown for clarity, but this admin flow currently updates the password directly through the secure account session.
+            </p>
+          </div>
+        </div>
+
+        <button className="admin-soft-button w-full py-3">
           Update Password
         </button>
-      </div>
+      </form>
     </div>
   );
 };

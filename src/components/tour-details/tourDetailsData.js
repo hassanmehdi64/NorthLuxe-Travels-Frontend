@@ -252,9 +252,7 @@ export const getTourHeroImages = (tour) => {
 };
 export const buildPackageOverview = (tour) => [
   { label: "Package Type", value: `${getTourMood(tour)} in ${normalizePlaceName(tour?.location)}` },
-  { label: "Ideal Group", value: getTourPlanLabel(tour) },
-  { label: "Travel Duration", value: tour?.durationLabel || `${tour?.durationDays || 0} Days` },
-  { label: "Route Coverage", value: getTourPlacesLabel(tour) },
+  { label: "Travel Style", value: "Private tour planning with flexible coordination" },
 ];
 
 export const buildDetailedDescription = (tour) =>

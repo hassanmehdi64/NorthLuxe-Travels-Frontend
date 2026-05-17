@@ -3,8 +3,6 @@ import {
   ChevronDown,
   CircleDot,
   Info,
-  MapPin,
-  Truck,
 } from "lucide-react";
 
 const formatListLabel = (value) =>
@@ -19,105 +17,75 @@ const SectionHeading = ({ eyebrow, title, description }) => (
       {eyebrow}
     </p>
 
-    <h2 className="text-[1.7rem] font-semibold leading-tight tracking-[-0.03em] text-theme md:text-[2.1rem]">
+    <h2 className="text-[1.45rem] font-semibold leading-tight tracking-[-0.03em] text-theme md:text-[1.75rem]">
       {title}
     </h2>
 
     {description ? (
-      <p className="max-w-5xl text-[15px] leading-7 text-muted md:text-[16px]">
+      <p className="max-w-5xl text-[14px] leading-6 text-muted md:text-[15px]">
         {description}
       </p>
     ) : null}
   </div>
 );
 
-export const OverviewSection = ({
-  description,
-  highlights = [],
-  bestFor = [],
-  packageOverview = [],
-}) => (
-  <section className="w-full py-8">
+export const OverviewSection = ({ description, packageOverview = [] }) => (
+  <section className="w-full pt-4 pb-3">
     <SectionHeading
       eyebrow="Overview"
-      title="Detailed Description"
-      description={description}
+      title="Tour Overview"
+      description="A quick summary of the route, pace, and package setup before you move into itinerary and booking details."
     />
 
-    <div className="mt-5 grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_280px_320px]">
-      <div>
-        <h3 className="text-[13px] font-black uppercase tracking-[0.16em] text-theme">
-          Key Highlights
-        </h3>
+    <div className="mt-4">
+      <div className="rounded-2xl border border-theme bg-theme-surface p-5 md:p-6">
+        <div className="space-y-4 text-[14px] leading-7 text-muted md:text-[15px]">
+          {String(description || "")
+            .split(/\n+/)
+            .filter(Boolean)
+            .map((paragraph, index) => (
+              <p key={`${paragraph.slice(0, 20)}-${index}`}>{paragraph}</p>
+            ))}
+        </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          {highlights.map((item) => (
-            <div
-              key={item}
-              className="flex items-center gap-3 rounded-2xl border border-theme bg-theme-surface px-4 py-3"
-            >
-              <span className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[rgba(var(--c-brand-rgb),0.1)] text-[var(--c-brand)]">
-                <Check size={15} />
-              </span>
+        {packageOverview.length ? (
+          <div className="mt-5 border-t border-[rgba(15,23,42,0.08)] pt-5">
+            <h3 className="text-[13px] font-black uppercase tracking-[0.16em] text-theme">
+              Package Details
+            </h3>
 
-              <span className="text-[14px] leading-6 text-theme">
-                {formatListLabel(item)}
-              </span>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {packageOverview.map((item) => (
+                <div
+                  key={item.label}
+                  className="rounded-xl bg-theme-bg px-4 py-3"
+                >
+                  <p className="text-[11px] font-black uppercase tracking-[0.14em] text-muted">
+                    {item.label}
+                  </p>
+
+                  <p className="mt-1.5 text-[14px] font-medium leading-6 text-theme">
+                    {item.value}
+                  </p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="rounded-2xl border border-theme bg-theme-surface p-5">
-        <h3 className="text-[13px] font-black uppercase tracking-[0.16em] text-theme">
-          Best For
-        </h3>
-
-        <div className="mt-4 flex flex-wrap gap-2">
-          {bestFor.map((item) => (
-            <span
-              key={item}
-              className="rounded-full border border-[rgba(var(--c-brand-rgb),0.2)] bg-[rgba(var(--c-brand-rgb),0.06)] px-3 py-1.5 text-[13px] font-medium text-theme"
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      <div className="rounded-2xl border border-theme bg-theme-surface p-5">
-        <h3 className="text-[13px] font-black uppercase tracking-[0.16em] text-theme">
-          Package Details
-        </h3>
-
-        <div className="mt-4 space-y-3">
-          {packageOverview.map((item) => (
-            <div
-              key={item.label}
-              className="flex items-start justify-between gap-4 border-b border-[rgba(15,23,42,0.08)] pb-3 last:border-b-0 last:pb-0"
-            >
-              <span className="text-[13px] text-muted">{item.label}</span>
-
-              <span className="max-w-[62%] text-right text-[14px] font-medium text-theme">
-                {item.value}
-              </span>
-            </div>
-          ))}
-        </div>
+          </div>
+        ) : null}
       </div>
     </div>
   </section>
 );
 
 export const InclusionsSection = ({ includedServices = [], beforeYouBook = [] }) => (
-  <section className="w-full py-8">
+  <section className="w-full py-4">
     <SectionHeading
       eyebrow="Know Before You Go"
       title="What's Included"
       description="Clear travel inclusions and practical notes before you confirm the booking."
     />
 
-    <div className="mt-5 grid gap-4 lg:grid-cols-2">
+    <div className="mt-4 grid gap-4 lg:grid-cols-2">
       <div className="rounded-2xl border border-theme bg-theme-surface p-5">
         <h3 className="text-[13px] font-black uppercase tracking-[0.16em] text-theme">
           Included
@@ -164,7 +132,7 @@ export const InclusionsSection = ({ includedServices = [], beforeYouBook = [] })
 );
 
 export const ItinerarySection = ({ items = [], openIndex, onToggle }) => (
-  <section className="w-full py-8">
+  <section className="w-full py-4">
     <SectionHeading
       eyebrow="Plan"
       title="Itinerary"
@@ -172,7 +140,7 @@ export const ItinerarySection = ({ items = [], openIndex, onToggle }) => (
     />
 
     {items.length ? (
-      <div className="mt-5 space-y-3">
+      <div className="mt-4 space-y-3">
         {items.map((item, idx) => {
           const isOpen = openIndex === idx;
 
@@ -237,72 +205,23 @@ export const ItinerarySection = ({ items = [], openIndex, onToggle }) => (
   </section>
 );
 
-export const RouteSection = ({
-  placeName,
-  placesCovered = [],
-  placesLabel,
-  planLabel,
-  vehicleDetails = [],
-}) => (
-  <section className="w-full py-8">
+export const RouteSection = ({ placeName, placesCovered = [] }) => (
+  <section className="w-full py-4">
     <SectionHeading
       eyebrow="Route"
       title="Places Covered"
       description={`This route is designed around ${placeName} with practical travel flow and sightseeing coverage.`}
     />
 
-    <div className="mt-5 space-y-5">
-      <div className="flex flex-wrap gap-2">
+    <div className="mt-4 rounded-2xl border border-theme bg-theme-surface p-5 md:p-6">
+      <div className="flex flex-wrap gap-2.5">
         {placesCovered.map((item) => (
           <span
             key={item}
-            className="rounded-full border border-[rgba(15,23,42,0.12)] bg-theme-surface px-3 py-1.5 text-[13px] font-medium text-theme"
+            className="rounded-full border border-[rgba(15,23,42,0.1)] bg-theme-bg px-3 py-1.5 text-[13px] font-medium text-theme"
           >
             {formatListLabel(item)}
           </span>
-        ))}
-      </div>
-
-      <div className="rounded-2xl border border-theme bg-theme-surface p-5">
-        <h3 className="text-[13px] font-black uppercase tracking-[0.16em] text-theme">
-          Route Summary
-        </h3>
-
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div className="flex items-center gap-3 text-[14px] text-theme">
-            <MapPin size={16} className="text-[var(--c-brand)]" />
-            <span>{placesLabel}</span>
-          </div>
-
-          <div className="flex items-center gap-3 text-[14px] text-theme">
-            <Truck size={16} className="text-[var(--c-brand)]" />
-            <span>{planLabel}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {vehicleDetails.map((item) => (
-          <div
-            key={item}
-            className="rounded-2xl border border-theme bg-theme-surface p-4"
-          >
-            <div className="flex items-center gap-3">
-              <span className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[rgba(var(--c-brand-rgb),0.1)] text-[var(--c-brand)]">
-                <Truck size={17} />
-              </span>
-
-              <div>
-                <p className="text-[14px] font-semibold text-theme">
-                  {formatListLabel(item)}
-                </p>
-
-                <p className="mt-1 text-[13px] text-muted">
-                  Suitable for selected route and trip setup.
-                </p>
-              </div>
-            </div>
-          </div>
         ))}
       </div>
     </div>
@@ -310,8 +229,8 @@ export const RouteSection = ({
 );
 
 export const FaqSection = ({ items = [], openIndex, onToggle }) => (
-  <section className="w-full py-8">
-    <div className="grid gap-5 lg:grid-cols-[300px_minmax(0,1fr)]">
+  <section className="w-full py-4">
+    <div className="grid gap-4 lg:grid-cols-[280px_minmax(0,1fr)]">
       <SectionHeading
         eyebrow="Support"
         title="Frequently Asked Questions"

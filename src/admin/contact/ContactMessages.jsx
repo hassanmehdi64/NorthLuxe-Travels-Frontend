@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Mail,
   MessageSquare,
@@ -38,9 +39,24 @@ const ContactMessages = () => {
   const updateContact = useUpdateContact();
   const replyContact = useReplyContact();
   const updateNotification = useUpdateNotification();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(() => searchParams.get("search") || "");
   const [selectedMessage, setSelectedMessage] = useState(null);
+
+  useEffect(() => {
+    const next = searchParams.get("search") || "";
+    setSearchTerm((current) => (current === next ? current : next));
+  }, [searchParams]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchParams);
+    if (searchTerm.trim()) params.set("search", searchTerm.trim());
+    else params.delete("search");
+    if (params.toString() !== searchParams.toString()) {
+      setSearchParams(params, { replace: true });
+    }
+  }, [searchParams, searchTerm, setSearchParams]);
 
   // --- HANDLERS ---
   const deleteMessage = (id) => {
@@ -75,7 +91,11 @@ const ContactMessages = () => {
       if (isCustomPlan) return false;
 
       const query = searchTerm.toLowerCase();
-      return m.sender.toLowerCase().includes(query) || m.subject.toLowerCase().includes(query);
+      return [m.sender, m.subject, m.email, m.message, m.status]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase()
+        .includes(query);
     })
     .sort((a, b) => {
       const aTime = new Date(a?.date || a?.createdAt || 0).getTime();
@@ -112,7 +132,7 @@ const ContactMessages = () => {
         className={`flex-1 space-y-3 overflow-y-auto pr-2 custom-scrollbar ${selectedMessage ? "hidden lg:block" : "block"}`}
       >
         <div className="mb-4 flex items-center justify-between">
-            <h1 className="flex items-center gap-2 text-lg font-black uppercase tracking-tight text-slate-900 xl:text-2xl">
+            <h1 className="admin-page-title flex items-center gap-2 normal-case">
             <Inbox size={20} className="text-blue-600" /> Inbox
           </h1>
           <div className="flex gap-2">
@@ -122,15 +142,12 @@ const ContactMessages = () => {
           </div>
         </div>
 
-        <div className="relative mb-4">
-          <Search
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
-            size={16}
-          />
+        <div className="mb-4">
           <input
             type="text"
-            placeholder="Search inquiries..."
-            className="w-full rounded-2xl border border-slate-100 bg-white py-2.5 pl-11 pr-4 text-sm font-medium shadow-sm outline-none transition-all focus:ring-4 focus:ring-slate-50"
+            placeholder="Search sender, subject, email, message, or status..."
+            className="w-full rounded-2xl border border-slate-100 bg-white px-4 py-2.5 text-sm font-medium shadow-sm outline-none transition-all focus:ring-4 focus:ring-slate-50"
+            value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>

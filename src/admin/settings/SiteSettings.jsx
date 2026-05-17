@@ -149,7 +149,7 @@ const SiteSettings = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-xl font-black uppercase tracking-tighter text-slate-900 xl:text-3xl">
+          <h1 className="admin-page-title">
             Site Settings
           </h1>
           <p className="text-sm text-slate-500 font-medium">
